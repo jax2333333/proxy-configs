@@ -1,22 +1,13 @@
 # ============================================================
-# Clash Verge / Mihomo - JAX V2.1 Final
+# Clash Verge / Mihomo - JAX V2.2 GitHub Template
 # 适用：macOS Clash Verge Rev + Mihomo
 # 核心：Fake-IP + TUN mixed + 国内/国外 DNS 分流 + MRS 规则
+#
+# 安全设计：
+# - GitHub 仅托管公共配置
+# - 不在本文件保存机场订阅 URL
+# - proxy-providers.Airport1 由 Clash Verge 本地「订阅扩展配置 / Merge」注入
 # ============================================================
-
-# ------------------------------------------------------------
-# 机场订阅
-# ------------------------------------------------------------
-proxy-providers:
-  Airport1:
-    url: "https://example.com/airport.yaml"
-    type: http
-    interval: 86400
-    health-check:
-      enable: true
-      url: https://www.gstatic.com/generate_204
-      interval: 300
-      lazy: true
 
 # ------------------------------------------------------------
 # 本地节点
@@ -159,18 +150,31 @@ proxy-groups:
       - 🔯 美国故转
       - 🚀 直连
 
+  # ----------------------------------------------------------
   # 应用服务分组
+  # ----------------------------------------------------------
   - {name: 🤖 AI, type: select, proxies: [🔮 节点选择, ♻️ 智能选择, 🌐 全部节点, ♻️ 日本智能, ♻️ 美国智能, 🇭🇰 香港节点, 🇯🇵 日本节点, 🇸🇬 狮城节点, 🇺🇲 美国节点, 🚀 直连]}
+
   - {name: 📺 YouTuBe, type: select, proxies: [🔮 节点选择, ♻️ 智能选择, 🌐 全部节点, ♻️ 香港智能, ♻️ 狮城智能, ♻️ 美国智能, ♻️ 日本智能, 🇭🇰 香港节点, 🇯🇵 日本节点, 🇸🇬 狮城节点, 🇺🇲 美国节点, 🚀 直连]}
+
   - {name: ✈️ Telegram, type: select, proxies: [🔮 节点选择, ♻️ 智能选择, 🌐 全部节点, ♻️ 香港智能, ♻️ 狮城智能, ♻️ 美国智能, ♻️ 日本智能, 🇭🇰 香港节点, 🇯🇵 日本节点, 🇸🇬 狮城节点, 🇺🇲 美国节点, 🚀 直连]}
+
   - {name: 🐙 GitHub, type: select, proxies: [🔮 节点选择, ♻️ 智能选择, 🌐 全部节点, ♻️ 香港智能, ♻️ 狮城智能, ♻️ 美国智能, ♻️ 日本智能, 🇭🇰 香港节点, 🇯🇵 日本节点, 🇸🇬 狮城节点, 🇺🇲 美国节点, 🚀 直连]}
+
   - {name: 🍎 Apple, type: select, proxies: [🔮 节点选择, 🚀 直连, ♻️ 智能选择, 🌐 全部节点, ♻️ 香港智能, ♻️ 狮城智能, ♻️ 美国智能, ♻️ 日本智能]}
+
   - {name: 💻 Microsoft, type: select, proxies: [🔮 节点选择, 🚀 直连, ♻️ 智能选择, 🌐 全部节点, ♻️ 香港智能, ♻️ 狮城智能, ♻️ 美国智能, ♻️ 日本智能]}
+
   - {name: ☁️ OneDriver, type: select, proxies: [🔮 节点选择, 🚀 直连, ♻️ 智能选择, 🌐 全部节点, ♻️ 香港智能, ♻️ 狮城智能, ♻️ 美国智能, ♻️ 日本智能]}
+
   - {name: 🎬 NETFLIX, type: select, proxies: [🔮 节点选择, ♻️ 智能选择, 🌐 全部节点, ♻️ 香港智能, ♻️ 狮城智能, ♻️ 美国智能, ♻️ 日本智能, 🇭🇰 香港节点, 🇯🇵 日本节点, 🇸🇬 狮城节点, 🇺🇲 美国节点, 🚀 直连]}
+
   - {name: 🎵 TikTok, type: select, proxies: [🔮 节点选择, ♻️ 智能选择, 🌐 全部节点, ♻️ 日本智能, ♻️ 香港智能, ♻️ 狮城智能, ♻️ 美国智能, 🇭🇰 香港节点, 🇯🇵 日本节点, 🇸🇬 狮城节点, 🇺🇲 美国节点, 🚀 直连]}
+
   - {name: 🎮 Steam 商店, type: select, proxies: [🔮 节点选择, ♻️ 智能选择, 🇭🇰 香港节点, 🇯🇵 日本节点, 🇸🇬 狮城节点, 🇺🇲 美国节点, 🚀 直连]}
+
   - {name: 📥 Steam 下载, type: select, proxies: [🚀 直连, 🔮 节点选择, ♻️ 智能选择]}
+
   - name: 🇨🇳 国内流量
     type: select
     proxies:
@@ -179,7 +183,10 @@ proxy-groups:
 
   - {name: 🐟 漏网之鱼, type: select, proxies: [🔮 节点选择, ♻️ 智能选择, 🌐 全部节点, 🇭🇰 香港节点, 🇯🇵 日本节点, 🇸🇬 狮城节点, 🇺🇲 美国节点, 🚀 直连]}
 
+  # ----------------------------------------------------------
   # 自动测速 / 全部节点
+  # include-all-providers 会读取本地 Merge 注入的 Airport1
+  # ----------------------------------------------------------
   - name: ♻️ 智能选择
     type: url-test
     include-all-providers: true
@@ -193,6 +200,9 @@ proxy-groups:
     type: select
     include-all-providers: true
 
+  # ----------------------------------------------------------
+  # 地区智能测速
+  # ----------------------------------------------------------
   - name: ♻️ 香港智能
     type: url-test
     include-all-providers: true
@@ -233,6 +243,9 @@ proxy-groups:
     tolerance: 50
     lazy: true
 
+  # ----------------------------------------------------------
+  # 地区手动选择
+  # ----------------------------------------------------------
   - name: 🇭🇰 香港节点
     type: select
     include-all-providers: true
@@ -257,6 +270,9 @@ proxy-groups:
     filter: '(?i)(美国|🇺🇸|🇺🇲|US|USA|United\s*States|America)'
     exclude-filter: '(?i)(直连|免费|剩余|流量|套餐|官网|到期|expire|traffic|x0\.01|x0\.1|0\.01x|0\.1x|0\.01倍|0\.1倍|x2(?:\.0)?|2x|2倍|2\.0倍|(^|[^0-9])0\.(?:01|1)($|[^0-9]))'
 
+  # ----------------------------------------------------------
+  # 地区故障转移
+  # ----------------------------------------------------------
   - name: 🔯 香港故转
     type: fallback
     include-all-providers: true
@@ -293,47 +309,133 @@ proxy-groups:
     interval: 300
     lazy: true
 
+# ------------------------------------------------------------
+# Rule Provider 锚点
+# ------------------------------------------------------------
 rule-anchor:
   ip: &ip
     type: http
     interval: 86400
     behavior: ipcidr
     format: mrs
+
   domain: &domain
     type: http
     interval: 86400
     behavior: domain
     format: mrs
 
+# ------------------------------------------------------------
+# Rule Providers
+# ------------------------------------------------------------
 rule-providers:
-  private_domain: {<<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/private.mrs"}
-  ai: {<<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-ai-!cn.mrs"}
-  youtube_domain: {<<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/youtube.mrs"}
-  google_domain: {<<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/google.mrs"}
-  github_domain: {<<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/github.mrs"}
-  telegram_domain: {<<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/telegram.mrs"}
-  netflix_domain: {<<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/netflix.mrs"}
-  onedrive_domain: {<<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/onedrive.mrs"}
-  microsoft_domain: {<<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/microsoft.mrs"}
-  apple_domain: {<<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/apple.mrs"}
-  tiktok_domain: {<<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/tiktok.mrs"}
-  ads_domain: {<<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-ads-all.mrs"}
-  steam_cn_domain: {<<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/steam@cn.mrs"}
-  steam_domain: {<<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/steam.mrs"}
-  cn_domain: {<<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/cn.mrs"}
-  private_ip: {<<: *ip, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/private.mrs"}
-  cn_ip: {<<: *ip, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cn.mrs"}
-  google_ip: {<<: *ip, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/google.mrs"}
-  telegram_ip: {<<: *ip, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/telegram.mrs"}
-  netflix_ip: {<<: *ip, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/netflix.mrs"}
 
+  # Domain
+  private_domain:
+    <<: *domain
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/private.mrs"
+
+  ai:
+    <<: *domain
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-ai-!cn.mrs"
+
+  youtube_domain:
+    <<: *domain
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/youtube.mrs"
+
+  google_domain:
+    <<: *domain
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/google.mrs"
+
+  github_domain:
+    <<: *domain
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/github.mrs"
+
+  telegram_domain:
+    <<: *domain
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/telegram.mrs"
+
+  netflix_domain:
+    <<: *domain
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/netflix.mrs"
+
+  onedrive_domain:
+    <<: *domain
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/onedrive.mrs"
+
+  microsoft_domain:
+    <<: *domain
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/microsoft.mrs"
+
+  apple_domain:
+    <<: *domain
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/apple.mrs"
+
+  tiktok_domain:
+    <<: *domain
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/tiktok.mrs"
+
+  ads_domain:
+    <<: *domain
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-ads-all.mrs"
+
+  # Steam：国内下载/CDN 必须在 steam_domain 之前匹配
+  steam_cn_domain:
+    <<: *domain
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/steam@cn.mrs"
+
+  steam_domain:
+    <<: *domain
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/steam.mrs"
+
+  cn_domain:
+    <<: *domain
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/cn.mrs"
+
+  # IP CIDR
+  private_ip:
+    <<: *ip
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/private.mrs"
+
+  cn_ip:
+    <<: *ip
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cn.mrs"
+
+  google_ip:
+    <<: *ip
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/google.mrs"
+
+  telegram_ip:
+    <<: *ip
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/telegram.mrs"
+
+  netflix_ip:
+    <<: *ip
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/netflix.mrs"
+
+# ------------------------------------------------------------
+# Rules
+# ------------------------------------------------------------
 rules:
+
+  # 局域网 / 私有网络
   - RULE-SET,private_ip,🚀 直连,no-resolve
   - RULE-SET,private_domain,🚀 直连
+
+  # 广告
   - RULE-SET,ads_domain,🛑 全局拦截
+
+  # AI / Gemini
   - RULE-SET,ai,🤖 AI
+
+  # Steam
+  # 国内 Steam CDN / 下载优先直连策略
   - RULE-SET,steam_cn_domain,📥 Steam 下载
+
+  # Steam 商店 / 社区 / 国际域名
   - RULE-SET,steam_domain,🎮 Steam 商店
+
+  # 应用
   - RULE-SET,github_domain,🐙 GitHub
   - RULE-SET,youtube_domain,📺 YouTuBe
   - RULE-SET,onedrive_domain,☁️ OneDriver
@@ -342,10 +444,18 @@ rules:
   - RULE-SET,tiktok_domain,🎵 TikTok
   - RULE-SET,telegram_domain,✈️ Telegram
   - RULE-SET,netflix_domain,🎬 NETFLIX
+
+  # IP 类规则统一 no-resolve
   - RULE-SET,netflix_ip,🎬 NETFLIX,no-resolve
   - RULE-SET,telegram_ip,✈️ Telegram,no-resolve
+
+  # Google
   - RULE-SET,google_domain,🔮 节点选择
   - RULE-SET,google_ip,🔮 节点选择,no-resolve
+
+  # 中国大陆
   - RULE-SET,cn_domain,🇨🇳 国内流量
   - RULE-SET,cn_ip,🇨🇳 国内流量,no-resolve
+
+  # 兜底
   - MATCH,🐟 漏网之鱼
