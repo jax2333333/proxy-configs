@@ -5,6 +5,7 @@
  * Current sites:
  * - 51cg1.com
  * - wnacg.com
+ * - missav.ws
  *
  * Privacy:
  * - No fetch / $httpClient / $task.fetch
@@ -57,6 +58,14 @@
       return html.replace(/<\/head\s*>/i, style + "</head>");
     }
     return style + html;
+  }
+
+  function injectHeadSnippet(html, snippet) {
+    if (!snippet) return html;
+    if (/<\/head\s*>/i.test(html)) {
+      return html.replace(/<\/head\s*>/i, snippet + "</head>");
+    }
+    return snippet + html;
   }
 
   function clean51cg1(html) {
@@ -189,6 +198,85 @@
     };
   }
 
+  function cleanMissav(html) {
+    var removed = 0;
+    var adHosts =
+      "(?:go\\.mayzaent\\.com|creative\\.live\\.missav\\.com|(?:cdn\\.)?tsyndicate\\.com|cm\\.pxltag\\.com|go\\.rmishe\\.com|stripchat\\.dk)";
+
+    // 已确认的广告脚本，避免页面加载后创建广告 iframe / 弹层。
+    var adScriptRegex = new RegExp(
+      "<script\\b(?=[^>]*\\bsrc=[\\\"'][^\\\"']*" +
+        adHosts +
+        "[^\\\"']*[\\\"'])[^>]*>[\\s\\S]*?<\\/script\\s*>",
+      "gi"
+    );
+    html = html.replace(adScriptRegex, function () {
+      removed++;
+      return "";
+    });
+
+    // 当前首页与播放页均出现 go.mayzaent.com 第三方广告 iframe。
+    var adIframeRegex = new RegExp(
+      "<iframe\\b(?=[^>]*\\bsrc=[\\\"'][^\\\"']*" +
+        adHosts +
+        "[^\\\"']*[\\\"'])[^>]*>[\\s\\S]*?<\\/iframe\\s*>",
+      "gi"
+    );
+    html = html.replace(adIframeRegex, function () {
+      removed++;
+      return "";
+    });
+
+    var adIframeSingleRegex = new RegExp(
+      "<iframe\\b(?=[^>]*\\bsrc=[\\\"'][^\\\"']*" +
+        adHosts +
+        "[^\\\"']*[\\\"'])[^>]*\\/?>",
+      "gi"
+    );
+    html = html.replace(adIframeSingleRegex, function () {
+      removed++;
+      return "";
+    });
+
+    // bit.ly 与 myavlive.com 在导航、播放页详情区域中作为推广/跳转入口出现。
+    html = html.replace(
+      /<a\b(?=[^>]*\bhref=["'][^"']*(?:bit\.ly|myavlive\.com)[^"']*["'])[^>]*>[\s\S]*?<\/a\s*>/gi,
+      function () {
+        removed++;
+        return "";
+      }
+    );
+
+    // 仅隐藏已确认的广告容器；不使用 iframe 全杀，避免影响播放器。
+    var css =
+      'iframe[src*="go.mayzaent.com"],iframe[src*="tsyndicate.com"],iframe[src*="stripchat.dk"],' +
+      'a[href*="bit.ly"],a[href*="myavlive.com"],' +
+      'li:has(>a[href*="bit.ly"]),li:has(>a[href*="myavlive.com"]),' +
+      ".under_player," +
+      'div[style*="z-index: 1001"],div[style*="width: 300px"][style*="height: 250px"]{' +
+      "display:none!important;visibility:hidden!important;height:0!important;min-height:0!important;max-height:0!important;margin:0!important;padding:0!important;border:0!important;overflow:hidden!important;pointer-events:none!important}" +
+      "body{overflow-x:hidden!important}";
+
+    html = injectCss(html, "jax-site-cleaner-missav", css);
+
+    // Best-effort 弹窗防护：只拦截已确认的广告/推广主机，不拦正常播放器与站内链接。
+    var popupGuard =
+      '<script id="jax-site-cleaner-missav-popup">(function(){' +
+      "try{" +
+      "var n=window.open;" +
+      "var b=/(?:^|\\.)(?:mayzaent\\.com|tsyndicate\\.com|pxltag\\.com|rmishe\\.com|stripchat\\.dk|myavlive\\.com)$/i;" +
+      "window.open=function(u){try{var x=new URL(String(u||\"\"),location.href);if(x.hostname===\"bit.ly\"||b.test(x.hostname))return null;}catch(e){}return n.apply(window,arguments);};" +
+      "}catch(e){}" +
+      "})();</script>";
+
+    html = injectHeadSnippet(html, popupGuard);
+
+    return {
+      body: html,
+      removed: removed
+    };
+  }
+
   var SITE_RULES = [
     {
       name: "51CG1",
@@ -199,6 +287,11 @@
       name: "WNACG",
       hosts: ["wnacg.com", "www.wnacg.com"],
       cleaner: cleanWnacg
+    },
+    {
+      name: "MissAV",
+      hosts: ["missav.ws"],
+      cleaner: cleanMissav
     }
   ];
 
