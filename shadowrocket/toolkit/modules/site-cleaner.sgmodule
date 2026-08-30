@@ -1,5 +1,5 @@
 #!name=JAX - 网站净化中心
-#!desc=JAX 统一网页净化模块：集中管理需要去广告/净化的网站。当前支持 51cg1.com；以后新增网站只维护本模块。2026-08-30
+#!desc=JAX 统一网页净化模块：集中管理需要去广告/净化的网站。当前支持 51cg1.com、wnacg.com；以后新增网站只维护本模块。2026-08-30
 
 # ============================================================
 # JAX Site Cleaner
@@ -25,13 +25,17 @@
 AND,((DOMAIN,51cg1.com),(PROTOCOL,UDP)),REJECT
 AND,((DOMAIN,www.51cg1.com),(PROTOCOL,UDP)),REJECT
 
+# WNACG：阻止 QUIC / HTTP3，使 HTTPS 回落 TCP，方便 MITM 网页正文
+AND,((DOMAIN,wnacg.com),(PROTOCOL,UDP)),REJECT
+AND,((DOMAIN,www.wnacg.com),(PROTOCOL,UDP)),REJECT
+
 [Script]
 
 # 统一网页净化脚本
 # ?v= 版本号用于强制 Shadowrocket 重新拉取 JS。
-JAX Site Cleaner = type=http-response,pattern=^https://(?:www\.)?51cg1\.com/.*,requires-body=1,max-size=-1,script-path=https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/scripts/site-cleaner.js?v=20260830-1,engine=jsc,timeout=10
+JAX Site Cleaner = type=http-response,pattern=^https://(?:(?:www\.)?51cg1\.com|(?:www\.)?wnacg\.com)/.*,requires-body=1,max-size=-1,script-path=https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/scripts/site-cleaner.js?v=20260830-2,engine=jsc,timeout=10
 
 [MITM]
 
 # 网站净化白名单；以后新增网站只往这里追加明确域名。
-hostname = %APPEND% 51cg1.com,www.51cg1.com
+hostname = %APPEND% 51cg1.com,www.51cg1.com,wnacg.com,www.wnacg.com
