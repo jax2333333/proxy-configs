@@ -28,11 +28,13 @@ shadowrocket/toolkit/
 │   ├── webtoon-adblock.module
 │   ├── wandou-privacy.module
 │   ├── youtube-adblock.sgmodule
+│   ├── 51cg1-clean.sgmodule
 │   └── app-adblock-template.sgmodule
 └── scripts/
     ├── url-cleaner.js
     ├── network-health.js
     ├── youtube-adblock-local.js
+    ├── 51cg1-clean.js
     └── app-adblock-template.js
 ```
 
@@ -67,7 +69,15 @@ URL Cleaner 只 MITM Google、YouTube、Reddit、X/Twitter、Instagram、Faceboo
 
 YouTube 模块只保留这一份。不要同时启用旧仓库 URL、重复导入副本或其它作用相同的 YouTube MITM 模块，以免同一响应被重复改写。
 
-### ③ 通用广告模块：按需，不建议一开始全部打开
+### ③ 网页专用净化
+
+| 模块 | 用途 | MITM |
+|---|---|---|
+| `51cg1-clean.sgmodule` | 清理 51cg1.com 的外链图片横幅、外部 iframe、明显广告容器与残留占位 | `51cg1.com`、`www.51cg1.com` |
+
+`51cg1-clean.sgmodule` 为站点专用，不做全局网页过滤。脚本只处理本机已截获的 HTML，不主动联网、不上传 Cookie/Header/浏览历史。若该站改变页面结构，未命中部分会原样放行，再按实际页面更新脚本。
+
+### ④ 通用广告模块：按需，不建议一开始全部打开
 
 `general-adblock-safe.module` 与 `splash-adblock-safe.module` 都会拦截常见广告 SDK，和 Privacy Lite、番茄、七猫、WEBTOON、豌豆等模块存在规则重叠。
 
@@ -76,7 +86,7 @@ YouTube 模块只保留这一份。不要同时启用旧仓库 URL、重复导�
 ```text
 默认：先不开通用广告模块
 ↓
-使用常开基础模块 + 对应 App 专用模块
+使用常开基础模块 + 对应 App/网站专用模块
 ↓
 如果仍有大量第三方 App 开屏/SDK 广告
 再开启 general-adblock-safe.module
@@ -86,7 +96,7 @@ YouTube 模块只保留这一份。不要同时启用旧仓库 URL、重复导�
 
 `general-adblock-safe.module` 和 `splash-adblock-safe.module` 可以技术上同时开启，但收益有较多重复，出现 App 异常时排查更困难，因此不建议默认双开。
 
-### ④ 开发模板
+### ⑤ 开发模板
 
 `app-adblock-template.sgmodule`：❌ 不启用。
 
@@ -102,6 +112,7 @@ YouTube 模块只保留这一份。不要同时启用旧仓库 URL、重复导�
 ✅ url-cleaner-safe.sgmodule
 ✅ youtube-adblock.sgmodule（需要 YouTube 去广告时）
 ✅ 自己实际使用的 App 专用模块
+✅ 51cg1-clean.sgmodule（访问该网站时）
 ❌ general-adblock-safe.module
 ❌ splash-adblock-safe.module
 ❌ app-adblock-template.sgmodule
@@ -126,11 +137,11 @@ YouTube 模块只保留这一份。不要同时启用旧仓库 URL、重复导�
 ```text
 1. 先关闭 splash-adblock-safe.module
 2. 再关闭 general-adblock-safe.module
-3. 再关闭对应 App 专用模块
+3. 再关闭对应 App/网站专用模块
 4. 最后才检查基础 privacy-lite / URL Cleaner
 ```
 
-## 18 个模块最新地址
+## 19 个模块最新地址
 
 ```text
 # 基础工具
@@ -156,11 +167,14 @@ https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/too
 https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/modules/wandou-privacy.module
 https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/modules/youtube-adblock.sgmodule
 
+# 网页专用
+https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/modules/51cg1-clean.sgmodule
+
 # 开发模板
 https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/modules/app-adblock-template.sgmodule
 ```
 
-## iPhone 迁移步骤
+## iPhone 迁移 / 安装
 
 旧 `shadowrocket-config` Raw 地址已经不再维护。iPhone 上如果还保存旧模块，建议：
 
@@ -169,7 +183,7 @@ Shadowrocket → 配置 → 模块
 1. 删除旧 shadowrocket-config 地址导入的模块
 2. 使用上面的 proxy-configs 新地址重新添加
 3. 按“稳定优先”组合启用
-4. 确认 YouTube、淘宝/闲鱼、小红书等常用 App 正常
+4. 确认 YouTube、淘宝/闲鱼、小红书、51cg1 等常用服务正常
 5. 再逐步开启更多专用或通用广告模块
 ```
 
@@ -193,14 +207,20 @@ YouTube 模块当前脚本地址：
 https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/scripts/youtube-adblock-local.js
 ```
 
+51CG1 网页净化脚本地址：
+
+```text
+https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/scripts/51cg1-clean.js
+```
+
 ## MITM / 隐私原则
 
 - 不使用 `hostname = *`。
 - MITM 只给确实需要修改 HTTPS 内容的明确域名。
 - 银行、支付、Apple ID、密码管理器等敏感服务不加入 Toolkit MITM。
 - 不在 GitHub 保存机场订阅地址、Token、Cookie、账号密码或证书私钥。
-- App 净化采用“一 App 一模块”，出现问题可以单独关闭。
-- YouTube 脚本不主动联网、不上传 Cookie/Header/播放密钥，仅处理 Shadowrocket 本地截获的响应。
+- App/网站净化采用“一服务一模块”，出现问题可以单独关闭。
+- YouTube 与 51CG1 脚本均不主动联网，仅处理 Shadowrocket 本地截获的响应。
 - 修改前以 GitHub `main` 分支最新版为准。
 
 ## 与正式主配置的关系
