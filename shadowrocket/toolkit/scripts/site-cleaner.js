@@ -68,6 +68,16 @@
     return snippet + html;
   }
 
+  function injectHeadStart(html, snippet) {
+    if (!snippet) return html;
+    if (/<head\b[^>]*>/i.test(html)) {
+      return html.replace(/<head\b[^>]*>/i, function (headTag) {
+        return headTag + snippet;
+      });
+    }
+    return snippet + html;
+  }
+
   function clean51cg1(html) {
     var removed = 0;
 
@@ -201,7 +211,7 @@
   function cleanMissav(html) {
     var removed = 0;
     var adHosts =
-      "(?:go\\.mayzaent\\.com|creative\\.live\\.missav\\.com|(?:cdn\\.)?tsyndicate\\.com|cm\\.pxltag\\.com|go\\.rmishe\\.com|stripchat\\.dk)";
+      "(?:go\\.mayzaent\\.com|creative\\.live\\.missav\\.com|(?:cdn\\.)?tsyndicate\\.com|cm\\.pxltag\\.com|go\\.rmishe\\.com|stripchat\\.dk|(?:[^\\/]+\\.)?ladyoffices\\.com)";
 
     // 已确认的广告脚本，避免页面加载后创建广告 iframe / 弹层。
     var adScriptRegex = new RegExp(
@@ -215,63 +225,61 @@
       return "";
     });
 
-    // 当前首页与播放页均出现 go.mayzaent.com 第三方广告 iframe。
-    var adIframeRegex = new RegExp(
-      "<iframe\\b(?=[^>]*\\bsrc=[\\\"'][^\\\"']*" +
-        adHosts +
-        "[^\\\"']*[\\\"'])[^>]*>[\\s\\S]*?<\\/iframe\\s*>",
-      "gi"
-    );
-    html = html.replace(adIframeRegex, function () {
-      removed++;
-      return "";
-    });
-
-    var adIframeSingleRegex = new RegExp(
-      "<iframe\\b(?=[^>]*\\bsrc=[\\\"'][^\\\"']*" +
-        adHosts +
-        "[^\\\"']*[\\\"'])[^>]*\\/?>",
-      "gi"
-    );
-    html = html.replace(adIframeSingleRegex, function () {
-      removed++;
-      return "";
-    });
-
-    // bit.ly 与 myavlive.com 在导航、播放页详情区域中作为推广/跳转入口出现。
+    // MissAV 当前播放器使用原生页面播放器；第三方 iframe 均按广告容器处理。
     html = html.replace(
-      /<a\b(?=[^>]*\bhref=["'][^"']*(?:bit\.ly|myavlive\.com)[^"']*["'])[^>]*>[\s\S]*?<\/a\s*>/gi,
+      /<iframe\b[^>]*>[\s\S]*?<\/iframe\s*>/gi,
+      function () {
+        removed++;
+        return "";
+      }
+    );
+    html = html.replace(/<iframe\b[^>]*\/?>/gi, function () {
+      removed++;
+      return "";
+    });
+
+    // 已确认的推广/跳转入口。
+    html = html.replace(
+      /<a\b(?=[^>]*\bhref=["'][^"']*(?:bit\.ly|myavlive\.com|ladyoffices\.com)[^"']*["'])[^>]*>[\s\S]*?<\/a\s*>/gi,
       function () {
         removed++;
         return "";
       }
     );
 
-    // 仅隐藏已确认的广告容器；不使用 iframe 全杀，避免影响播放器。
-    // MissAV 的右下角 LIVE 飘窗使用 fixed + right-* + bottom-* 类，且可能动态插入；CSS 会持续匹配后续节点。
+    // CSS 兜底：处理动态插入前短暂出现的广告层。
     var css =
-      'iframe[src*="go.mayzaent.com"],iframe[src*="tsyndicate.com"],iframe[src*="stripchat.dk"],' +
-      'a[href*="bit.ly"],a[href*="myavlive.com"],' +
+      "iframe," +
+      'a[href*="bit.ly"],a[href*="myavlive.com"],a[href*="ladyoffices.com"],' +
       'li:has(>a[href*="bit.ly"]),li:has(>a[href*="myavlive.com"]),' +
       ".under_player,.ts-outstream-video," +
-      'div[class*="fixed"][class*="right-"][class*="bottom-"],' +
+      'div[class^="root"],div[class*="fixed"][class*="right-"][class*="bottom-"],' +
       'div[style*="z-index: 1001"],div[style*="width: 300px"][style*="height: 250px"]{' +
       "display:none!important;visibility:hidden!important;height:0!important;min-height:0!important;max-height:0!important;margin:0!important;padding:0!important;border:0!important;overflow:hidden!important;pointer-events:none!important}" +
       "body{overflow-x:hidden!important}";
 
     html = injectCss(html, "jax-site-cleaner-missav", css);
 
-    // Best-effort 弹窗防护：只拦截已确认的广告/推广主机，不拦正常播放器与站内链接。
-    var popupGuard =
-      '<script id="jax-site-cleaner-missav-popup">(function(){' +
-      "try{" +
-      "var n=window.open;" +
-      "var b=/(?:^|\\.)(?:mayzaent\\.com|tsyndicate\\.com|pxltag\\.com|rmishe\\.com|stripchat\\.dk|myavlive\\.com)$/i;" +
-      "window.open=function(u){try{var x=new URL(String(u||\"\"),location.href);if(x.hostname===\"bit.ly\"||b.test(x.hostname))return null;}catch(e){}return n.apply(window,arguments);};" +
-      "}catch(e){}" +
-      "})();</script>";
+    // 运行时防护必须尽量早执行：动态删除广告节点，并阻断首次点击劫持。
+    var runtimeGuard =
+      '<script id="jax-site-cleaner-missav-runtime">(function(){' +
+      '"use strict";' +
+      'var bad=/(?:^|\\.)(?:ladyoffices\\.com|mayzaent\\.com|tsyndicate\\.com|pxltag\\.com|rmishe\\.com|stripchat\\.dk|myavlive\\.com)$/i;' +
+      'function badUrl(u){try{var x=new URL(String(u||""),location.href);return x.hostname==="bit.ly"||bad.test(x.hostname);}catch(e){return false;}}' +
+      'try{window.open=function(){return null;};}catch(e){}' +
+      'try{var ac=HTMLAnchorElement.prototype.click;HTMLAnchorElement.prototype.click=function(){if(badUrl(this.href))return;return ac.apply(this,arguments);};}catch(e){}' +
+      'try{var la=Location.prototype.assign,lr=Location.prototype.replace;Location.prototype.assign=function(u){if(badUrl(u))return;return la.call(this,u);};Location.prototype.replace=function(u){if(badUrl(u))return;return lr.call(this,u);};}catch(e){}' +
+      'function clean(){try{' +
+      'document.querySelectorAll("iframe,div[class^=\\"root\\"],div[class*=\\"fixed\\"][class*=\\"right-\\"][class*=\\"bottom-\\"],.ts-outstream-video,.under_player").forEach(function(el){el.remove();});' +
+      'document.querySelectorAll("a[href]").forEach(function(a){if(badUrl(a.href))a.remove();});' +
+      '}catch(e){}}' +
+      'function shield(e){try{var t=e.target;var a=t&&t.closest?t.closest("a[href]"):null;if(a&&badUrl(a.href)){e.preventDefault();e.stopImmediatePropagation();return false;}var p=t&&t.closest?t.closest("video,.plyr,#player,.video-player,[class*=\\"player\\"]"):null;if(p){e.stopImmediatePropagation();}}catch(x){}}' +
+      'try{document.addEventListener("click",shield,false);document.addEventListener("touchend",shield,false);}catch(e){}' +
+      'try{new MutationObserver(function(){clean();}).observe(document.documentElement,{childList:true,subtree:true});}catch(e){}' +
+      'if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",clean,{once:true});}else{clean();}' +
+      '})();</script>';
 
-    html = injectHeadSnippet(html, popupGuard);
+    html = injectHeadStart(html, runtimeGuard);
 
     return {
       body: html,
