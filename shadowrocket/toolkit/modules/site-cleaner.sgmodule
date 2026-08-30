@@ -1,5 +1,5 @@
 #!name=JAX - 网站净化中心
-#!desc=JAX 统一网页净化模块：集中管理需要去广告/净化的网站。当前支持 51cg1.com、wnacg.com、missav.ws；以后新增网站只维护本模块。2026-08-30
+#!desc=JAX 统一网页净化模块：51cg1.com、wnacg.com 使用网页净化；missav.ws 暂改网络级净化，避免 Cloudflare 验证与 MITM 冲突。2026-08-31
 
 # ============================================================
 # JAX Site Cleaner
@@ -7,14 +7,10 @@
 # 设计原则：
 # 1. 一个 Shadowrocket 模块集中管理所有网站净化。
 # 2. 不使用 hostname = *。
-# 3. 只 MITM 明确加入净化名单的网站。
+# 3. 只 MITM 明确且兼容网页改写的网站。
 # 4. JS 完全托管在自己的 GitHub。
 # 5. 不上传 Cookie / Header / 账号信息 / 浏览记录。
-# 6. 新增网站时：
-#    - 在 [Rule] 中追加站点 UDP/QUIC 回落规则
-#    - 在 [Script] pattern 中追加域名
-#    - 在 [MITM] 中追加域名
-#    - 在 site-cleaner.js 中加入该网站的净化函数
+# 6. Cloudflare 验证与 MITM 冲突的网站优先采用网络级净化。
 #
 # 手机端始终只需要保留并更新这一个模块。
 # ============================================================
@@ -29,19 +25,25 @@ AND,((DOMAIN,www.51cg1.com),(PROTOCOL,UDP)),REJECT
 AND,((DOMAIN,wnacg.com),(PROTOCOL,UDP)),REJECT
 AND,((DOMAIN,www.wnacg.com),(PROTOCOL,UDP)),REJECT
 
-# MissAV：阻止 QUIC / HTTP3，使 HTTPS 回落 TCP，方便 MITM 网页正文
-AND,((DOMAIN,missav.ws),(PROTOCOL,UDP)),REJECT
-
-# MissAV：录屏确认的点击劫持跳转域名；仅网络拒绝，不加入 MITM
+# MissAV：暂时不 MITM 主站，改为网络级净化，避免 Cloudflare 安全验证循环。
+# 已确认的第三方广告/推广/点击劫持域名。
+DOMAIN,go.mayzaent.com,REJECT
+DOMAIN,creative.live.missav.com,REJECT
+DOMAIN,tsyndicate.com,REJECT
+DOMAIN,cdn.tsyndicate.com,REJECT
+DOMAIN,cm.pxltag.com,REJECT
+DOMAIN,go.rmishe.com,REJECT
+DOMAIN,stripchat.dk,REJECT
+DOMAIN,myavlive.com,REJECT
 DOMAIN-SUFFIX,ladyoffices.com,REJECT
 
 [Script]
 
 # 统一网页净化脚本
-# ?v= 版本号用于强制 Shadowrocket 重新拉取 JS。
-JAX Site Cleaner = type=http-response,pattern=^https://(?:(?:www\.)?51cg1\.com|(?:www\.)?wnacg\.com|missav\.ws)/.*,requires-body=1,max-size=-1,script-path=https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/scripts/site-cleaner.js?v=20260831-6,engine=jsc,timeout=10
+# missav.ws 暂不进入响应改写，避免影响 Cloudflare challenge。
+JAX Site Cleaner = type=http-response,pattern=^https://(?:(?:www\.)?51cg1\.com|(?:www\.)?wnacg\.com)/.*,requires-body=1,max-size=-1,script-path=https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/scripts/site-cleaner.js?v=20260831-6,engine=jsc,timeout=10
 
 [MITM]
 
-# 网站净化白名单；以后新增网站只往这里追加明确域名。
-hostname = %APPEND% 51cg1.com,www.51cg1.com,wnacg.com,www.wnacg.com,missav.ws
+# 最小 MITM 白名单。missav.ws 当前明确排除。
+hostname = %APPEND% 51cg1.com,www.51cg1.com,wnacg.com,www.wnacg.com
