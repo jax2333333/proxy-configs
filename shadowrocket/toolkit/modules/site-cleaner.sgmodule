@@ -32,11 +32,14 @@ AND,((DOMAIN,www.wnacg.com),(PROTOCOL,UDP)),REJECT
 # MissAV：阻止 QUIC / HTTP3，使 HTTPS 回落 TCP，方便 MITM 网页正文
 AND,((DOMAIN,missav.ws),(PROTOCOL,UDP)),REJECT
 
+# MissAV：录屏确认的点击劫持跳转域名；仅网络拒绝，不加入 MITM
+DOMAIN-SUFFIX,ladyoffices.com,REJECT
+
 [Script]
 
 # 统一网页净化脚本
 # ?v= 版本号用于强制 Shadowrocket 重新拉取 JS。
-JAX Site Cleaner = type=http-response,pattern=^https://(?:(?:www\.)?51cg1\.com|(?:www\.)?wnacg\.com|missav\.ws)/.*,requires-body=1,max-size=-1,script-path=https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/scripts/site-cleaner.js?v=20260830-4,engine=jsc,timeout=10
+JAX Site Cleaner = type=http-response,pattern=^https://(?:(?:www\.)?51cg1\.com|(?:www\.)?wnacg\.com|missav\.ws)/.*,requires-body=1,max-size=-1,script-path=https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/scripts/site-cleaner.js?v=20260830-5,engine=jsc,timeout=10
 
 [MITM]
 
