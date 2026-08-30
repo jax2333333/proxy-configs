@@ -11,11 +11,13 @@
 - 不依赖第三方订阅转换服务
 - 不在 GitHub 中保存真实 UUID、WS Path、Token、API Key
 - 可用于 Shadowrocket、Clash Verge Rev、OpenClash / Mihomo
+- GitHub `main` 分支作为代码唯一正式版本
 
 ## 文件
 
 - `worker.js`：Worker 主程序
-- `wrangler.toml.example`：Wrangler 配置模板
+- `wrangler.jsonc`：Cloudflare Workers / GitHub Builds 正式部署配置，不包含秘密
+- `wrangler.toml.example`：Wrangler TOML 参考模板
 - `.gitignore`：避免本地 secrets / Wrangler 文件误提交
 
 ## 1. 准备 UUID 和 WS Path
@@ -41,28 +43,71 @@ WS_PATH = /jax-0123456789abcdef01234567
 
 不要把真实值提交到本仓库。
 
-## 2. Cloudflare Dashboard 部署
+## 2. 推荐：GitHub → Cloudflare 自动部署
 
-1. 登录 Cloudflare Dashboard。
-2. 进入 `Workers & Pages`，创建一个 Worker，例如 `jax-cf-node`。
-3. 将本目录 `worker.js` 的内容作为 Worker 代码并部署。
-4. 进入该 Worker 的 `Settings` → `Variables and Secrets`。
-5. 新建两个加密 Secret：
-   - `UUID`：你刚生成的 UUID。
-   - `WS_PATH`：你刚生成的随机路径，必须以 `/` 开头。
-6. 保存后重新部署。
+Cloudflare Dashboard：
 
-建议不要把 UUID 或随机路径作为普通明文变量公开在代码仓库中。
+1. 进入 `Workers & Pages`。
+2. 选择 `Create application`。
+3. 在 `Import a repository` 旁选择 `Get started`。
+4. 连接 GitHub，并选择仓库 `jax2333333/proxy-configs`。
+5. Production branch 选择 `main`。
+6. Worker / Project name 必须设置为：
 
-## 3. 可选：Wrangler 部署
-
-复制示例配置：
-
-```bash
-cp wrangler.toml.example wrangler.toml
+```text
+jax-cf-node
 ```
 
-然后设置 Secrets：
+7. Root directory 设置为：
+
+```text
+cloudflare-node
+```
+
+8. Build command 留空。
+9. Deploy command 使用默认：
+
+```text
+npx wrangler deploy
+```
+
+10. 保存并部署。
+
+部署完成以后，后续修改 `cloudflare-node/` 并提交到 GitHub `main`，Cloudflare 可以自动构建并重新部署。
+
+建议在 Cloudflare 的 Build watch paths 中只包含：
+
+```text
+cloudflare-node/**
+```
+
+这样修改 Shadowrocket、Clash Verge 或 OpenClash 配置时不会触发 CF Worker 重建。
+
+## 3. 设置 Cloudflare Secrets
+
+进入：
+
+```text
+Workers & Pages
+→ jax-cf-node
+→ Settings
+→ Variables and Secrets
+```
+
+新增两个 `Secret`：
+
+```text
+UUID
+WS_PATH
+```
+
+值分别填写你在第 1 步生成的真实 UUID 和随机路径。
+
+注意：必须选择 `Secret`，不要使用普通明文变量。保存后执行 Deploy。
+
+## 4. 可选：Wrangler 手动部署
+
+如果不使用 GitHub Builds，可进入本目录直接运行：
 
 ```bash
 npx wrangler secret put UUID
@@ -70,9 +115,9 @@ npx wrangler secret put WS_PATH
 npx wrangler deploy
 ```
 
-`wrangler.toml`、`.dev.vars`、`.env*` 已通过 `.gitignore` 排除。
+本仓库的 `wrangler.jsonc` 本身不保存任何 Secret。
 
-## 4. 域名
+## 5. 域名
 
 优先推荐给 Worker 绑定自己的 Cloudflare Custom Domain，例如：
 
@@ -88,7 +133,7 @@ jax-cf-node.<你的 workers.dev 子域>.workers.dev
 
 客户端中的 `server`、`Host`、`SNI/servername` 必须使用你实际部署的域名。
 
-## 5. Shadowrocket
+## 6. Shadowrocket
 
 手动添加 VLESS 节点：
 
@@ -111,7 +156,7 @@ UDP：关闭
 ☁️ CF-Auto
 ```
 
-## 6. Clash Verge Rev / OpenClash / Mihomo
+## 7. Clash Verge Rev / OpenClash / Mihomo
 
 模板：
 
@@ -132,9 +177,9 @@ proxies:
         Host: cf.example.com
 ```
 
-注意：本模板中的真实 UUID、域名和 WS Path 应只保存在本地配置中，不要直接提交到这个 Public 仓库。
+注意：真实 UUID、域名和 WS Path 应只保存在客户端本地配置或 Cloudflare Secrets 中，不要直接提交到这个 Public 仓库。
 
-## 7. 当前限制
+## 8. 当前限制
 
 本项目刻意保持精简：
 
@@ -145,7 +190,7 @@ proxies:
 - Cloudflare Workers 的出站 TCP 无法连接 Cloudflare 自身 IP 范围，因此部分目标可能无法通过此最简实现访问。
 - 第一阶段不使用 ProxyIP；如果实际测试确实存在必要，再单独评估自建或可信 ProxyIP，而不是直接接入公共 ProxyIP。
 
-## 8. 建议测试顺序
+## 9. 建议测试顺序
 
 部署完成后依次测试：
 
