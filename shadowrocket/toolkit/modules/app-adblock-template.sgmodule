@@ -1,0 +1,15 @@
+#!name=JAX App Adblock Template
+#!desc=开发模板：默认无任何生效规则。确认某个 App 的广告 API 后复制并修改，不要直接启用本模板。
+
+# 使用方法：
+# 1. 复制本文件并改成目标 App 名称，例如 xxx-adblock.sgmodule
+# 2. 抓取并确认真实 API 域名和 URL pattern
+# 3. 取消下面 [Script] 示例行的注释并替换 example.com
+# 4. 只有 HTTPS 响应需要正文修改时，才把目标域名加入 [MITM]
+# 5. [MITM] 模块必须保留 %APPEND%，禁止 hostname = *
+
+[Script]
+# JAX App Adblock = type=http-response,pattern=^https://api\.example\.com/ads.*,requires-body=true,max-size=1048576,script-path=https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/scripts/app-adblock-template.js,engine=jsc,timeout=5
+
+[MITM]
+# hostname = %APPEND% api.example.com
