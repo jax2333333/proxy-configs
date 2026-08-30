@@ -1,0 +1,15 @@
+#!name=JAX Privacy Lite
+#!desc=高置信度广告/统计域名拦截；不启用 MITM，优先稳定与低误伤。
+
+[Rule]
+# Google 广告与统计
+DOMAIN-SUFFIX,doubleclick.net,REJECT
+DOMAIN-SUFFIX,googlesyndication.com,REJECT
+DOMAIN-SUFFIX,googleadservices.com,REJECT
+DOMAIN-SUFFIX,google-analytics.com,REJECT
+DOMAIN-SUFFIX,app-measurement.com,REJECT
+DOMAIN,adservice.google.com,REJECT
+
+# 说明：
+# 1. 暂不全局拦截 AppsFlyer / Adjust / Branch，避免影响登录、归因、TikTok 等正常功能。
+# 2. 若某个 App 仍有广告，后续单独建立该 App 专用模块。
