@@ -1,11 +1,15 @@
 #!name=JAX - 开屏广告拦截
-#!desc=隐私优先轻量版：常见开屏/广告 SDK 域名拦截；无远程 JS、无外部 Worker、无全局 MITM。2026-08-30
+#!desc=隐私优先轻量版：常见开屏/广告 SDK 域名拦截；Bilibili 开屏使用最小范围本地响应；无第三方 JS、无外部 Worker、无全局 MITM。2026-08-30
 
 # 这是对 adultraplus 类模块的安全化替代：
 # - 优先用域名规则，不解密不必要的 HTTPS。
+# - Bilibili 仅 MITM app.bilibili.com，并且只处理明确的开屏接口。
 # - 效果可能少于大型社区规则，但隐私边界更清晰、误伤更少。
 
 [Rule]
+# Bilibili commercial ads
+DOMAIN,cm.bilibili.com,REJECT
+
 # ByteDance / Pangle 常见广告资源
 DOMAIN-KEYWORD,-ad-sign.byteimg.com,REJECT
 DOMAIN,pangolin.snssdk.com,REJECT
@@ -38,3 +42,14 @@ DOMAIN-SUFFIX,ironsrc.com,REJECT
 DOMAIN-SUFFIX,supersonicads.com,REJECT
 DOMAIN-SUFFIX,mbridge.com,REJECT
 DOMAIN-SUFFIX,mintegral.com,REJECT
+
+[Map Local]
+# Bilibili splash preload list: return a valid empty ad list locally
+^https?:\/\/app\.bilibili\.com\/x\/v2\/splash\/list(?:\?|$) data-type=text data="{\"code\":0,\"message\":\"0\",\"ttl\":1,\"data\":{\"max_time\":0,\"min_interval\":86400,\"pull_interval\":86400,\"keep_ids\":[],\"list\":[]}}" status-code=200 header="Content-Type:application/json"
+
+[URL Rewrite]
+# Bilibili splash display request
+^https?:\/\/app\.bilibili\.com\/x\/v2\/splash\/show(?:\?|$) - reject-dict
+
+[MITM]
+hostname = %APPEND% app.bilibili.com
