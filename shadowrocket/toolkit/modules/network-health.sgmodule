@@ -1,0 +1,5 @@
+#!name=JAX Network Health
+#!desc=每天 09:05 检查出口与 Google/GitHub/YouTube 连通性；正常仅记日志，异常才通知。
+
+[Script]
+JAX Network Health = type=cron,cronexp="5 9 * * *",wake-system=1,timeout=25,script-path=https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/scripts/network-health.js,engine=jsc
