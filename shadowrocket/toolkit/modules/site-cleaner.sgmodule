@@ -36,7 +36,7 @@ AND,((DOMAIN,missav.ws),(PROTOCOL,UDP)),REJECT
 
 # 统一网页净化脚本
 # ?v= 版本号用于强制 Shadowrocket 重新拉取 JS。
-JAX Site Cleaner = type=http-response,pattern=^https://(?:(?:www\.)?51cg1\.com|(?:www\.)?wnacg\.com|missav\.ws)/.*,requires-body=1,max-size=-1,script-path=https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/scripts/site-cleaner.js?v=20260830-3,engine=jsc,timeout=10
+JAX Site Cleaner = type=http-response,pattern=^https://(?:(?:www\.)?51cg1\.com|(?:www\.)?wnacg\.com|missav\.ws)/.*,requires-body=1,max-size=-1,script-path=https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/scripts/site-cleaner.js?v=20260830-4,engine=jsc,timeout=10
 
 [MITM]
 
