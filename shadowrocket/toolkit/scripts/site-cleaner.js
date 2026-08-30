@@ -248,11 +248,13 @@
     );
 
     // 仅隐藏已确认的广告容器；不使用 iframe 全杀，避免影响播放器。
+    // MissAV 的右下角 LIVE 飘窗使用 fixed + right-* + bottom-* 类，且可能动态插入；CSS 会持续匹配后续节点。
     var css =
       'iframe[src*="go.mayzaent.com"],iframe[src*="tsyndicate.com"],iframe[src*="stripchat.dk"],' +
       'a[href*="bit.ly"],a[href*="myavlive.com"],' +
       'li:has(>a[href*="bit.ly"]),li:has(>a[href*="myavlive.com"]),' +
-      ".under_player," +
+      ".under_player,.ts-outstream-video," +
+      'div[class*="fixed"][class*="right-"][class*="bottom-"],' +
       'div[style*="z-index: 1001"],div[style*="width: 300px"][style*="height: 250px"]{' +
       "display:none!important;visibility:hidden!important;height:0!important;min-height:0!important;max-height:0!important;margin:0!important;padding:0!important;border:0!important;overflow:hidden!important;pointer-events:none!important}" +
       "body{overflow-x:hidden!important}";
