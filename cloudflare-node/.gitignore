@@ -1,0 +1,10 @@
+# Local Cloudflare / Wrangler files
+wrangler.toml
+.dev.vars
+.env
+.env.*
+.wrangler/
+node_modules/
+
+# Keep the public example file
+!wrangler.toml.example
