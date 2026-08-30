@@ -1,0 +1,20 @@
+#!name=JAX - 51CG1 网页净化
+#!desc=站点专用：清理 51cg1.com 页面中的外链图片横幅、外部 iframe 与明显广告容器；仅处理该站 HTML，不使用第三方脚本。2026-08-30
+
+# 隐私 / 稳定性原则：
+# - 仅 MITM 51cg1.com / www.51cg1.com，不使用 hostname=*。
+# - 脚本完全自托管在 jax2333333/proxy-configs。
+# - 不读取/上传 Cookie、Header、账号数据或浏览历史。
+# - 不主动联网，只修改 Shadowrocket 本机已截获的 HTML 响应。
+# - 页面结构变化时，未匹配内容原样放行。
+
+[Rule]
+# 如果浏览器尝试 HTTP/3 / QUIC，拒绝本站 UDP，让 HTTPS 回落到可解密的 TCP。
+AND,((DOMAIN,51cg1.com),(PROTOCOL,UDP)),REJECT
+AND,((DOMAIN,www.51cg1.com),(PROTOCOL,UDP)),REJECT
+
+[Script]
+JAX 51CG1 Cleaner = type=http-response,pattern=^https://(?:www\.)?51cg1\.com/.*,requires-body=1,max-size=-1,script-path=https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/scripts/51cg1-clean.js,engine=jsc,timeout=10
+
+[MITM]
+hostname = %APPEND% 51cg1.com,www.51cg1.com
