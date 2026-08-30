@@ -1,0 +1,37 @@
+#!name=JAX - 网站净化中心
+#!desc=JAX 统一网页净化模块：集中管理需要去广告/净化的网站。当前支持 51cg1.com；以后新增网站只维护本模块。2026-08-30
+
+# ============================================================
+# JAX Site Cleaner
+#
+# 设计原则：
+# 1. 一个 Shadowrocket 模块集中管理所有网站净化。
+# 2. 不使用 hostname = *。
+# 3. 只 MITM 明确加入净化名单的网站。
+# 4. JS 完全托管在自己的 GitHub。
+# 5. 不上传 Cookie / Header / 账号信息 / 浏览记录。
+# 6. 新增网站时：
+#    - 在 [Rule] 中追加站点 UDP/QUIC 回落规则
+#    - 在 [Script] pattern 中追加域名
+#    - 在 [MITM] 中追加域名
+#    - 在 site-cleaner.js 中加入该网站的净化函数
+#
+# 手机端始终只需要保留并更新这一个模块。
+# ============================================================
+
+[Rule]
+
+# 51CG1：阻止 QUIC / HTTP3，使 HTTPS 回落 TCP，方便 MITM 网页正文
+AND,((DOMAIN,51cg1.com),(PROTOCOL,UDP)),REJECT
+AND,((DOMAIN,www.51cg1.com),(PROTOCOL,UDP)),REJECT
+
+[Script]
+
+# 统一网页净化脚本
+# ?v= 版本号用于强制 Shadowrocket 重新拉取 JS。
+JAX Site Cleaner = type=http-response,pattern=^https://(?:www\.)?51cg1\.com/.*,requires-body=1,max-size=-1,script-path=https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/scripts/site-cleaner.js?v=20260830-1,engine=jsc,timeout=10
+
+[MITM]
+
+# 网站净化白名单；以后新增网站只往这里追加明确域名。
+hostname = %APPEND% 51cg1.com,www.51cg1.com
