@@ -1,0 +1,9 @@
+name = "jax-cf-node"
+main = "worker.js"
+compatibility_date = "2026-08-30"
+workers_dev = true
+
+# Do not put UUID or WS_PATH here in this public repository.
+# Set them as Cloudflare encrypted secrets instead:
+#   npx wrangler secret put UUID
+#   npx wrangler secret put WS_PATH
