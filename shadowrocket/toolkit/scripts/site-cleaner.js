@@ -4,6 +4,7 @@
  *
  * Current sites:
  * - 51cg1.com
+ * - wnacg.com
  *
  * Privacy:
  * - No fetch / $httpClient / $task.fetch
@@ -136,11 +137,68 @@
     };
   }
 
+  function cleanWnacg(html) {
+    var removed = 0;
+
+    // 已确认的第三方广告脚本：在 HTML 执行前直接移除，避免生成 iframe / 弹层。
+    html = html.replace(
+      /<script\b(?=[^>]*\bsrc=["'][^"']*(?:juicyads\.com|jads\.co|erodatalabs\.com)[^"']*["'])[^>]*>[\s\S]*?<\/script\s*>/gi,
+      function () {
+        removed++;
+        return "";
+      }
+    );
+
+    // JuicyAds / jads iframe。
+    html = html.replace(
+      /<iframe\b(?=[^>]*\bsrc=["'][^"']*(?:juicyads\.com|jads\.co)[^"']*["'])[^>]*>[\s\S]*?<\/iframe\s*>/gi,
+      function () {
+        removed++;
+        return "";
+      }
+    );
+    html = html.replace(
+      /<iframe\b(?=[^>]*\bsrc=["'][^"']*(?:juicyads\.com|jads\.co)[^"']*["'])[^>]*\/?>/gi,
+      function () {
+        removed++;
+        return "";
+      }
+    );
+
+    // EroDataLabs 广告/跳转链接。
+    html = html.replace(
+      /<a\b(?=[^>]*\bhref=["'][^"']*erodatalabs\.com[^"']*["'])[^>]*>[\s\S]*?<\/a\s*>/gi,
+      function () {
+        removed++;
+        return "";
+      }
+    );
+
+    // 页面已知广告容器和导航推广项。CSS 同时覆盖后续动态插入的广告节点。
+    var css =
+      "#ad-footer,.dlh," +
+      'iframe[src*="juicyads.com"],iframe[src*="jads.co"],a[href*="erodatalabs.com"],' +
+      '#album_tabs li:has(a[href*="shenshiai.net"]),#album_tabs li:has(a[href*="missai.space"]){' +
+      "display:none!important;visibility:hidden!important;height:0!important;min-height:0!important;max-height:0!important;margin:0!important;padding:0!important;border:0!important;overflow:hidden!important}";
+
+    html = injectCss(html, "jax-site-cleaner-wnacg", css);
+
+    return {
+      body: html,
+      removed: removed
+    };
+  }
+
   var SITE_RULES = [
     {
       name: "51CG1",
       hosts: ["51cg1.com", "www.51cg1.com"],
       cleaner: clean51cg1
+    },
+    {
+      name: "WNACG",
+      hosts: ["wnacg.com", "www.wnacg.com"],
+      cleaner: cleanWnacg
     }
   ];
 
