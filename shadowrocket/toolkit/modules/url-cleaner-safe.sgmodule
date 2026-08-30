@@ -1,0 +1,8 @@
+#!name=JAX URL Cleaner Safe
+#!desc=清理常见链接追踪参数；仅对少量明确站点启用 MITM，不使用 hostname=*。
+
+[Script]
+JAX URL Cleaner = type=http-request,pattern=^https?://(?:www\.)?(?:google\.com|youtube\.com|youtu\.be|reddit\.com|x\.com|twitter\.com|instagram\.com|facebook\.com)/.*,script-path=https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/scripts/url-cleaner.js,engine=jsc,timeout=5
+
+[MITM]
+hostname = %APPEND% google.com, www.google.com, youtube.com, www.youtube.com, youtu.be, reddit.com, www.reddit.com, x.com, twitter.com, www.twitter.com, instagram.com, www.instagram.com, facebook.com, www.facebook.com
