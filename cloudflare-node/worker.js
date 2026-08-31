@@ -22,6 +22,11 @@ export default {
 
     const pair = new WebSocketPair();
     const [client, server] = Object.values(pair);
+
+    // Since Workers compatibility dates >= 2026-03-17 deliver binary
+    // WebSocket frames as Blob by default, force ArrayBuffer delivery so
+    // VLESS frames can be parsed synchronously and consistently.
+    server.binaryType = 'arraybuffer';
     server.accept({ allowHalfOpen: true });
 
     handleVlessSession(server, allowedUuid).catch(() => {
