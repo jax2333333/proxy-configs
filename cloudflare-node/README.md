@@ -75,6 +75,15 @@ npx wrangler deploy
 
 部署完成以后，后续修改 `cloudflare-node/` 并提交到 GitHub `main`，Cloudflare 可以自动构建并重新部署。
 
+当前 Cloudflare Builds 配置应保持：
+
+```text
+Production branch: main
+Root directory: cloudflare-node
+Build command: 留空
+Deploy command: npx wrangler deploy
+```
+
 建议在 Cloudflare 的 Build watch paths 中只包含：
 
 ```text
