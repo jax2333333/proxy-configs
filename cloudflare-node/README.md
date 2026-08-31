@@ -84,6 +84,8 @@ Build command: 留空
 Deploy command: npx wrangler deploy
 ```
 
+连接 GitHub 后，对 `cloudflare-node/` 的任意提交都应触发 Cloudflare Workers Build。
+
 建议在 Cloudflare 的 Build watch paths 中只包含：
 
 ```text
