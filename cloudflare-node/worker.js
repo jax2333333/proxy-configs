@@ -1,5 +1,6 @@
 import { connect } from 'cloudflare:sockets';
 
+// Deployment source: GitHub main -> Cloudflare Workers Builds.
 const textDecoder = new TextDecoder();
 
 export default {
