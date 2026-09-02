@@ -1,0 +1,50 @@
+#!name=JAX - TikTok / 抖音广告净化
+#!desc=TikTok 安全优先：不修改 TikTok 核心分流、不启用 MITM；仅拦截高置信度抖音/字节广告与推广域名。原生信息流推广若与正常 Feed 共接口则不强删。2026-09-02
+
+# 设计原则：
+# - TikTok 安全 / 地区稳定优先，不阻断 tiktokv.com / tiktokcdn.com / byteoversea 等核心域名。
+# - 不封整个 snssdk.com / zijieapi.com / pstatp.com，避免共享基础设施误伤 TikTok 或抖音正常业务。
+# - 仅使用公开规则库明确标记为 Ads/Tracking 的广告专用域名中，误伤风险较低的部分。
+# - 纯规则 REJECT，无脚本、无 MITM、无外部请求。
+
+[Rule]
+
+# ============================================================
+# 抖音 / 字节：高置信度广告与推广平台
+# ============================================================
+
+# 今日头条 / 字节广告入口
+DOMAIN,ad.toutiao.com,REJECT
+DOMAIN-SUFFIX,byteadverts.com,REJECT
+DOMAIN-SUFFIX,csjplatform.com,REJECT
+DOMAIN-SUFFIX,shoppingads.cn,REJECT
+
+# Pangle / 穿山甲中国广告平台
+DOMAIN-SUFFIX,pangle.cn,REJECT
+DOMAIN-SUFFIX,pangolin-dsp-toutiao-b.com,REJECT
+DOMAIN-SUFFIX,pangolin-dsp-toutiao.com,REJECT
+DOMAIN-SUFFIX,pangolin-sdk-toutiao-b.com,REJECT
+DOMAIN-SUFFIX,pangolin-sdk-toutiao.com,REJECT
+DOMAIN-SUFFIX,pangolin-sdk-toutiao1.com,REJECT
+DOMAIN-SUFFIX,panplayable-toutiao-b.com,REJECT
+DOMAIN-SUFFIX,panplayable-toutiao.com,REJECT
+DOMAIN-SUFFIX,pglstatp-sdk-toutiao.com,REJECT
+DOMAIN-SUFFIX,pglstatp-snssdk-toutiao.com,REJECT
+DOMAIN-SUFFIX,pglstatp-toutiao-b.com,REJECT
+DOMAIN-SUFFIX,pglstatp-toutiao.com,REJECT
+
+# snssdk.com 为 TikTok / 抖音共享基础设施，禁止整域封锁；仅拒绝明确广告子域
+DOMAIN,pangolin-hl.snssdk.com,REJECT
+DOMAIN,pangolin-lf.snssdk.com,REJECT
+DOMAIN,pangolin-lq.snssdk.com,REJECT
+DOMAIN,pangolin.snssdk.com,REJECT
+
+# ============================================================
+# 保守排除（故意不拦截）
+# ============================================================
+# bds.snssdk.com / extlog.snssdk.com / i.snssdk.com / mcs.snssdk.com
+# log.zijieapi.com / ctobsnssdk.com / sf3-ttcdn-tos.pstatp.com
+# 这些域名虽常被标记为广告/追踪，但属于共享或遥测链路；为保证 TikTok 安全与 App 稳定暂不阻断。
+#
+# 原生信息流“广告/推广”可能与正常视频共用 Feed API，仅靠域名 REJECT 无法安全完全移除。
+# 若后续仍有明显信息流推广，应先抓取 Shadowrocket 日志，再针对抖音独占接口做最小化响应改写。
