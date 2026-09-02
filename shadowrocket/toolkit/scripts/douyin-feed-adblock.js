@@ -1,32 +1,41 @@
 /*
- * JAX Douyin Feed AdBlock v2
+ * JAX Douyin Feed AdBlock v3
  * - No external requests.
- * - Only filters explicitly marked ad items in known Douyin feed arrays.
- * - Parse failure => original response.
+ * - Recursively filters only content candidates with strong ad markers.
+ * - Parse, size, depth, or traversal-limit failure => original response.
  */
 
 (() => {
   const original = $response && typeof $response.body === "string" ? $response.body : "";
   if (!original) return $done({});
 
-  const FEED_KEYS = [
-    "aweme_list",
-    "awemeList",
-    "item_list",
-    "itemList",
-    "feed_list",
-    "feedList",
-    "items",
-    "data"
+  const MAX_BODY_BYTES = 2 * 1024 * 1024;
+  const MAX_DEPTH = 12;
+  const MAX_NODES = 20000;
+
+  if (original.length > MAX_BODY_BYTES) return $done({});
+
+  const CONTENT_KEYS = [
+    "aweme_id",
+    "awemeId",
+    "item_id",
+    "itemId",
+    "video",
+    "author",
+    "desc",
+    "aweme_info",
+    "awemeInfo"
   ];
 
-  const AWEME_KEYS = [
+  const AD_OBJECT_KEYS = [
     "aweme_info",
     "awemeInfo",
     "aweme",
     "aweme_detail",
     "awemeDetail",
-    "item"
+    "item",
+    "data",
+    "series"
   ];
 
   const hasPayload = (value) => {
@@ -40,9 +49,14 @@
     return Boolean(value);
   };
 
-  const isTrueFlag = (value) => value === true || value === 1 || value === "1";
+  const isTrueFlag = (value) => value === true || value === 1;
 
-  const isExplicitAd = (item) => {
+  const isContentCandidate = (item) =>
+    !!item &&
+    typeof item === "object" &&
+    CONTENT_KEYS.some((key) => hasPayload(item[key]));
+
+  const hasNonCreativeAdMarker = (item) => {
     if (!item || typeof item !== "object") return false;
 
     if (
@@ -54,14 +68,14 @@
       hasPayload(item.adId) ||
       hasPayload(item.live_ad_id) ||
       hasPayload(item.liveAdId) ||
-      hasPayload(item.live_ad_creative_id) ||
-      hasPayload(item.liveAdCreativeId) ||
-      hasPayload(item.ad_aweme_source) ||
-      hasPayload(item.adAwemeSource) ||
       hasPayload(item.raw_ad_data) ||
       hasPayload(item.rawAdData) ||
       hasPayload(item.ad_data) ||
-      hasPayload(item.adData)
+      hasPayload(item.adData) ||
+      hasPayload(item.ad_info) ||
+      hasPayload(item.adInfo) ||
+      hasPayload(item.ad_order_id) ||
+      hasPayload(item.adOrderId)
     ) {
       return true;
     }
@@ -84,23 +98,50 @@
     );
   };
 
-  const isExplicitAdEntry = (entry) => {
-    if (!entry || typeof entry !== "object") return false;
-    if (isExplicitAd(entry)) return true;
+  const isExplicitAd = (item) => {
+    if (!isContentCandidate(item)) return false;
 
-    return AWEME_KEYS.some((key) => isExplicitAd(entry[key]));
+    // creative_id / creativeId 不在强标记集合中，不能单独触发删除；
+    // 若同时存在其它强标记，由其它强标记决定删除。
+    return hasNonCreativeAdMarker(item);
   };
 
-  const filterFeedArrays = (container) => {
-    if (!container || typeof container !== "object" || Array.isArray(container)) return 0;
+  let visitedNodes = 0;
+
+  const enforceTraversalLimit = (depth) => {
+    visitedNodes += 1;
+    if (depth > MAX_DEPTH || visitedNodes > MAX_NODES) {
+      throw new Error("response traversal limit reached");
+    }
+  };
+
+  const isExplicitAdEntry = (entry, depth) => {
+    if (!entry || typeof entry !== "object") return false;
+    enforceTraversalLimit(depth);
+    if (isExplicitAd(entry)) return true;
+
+    return AD_OBJECT_KEYS.some((key) => isExplicitAdEntry(entry[key], depth + 1));
+  };
+
+  const filterArraysDeep = (value, depth) => {
+    if (!value || typeof value !== "object") return 0;
+    enforceTraversalLimit(depth);
 
     let removed = 0;
-    FEED_KEYS.forEach((key) => {
-      if (!Array.isArray(container[key])) return;
+    if (Array.isArray(value)) {
+      for (let index = value.length - 1; index >= 0; index -= 1) {
+        if (isExplicitAdEntry(value[index], depth + 1)) {
+          value.splice(index, 1);
+          removed += 1;
+        } else {
+          removed += filterArraysDeep(value[index], depth + 1);
+        }
+      }
+      return removed;
+    }
 
-      const before = container[key].length;
-      container[key] = container[key].filter((entry) => !isExplicitAdEntry(entry));
-      removed += before - container[key].length;
+    Object.keys(value).forEach((key) => {
+      removed += filterArraysDeep(value[key], depth + 1);
     });
 
     return removed;
@@ -108,12 +149,9 @@
 
   try {
     const obj = JSON.parse(original);
-    if (!obj || typeof obj !== "object" || Array.isArray(obj)) return $done({});
+    if (!obj || typeof obj !== "object") return $done({});
 
-    let removed = filterFeedArrays(obj);
-    if (obj.data && typeof obj.data === "object" && !Array.isArray(obj.data)) {
-      removed += filterFeedArrays(obj.data);
-    }
+    const removed = filterArraysDeep(obj, 0);
 
     if (removed > 0) console.log(`JAX Douyin AdBlock: removed ${removed} ad item(s)`);
     return removed > 0 ? $done({ body: JSON.stringify(obj) }) : $done({});
