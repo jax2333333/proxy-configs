@@ -1,5 +1,5 @@
 #!name=JAX - 网站净化中心
-#!desc=JAX 统一网页净化模块：51cg1.com、wnacg.com 使用网页净化；missav.ws 暂改网络级净化，避免 Cloudflare 验证与 MITM 冲突。2026-08-31
+#!desc=JAX 统一网页净化模块：51cg1.com、wnacg.com 使用网页净化；missav.ws 暂改网络级净化；附带抖音历史记录联网修复。2026-09-02
 
 # ============================================================
 # JAX Site Cleaner
@@ -11,11 +11,17 @@
 # 4. JS 完全托管在自己的 GitHub。
 # 5. 不上传 Cookie / Header / 账号信息 / 浏览记录。
 # 6. Cloudflare 验证与 MITM 冲突的网站优先采用网络级净化。
+# 7. 兼容性修复优先使用最小范围精确域名规则，避免扩大 ByteDance 共享域名范围。
 #
 # 手机端始终只需要保留并更新这一个模块。
 # ============================================================
 
 [Rule]
+
+# 抖音：历史记录/同步接口直连补丁。
+# 主配置将共享 snssdk.com 交给 TikTok；模块规则优先级高于主配置，
+# 这里只精确放行 is.snssdk.com，避免把整个 snssdk.com 改为 DIRECT 而影响 TikTok。
+DOMAIN,is.snssdk.com,DIRECT
 
 # 51CG1：阻止 QUIC / HTTP3，使 HTTPS 回落 TCP，方便 MITM 网页正文
 AND,((DOMAIN,51cg1.com),(PROTOCOL,UDP)),REJECT
