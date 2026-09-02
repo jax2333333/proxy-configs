@@ -1,6 +1,12 @@
-# openclash_by_jax_v5.3
-# 基于 V5.2 修改
+# openclash_by_jax_v5.4
+# 基于 V5.3 修改
 # 目标：防 DNS 泄漏 / 国内低延迟直连 / 国外高性能 / Smart 内核 / 节点过滤优化
+#
+# V5.4 更新：
+# 1. Airport1 仅加入原有智能/地区/故障转移分组
+# 2. Airport2 / Airport3 不加入原有分组，仅保留在“全部节点”和“备用智能选择”
+# 3. 新增“♻️ 备用智能选择”，仅使用 Airport2 / Airport3
+# 4. “🔮 节点选择”新增“♻️ 备用智能选择”选项，其它功能策略组不新增该选项
 #
 # V5.3 更新：
 # 1. proxy-providers 增加 Airport3 占位模板
@@ -203,7 +209,7 @@ proxy-groups:
 
 - {name: 🛑 全局拦截, type: select, proxies: [REJECT, 🚀 直连]}
 
-- {name: 🔮 节点选择, type: select, proxies: [♻️ 智能选择, 🌐 全部节点, ♻️ 香港智能, ♻️ 日本智能, ♻️ 狮城智能, ♻️ 美国智能, 🇭🇰 香港节点, 🇯🇵 日本节点, 🇸🇬 狮城节点, 🇺🇲 美国节点, 🔯 香港故转, 🔯 日本故转, 🔯 狮城故转, 🔯 美国故转, 🚀 直连]}
+- {name: 🔮 节点选择, type: select, proxies: [♻️ 智能选择, ♻️ 备用智能选择, 🌐 全部节点, ♻️ 香港智能, ♻️ 日本智能, ♻️ 狮城智能, ♻️ 美国智能, 🇭🇰 香港节点, 🇯🇵 日本节点, 🇸🇬 狮城节点, 🇺🇲 美国节点, 🔯 香港故转, 🔯 日本故转, 🔯 狮城故转, 🔯 美国故转, 🚀 直连]}
 
 
 # ------------------------------------------------------------
@@ -245,43 +251,45 @@ proxy-groups:
 # Smart / 自动选择
 # ------------------------------------------------------------
 
-- {name: ♻️ 智能选择, type: smart, include-all: true, url: https://www.gstatic.com/generate_204, interval: 300, tolerance: 100, uselightgbm: false, collectdata: false, exclude-type: direct, exclude-filter: '免费|0\.01'}
+- {name: ♻️ 智能选择, type: smart, use: [Airport1], url: https://www.gstatic.com/generate_204, interval: 300, tolerance: 100, uselightgbm: false, collectdata: false, exclude-type: direct, exclude-filter: '免费|0\.01'}
+
+- {name: ♻️ 备用智能选择, type: smart, use: [Airport2, Airport3], url: https://www.gstatic.com/generate_204, interval: 300, tolerance: 100, uselightgbm: false, collectdata: false, exclude-type: direct}
 
 - {name: 🌐 全部节点, type: select, include-all: true, exclude-type: direct}
 
-- {name: ♻️ 香港智能, type: smart, uselightgbm: false, collectdata: false, include-all: true, interval: 300, filter: "(?=.*(港|HK|(?i)Hong))^((?!(台|日|韩|新|深|美)).)*$", exclude-type: direct, url: https://www.gstatic.com/generate_204, tolerance: 100}
+- {name: ♻️ 香港智能, type: smart, uselightgbm: false, collectdata: false, use: [Airport1], interval: 300, filter: "(?=.*(港|HK|(?i)Hong))^((?!(台|日|韩|新|深|美)).)*$", exclude-type: direct, url: https://www.gstatic.com/generate_204, tolerance: 100}
 
-- {name: ♻️ 日本智能, type: smart, uselightgbm: false, collectdata: false, include-all: true, interval: 300, filter: "(?=.*(日|JP|(?i)Japan))^((?!(港|台|韩|新|美)).)*$", exclude-type: direct, url: https://www.gstatic.com/generate_204, tolerance: 100, exclude-filter: '免费|0\.01'}
+- {name: ♻️ 日本智能, type: smart, uselightgbm: false, collectdata: false, use: [Airport1], interval: 300, filter: "(?=.*(日|JP|(?i)Japan))^((?!(港|台|韩|新|美)).)*$", exclude-type: direct, url: https://www.gstatic.com/generate_204, tolerance: 100, exclude-filter: '免费|0\.01'}
 
-- {name: ♻️ 狮城智能, type: smart, uselightgbm: false, collectdata: false, include-all: true, interval: 300, filter: "(?=.*(新加坡|坡|狮城|SG|Singapore))^((?!(港|台|日|韩|美)).)*$", exclude-type: direct, url: https://www.gstatic.com/generate_204, tolerance: 100}
+- {name: ♻️ 狮城智能, type: smart, uselightgbm: false, collectdata: false, use: [Airport1], interval: 300, filter: "(?=.*(新加坡|坡|狮城|SG|Singapore))^((?!(港|台|日|韩|美)).)*$", exclude-type: direct, url: https://www.gstatic.com/generate_204, tolerance: 100}
 
-- {name: ♻️ 美国智能, type: smart, uselightgbm: false, collectdata: false, include-all: true, interval: 300, filter: "(?=.*(美|US|(?i)States|America))^((?!(港|台|日|韩|新)).)*$", exclude-type: direct, url: https://www.gstatic.com/generate_204, tolerance: 100}
+- {name: ♻️ 美国智能, type: smart, uselightgbm: false, collectdata: false, use: [Airport1], interval: 300, filter: "(?=.*(美|US|(?i)States|America))^((?!(港|台|日|韩|新)).)*$", exclude-type: direct, url: https://www.gstatic.com/generate_204, tolerance: 100}
 
 
 # ------------------------------------------------------------
 # 地区手动选择
 # ------------------------------------------------------------
 
-- {name: 🇭🇰 香港节点, type: select, include-all: true, filter: "(?=.*(港|HK|(?i)Hong))^((?!(台|日|韩|新|深|美)).)*$", exclude-type: direct}
+- {name: 🇭🇰 香港节点, type: select, use: [Airport1], filter: "(?=.*(港|HK|(?i)Hong))^((?!(台|日|韩|新|深|美)).)*$", exclude-type: direct}
 
-- {name: 🇯🇵 日本节点, type: select, include-all: true, filter: "(?=.*(日|JP|(?i)Japan))^((?!(港|台|韩|新|美)).)*$", exclude-type: direct}
+- {name: 🇯🇵 日本节点, type: select, use: [Airport1], filter: "(?=.*(日|JP|(?i)Japan))^((?!(港|台|韩|新|美)).)*$", exclude-type: direct}
 
-- {name: 🇸🇬 狮城节点, type: select, include-all: true, filter: "(?=.*(新加坡|坡|狮城|SG|Singapore))^((?!(台|日|韩|美)).)*$", exclude-type: direct}
+- {name: 🇸🇬 狮城节点, type: select, use: [Airport1], filter: "(?=.*(新加坡|坡|狮城|SG|Singapore))^((?!(台|日|韩|美)).)*$", exclude-type: direct}
 
-- {name: 🇺🇲 美国节点, type: select, include-all: true, filter: "(?=.*(美|US|(?i)States|America))^((?!(港|台|日|韩|新)).)*$", exclude-type: direct}
+- {name: 🇺🇲 美国节点, type: select, use: [Airport1], filter: "(?=.*(美|US|(?i)States|America))^((?!(港|台|日|韩|新)).)*$", exclude-type: direct}
 
 
 # ------------------------------------------------------------
 # 故障转移
 # ------------------------------------------------------------
 
-- {name: 🔯 香港故转, type: fallback, include-all: true, interval: 300, filter: "(?=.*(港|HK|(?i)Hong))^((?!(台|日|韩|新|深|美)).)*$", exclude-type: direct, url: https://www.gstatic.com/generate_204}
+- {name: 🔯 香港故转, type: fallback, use: [Airport1], interval: 300, filter: "(?=.*(港|HK|(?i)Hong))^((?!(台|日|韩|新|深|美)).)*$", exclude-type: direct, url: https://www.gstatic.com/generate_204}
 
-- {name: 🔯 日本故转, type: fallback, include-all: true, interval: 300, filter: "(?=.*(日|JP|(?i)Japan))^((?!(港|台|韩|新|美)).)*$", exclude-type: direct, url: https://www.gstatic.com/generate_204}
+- {name: 🔯 日本故转, type: fallback, use: [Airport1], interval: 300, filter: "(?=.*(日|JP|(?i)Japan))^((?!(港|台|韩|新|美)).)*$", exclude-type: direct, url: https://www.gstatic.com/generate_204}
 
-- {name: 🔯 狮城故转, type: fallback, include-all: true, interval: 300, filter: "(?=.*(新加坡|坡|狮城|SG|Singapore))^((?!(台|日|韩|美)).)*$", exclude-type: direct, url: https://www.gstatic.com/generate_204}
+- {name: 🔯 狮城故转, type: fallback, use: [Airport1], interval: 300, filter: "(?=.*(新加坡|坡|狮城|SG|Singapore))^((?!(台|日|韩|美)).)*$", exclude-type: direct, url: https://www.gstatic.com/generate_204}
 
-- {name: 🔯 美国故转, type: fallback, include-all: true, interval: 300, filter: "(?=.*(美|US|(?i)States|America))^((?!(港|台|日|韩|新)).)*$", exclude-type: direct, url: https://www.gstatic.com/generate_204}
+- {name: 🔯 美国故转, type: fallback, use: [Airport1], interval: 300, filter: "(?=.*(美|US|(?i)States|America))^((?!(港|台|日|韩|新)).)*$", exclude-type: direct, url: https://www.gstatic.com/generate_204}
 
 
 # ============================================================
@@ -356,7 +364,6 @@ rule-providers:
   apple_intelligence:
     <<: *domain
     url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/apple-intelligence.mrs"
-
 
   tiktok_domain:
     <<: *domain
