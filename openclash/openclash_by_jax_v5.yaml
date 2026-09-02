@@ -1,6 +1,11 @@
-# openclash_by_jax_v5.2
-# 基于 V5.1 修改
+# openclash_by_jax_v5.3
+# 基于 V5.2 修改
 # 目标：防 DNS 泄漏 / 国内低延迟直连 / 国外高性能 / Smart 内核 / 节点过滤优化
+#
+# V5.3 更新：
+# 1. proxy-providers 增加 Airport3 占位模板
+# 2. Airport3 节点统一添加“网上搜刮|”前缀
+# 3. 三个真实订阅 URL 继续仅由本地 local-airport.txt 覆写，GitHub 不保存真实地址
 #
 # V5.2 更新：
 # 1. proxy-providers 增加 Airport2 占位模板
@@ -40,6 +45,17 @@ proxy-providers:
       interval: 300
     override:
       additional-prefix: "A2｜"
+
+  Airport3:
+    url: "https://example.com/airport3.yaml"
+    type: http
+    interval: 86400
+    health-check:
+      enable: true
+      url: https://www.gstatic.com/generate_204
+      interval: 300
+    override:
+      additional-prefix: "网上搜刮|"
 
 
 # ============================================================
@@ -437,7 +453,6 @@ rules:
 # ------------------------------------------------------------
 
 - RULE-SET,ai,🤖 AI
-
 
 # ------------------------------------------------------------
 # Steam
