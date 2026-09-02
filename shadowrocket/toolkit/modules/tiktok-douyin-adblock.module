@@ -1,5 +1,5 @@
 #!name=JAX - TikTok / 抖音广告净化
-#!desc=TikTok 安全优先：保留 TikTok 核心分流；拦截高置信度字节广告域名，并对抖音推荐 Feed 做最小化本地响应过滤以移除原生插播广告。2026-09-02
+#!desc=TikTok 安全优先：保留 TikTok 核心分流；拦截高置信度字节广告域名，并对抖音 aweme API 的 Feed JSON 做最小化本地响应过滤以移除原生插播广告。v2 · 2026-09-02
 
 # 设计原则：
 # - TikTok 安全 / 地区稳定优先，不阻断 tiktokv.com / tiktokcdn.com / byteoversea 等核心域名。
@@ -46,14 +46,13 @@ DOMAIN,pangolin.snssdk.com,REJECT
 # ============================================================
 # 2(1).db 实测：插播广告视频与普通视频一样使用 douyinvod.com，
 # 且本轮没有命中上述广告专用域名，因此仅靠域名 REJECT 无法移除。
-# 对抖音独占的 amemv.com feed 接口做最小化 JSON 过滤：
-# - is_ads=true/1
-# - raw_ad_data 非空
-# - ad_data / ad_info 非空
-# 其余内容原样保留。
+# 对抖音独占的 amemv.com aweme API 做最小化 JSON 过滤：
+# - 脚本仅在响应包含已知 Feed 数组时处理。
+# - 仅删除具有明确广告标记的条目，普通商品、直播、探店等内容原样保留。
 
 [Script]
-douyin_feed_adblock = type=http-response,pattern=^https://[^/]+\.amemv\.com/aweme/v\d+/(?:feed|follow/feed|nearby/feed)(?:[/?#]|$),requires-body=1,max-size=-1,script-path=https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/scripts/douyin-feed-adblock.js
+# 匹配 amemv.com 的 aweme API；脚本自行确认 JSON 中存在 Feed 数组后才过滤。
+douyin_feed_adblock = type=http-response,pattern=^https://[^/]+\.amemv\.com/aweme/v\d+/,requires-body=1,max-size=-1,script-path=https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/scripts/douyin-feed-adblock.js?v=20260902-2
 
 # ============================================================
 # 保守排除（故意不拦截）
