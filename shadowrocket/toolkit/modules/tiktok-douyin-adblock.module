@@ -1,11 +1,12 @@
 #!name=JAX - TikTok / 抖音广告净化
-#!desc=TikTok 安全优先：不修改 TikTok 核心分流、不启用 MITM；仅拦截高置信度抖音/字节广告与推广域名。原生信息流推广若与正常 Feed 共接口则不强删。2026-09-02
+#!desc=TikTok 安全优先：保留 TikTok 核心分流；拦截高置信度字节广告域名，并对抖音推荐 Feed 做最小化本地响应过滤以移除原生插播广告。2026-09-02
 
 # 设计原则：
 # - TikTok 安全 / 地区稳定优先，不阻断 tiktokv.com / tiktokcdn.com / byteoversea 等核心域名。
 # - 不封整个 snssdk.com / zijieapi.com / pstatp.com，避免共享基础设施误伤 TikTok 或抖音正常业务。
-# - 仅使用公开规则库明确标记为 Ads/Tracking 的广告专用域名中，误伤风险较低的部分。
-# - 纯规则 REJECT，无脚本、无 MITM、无外部请求。
+# - 域名层仅拦截公开规则库明确标记为 Ads/Tracking 的高置信度广告专用域名。
+# - 原生信息流广告使用本仓库自托管脚本，仅处理 *.amemv.com 的 feed 类 JSON 响应。
+# - 脚本不主动联网、不上传 Cookie/Header/账号信息；解析异常时原样放行。
 
 [Rule]
 
@@ -15,6 +16,7 @@
 
 # 今日头条 / 字节广告入口
 DOMAIN,ad.toutiao.com,REJECT
+DOMAIN,dig.bdurl.net,REJECT
 DOMAIN-SUFFIX,byteadverts.com,REJECT
 DOMAIN-SUFFIX,csjplatform.com,REJECT
 DOMAIN-SUFFIX,shoppingads.cn,REJECT
@@ -40,11 +42,26 @@ DOMAIN,pangolin-lq.snssdk.com,REJECT
 DOMAIN,pangolin.snssdk.com,REJECT
 
 # ============================================================
+# 抖音原生 Feed 广告
+# ============================================================
+# 2(1).db 实测：插播广告视频与普通视频一样使用 douyinvod.com，
+# 且本轮没有命中上述广告专用域名，因此仅靠域名 REJECT 无法移除。
+# 对抖音独占的 amemv.com feed 接口做最小化 JSON 过滤：
+# - is_ads=true/1
+# - raw_ad_data 非空
+# - ad_data / ad_info 非空
+# 其余内容原样保留。
+
+[Script]
+douyin_feed_adblock = type=http-response,pattern=^https://[^/]+\.amemv\.com/aweme/v\d+/(?:feed|follow/feed|nearby/feed)(?:[/?#]|$),requires-body=1,max-size=-1,script-path=https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/scripts/douyin-feed-adblock.js
+
+# ============================================================
 # 保守排除（故意不拦截）
 # ============================================================
 # bds.snssdk.com / extlog.snssdk.com / i.snssdk.com / mcs.snssdk.com
 # log.zijieapi.com / ctobsnssdk.com / sf3-ttcdn-tos.pstatp.com
 # 这些域名虽常被标记为广告/追踪，但属于共享或遥测链路；为保证 TikTok 安全与 App 稳定暂不阻断。
-#
-# 原生信息流“广告/推广”可能与正常视频共用 Feed API，仅靠域名 REJECT 无法安全完全移除。
-# 若后续仍有明显信息流推广，应先抓取 Shadowrocket 日志，再针对抖音独占接口做最小化响应改写。
+
+[MITM]
+# 只解密抖音独占 amemv.com，用于推荐 Feed 响应过滤；不加入 TikTok 域名。
+hostname = %APPEND% *.amemv.com
