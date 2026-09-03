@@ -60,8 +60,10 @@ shadowrocket/toolkit/
 
 | 模块 | 移动模式 | Home Clean | 用途 | 风险 / 回退 |
 |---|---|---|---|---|
-| `proxy-stability.sgmodule` | ❌ 按需 | ❌ 默认关闭 | `block-quic = all-proxy`，仅让 Shadowrocket 代理流量从 QUIC 回落 TCP/HTTP2 | 家庭实际代理由 OpenClash 负责；移动模式无明确收益也保持关闭 |
+| `proxy-stability.sgmodule` | ⚙️ 按需，可常开 | ✅ 可保持开启，通常基本不生效 | `block-quic = all-proxy`，仅让 Shadowrocket 自己的代理流量从 QUIC 回落 TCP/HTTP2 | 是否启用主要看移动模式实测；Home Clean 正常流量是 DIRECT，不要求回家关闭 |
 | `webrtc-privacy.sgmodule` | ℹ️ 备用 | ℹ️ 备用 | 与正式配置相同的 STUN 替代地址设置，用于迁移/独立配置场景 | 两个正式配置均已内置，不要重复开启；实时音视频异常按 WebRTC P0 回退 |
+
+`proxy-stability.sgmodule` 的关键点是 **`all-proxy` 只匹配 Shadowrocket 的 PROXY 连接**。Home Clean 最终 `FINAL,DIRECT`，所以即使模块开关一直保持开启，家庭模式通常也没有 Shadowrocket PROXY 流量可供它处理；OpenClash 后续在路由器层把国外流量代理出去，不会被这个 Shadowrocket 模块再次处理。若移动模式确认开启后更稳定，可以让模块长期保持开启，无需随家庭 Wi-Fi / 蜂窝场景来回开关。
 
 当前 **WebRTC Privacy 已写入两个正式配置并默认生效**，无需再在 Shadowrocket 模块页额外开启 `webrtc-privacy.sgmodule`。该模块保留只是为了独立模块使用、迁移或以后快速拆分。
 
@@ -114,7 +116,7 @@ YouTube 模块只保留这一份。不要同时启用旧仓库 URL、重复导�
 
 ```text
 1. WebRTC / 实时音视频异常 → 先查重复 webrtc-privacy，再撤销当前配置 STUN 字段
-2. 移动代理 QUIC 异常 → 关闭 proxy-stability.sgmodule
+2. 移动代理 QUIC 异常 → 关闭 proxy-stability.sgmodule 做 A/B
 3. Home Clean 国外访问异常 → 先查 OpenClash / 场景 / DNS，不给 Home Clean 加代理组
 4. 再关闭 splash-adblock-safe.module
 5. 再关闭 general-adblock-safe.module
@@ -140,7 +142,7 @@ YouTube 模块只保留这一份。不要同时启用旧仓库 URL、重复导�
 ✅ 自己实际使用的 App 专用模块
 ✅ youtube-adblock.sgmodule（需要 YouTube 去广告时）
 ✅ 51cg1-clean.sgmodule（访问该网站时）
-❌ proxy-stability.sgmodule（出现代理 QUIC 稳定性问题再开）
+⚙️ proxy-stability.sgmodule（按需；若实测有收益可长期保持开启）
 ℹ️ webrtc-privacy.sgmodule（备用，不与正式配置重复启用）
 ❌ general-adblock-safe.module
 ❌ splash-adblock-safe.module
@@ -158,7 +160,7 @@ YouTube 模块只保留这一份。不要同时启用旧仓库 URL、重复导�
 ✅ 自己实际使用的 App / 网站专用模块
 ✅ youtube-adblock.sgmodule（需要时）
 
-❌ proxy-stability.sgmodule（实际代理由 OpenClash 负责）
+✅/按需 proxy-stability.sgmodule（可以保持开启；Home Clean 下通常基本不生效）
 ℹ️ webrtc-privacy.sgmodule（Home Clean 已内置，不重复开启）
 ❌ general-adblock-safe.module（基础/专用模块不够时再测试）
 ❌ splash-adblock-safe.module（最后单独测试）
