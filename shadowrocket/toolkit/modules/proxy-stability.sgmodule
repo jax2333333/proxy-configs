@@ -1,0 +1,9 @@
+#!name=JAX Proxy Stability
+#!desc=仅阻断走代理连接的 QUIC（UDP/443），让代理流量回落 TCP/HTTP2；DIRECT 不受影响。按需启用。2026-09-04
+
+# 适用：蜂窝网络下 YouTube / Google / GitHub 等代理连接出现偶发转圈、UDP 质量差。
+# 风险：可能改变延迟、功耗和部分应用传输行为，因此不作为默认常开模块。
+# 若体验变差，直接关闭本模块即可恢复。
+
+[General]
+block-quic = all-proxy
