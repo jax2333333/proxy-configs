@@ -54,14 +54,14 @@ shadowrocket/toolkit/
 
 `httpdns-block-safe.sgmodule` 只使用高置信度 HTTPDNS 专用域名与少量专用 IP，不照搬社区规则中的微信、支付宝、京东等业务 API MITM。若某 App 出现解析、登录或加载异常，先单独关闭本模块做 A/B。
 
-## ② 网络 / 隐私实验模块
+## ② 网络 / 隐私增强
 
 | 模块 | 默认 | 用途 | 风险 / 回退 |
 |---|---|---|---|
 | `proxy-stability.sgmodule` | ❌ 按需 | `block-quic = all-proxy`，仅让代理流量从 QUIC 回落 TCP/HTTP2 | 可能改变延迟、功耗或部分 App 行为；异常直接关闭 |
-| `webrtc-privacy.sgmodule` | ❌ 按需 | 用替代 STUN 地址降低 WebRTC 暴露真实网络地址的风险 | 可能影响 FaceTime、Meet、Discord、网页实时音视频 |
+| `webrtc-privacy.sgmodule` | ℹ️ 备用 | 与主配置相同的 STUN 替代地址设置，用于迁移/独立配置场景 | 正式主配置 V6.3.1 已默认启用，不要重复开启；实时音视频异常时回退主配置对应字段 |
 
-这两个模块故意不写进主配置，确保可以单独 A/B 和快速回退。
+当前 **WebRTC Privacy 已写入正式主配置并默认生效**，无需再在 Shadowrocket 模块页额外开启 `webrtc-privacy.sgmodule`。该模块保留只是为了独立模块使用、迁移或以后快速拆分。
 
 ## ③ 按实际使用的 App 开启
 
@@ -109,12 +109,13 @@ YouTube 模块只保留这一份。不要同时启用旧仓库 URL、重复导�
 异常排查顺序：
 
 ```text
-1. 先关闭 webrtc-privacy / proxy-stability 等实验模块
-2. 再关闭 splash-adblock-safe.module
-3. 再关闭 general-adblock-safe.module
-4. 再关闭对应 App / 网站专用模块
-5. HTTPDNS / URL Cleaner 做单独 A/B
-6. 最后才检查基础 privacy-lite
+1. WebRTC / 实时音视频异常 → 先撤销主配置 stun-response-ip / stun-response-ipv6
+2. 代理 QUIC 异常 → 关闭 proxy-stability.sgmodule
+3. 再关闭 splash-adblock-safe.module
+4. 再关闭 general-adblock-safe.module
+5. 再关闭对应 App / 网站专用模块
+6. HTTPDNS / URL Cleaner 做单独 A/B
+7. 最后才检查基础 privacy-lite
 ```
 
 ## ⑥ 开发模板
@@ -126,6 +127,7 @@ YouTube 模块只保留这一份。不要同时启用旧仓库 URL、重复导�
 ### 稳定优先
 
 ```text
+✅ 主配置 V6.3.1 WebRTC Privacy（已内置，无需额外模块）
 ✅ privacy-lite.sgmodule
 ✅ network-health.sgmodule
 ✅ url-cleaner-safe.sgmodule
@@ -134,7 +136,7 @@ YouTube 模块只保留这一份。不要同时启用旧仓库 URL、重复导�
 ✅ youtube-adblock.sgmodule（需要 YouTube 去广告时）
 ✅ 51cg1-clean.sgmodule（访问该网站时）
 ❌ proxy-stability.sgmodule（出现代理 QUIC 稳定性问题再开）
-❌ webrtc-privacy.sgmodule（有明确 WebRTC 隐私需求再开）
+ℹ️ webrtc-privacy.sgmodule（备用，不与主配置重复启用）
 ❌ general-adblock-safe.module
 ❌ splash-adblock-safe.module
 ❌ app-adblock-template.sgmodule
@@ -195,4 +197,4 @@ Toolkit 不替代：
 shadowrocket/Jax-shadowrocket-v6.conf
 ```
 
-主配置负责策略组、DNS 和长期稳定分流；`shadowrocket/rules/` 保存 JAX 自托管规则集；Toolkit 负责可选增强功能。
+主配置负责策略组、DNS、WebRTC/STUN 隐私和长期稳定分流；`shadowrocket/rules/` 保存 JAX 自托管规则集；Toolkit 负责可选增强功能。
