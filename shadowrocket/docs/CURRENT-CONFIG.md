@@ -45,9 +45,10 @@ iPhone
 3. `dns-server = system`，让 iOS 使用家庭网络提供的系统 DNS，继续由 OpenWrt / OpenClash 接管解析。
 4. 家庭配置不指定 Cloudflare / Google / AliDNS 公网 DoH，也不设置 `hijack-dns`，避免 Shadowrocket 与 OpenClash 重复抢 DNS 控制权。
 5. 不把 OpenClash Fake-IP 常用网段 `198.18.0.0/15` 加入家庭配置的 `tun-excluded-routes`，避免 Fake-IP 连接绕过 Shadowrocket Toolkit 净化层。
-6. `proxy-stability.sgmodule` 在家庭模式默认关闭。Shadowrocket 本身不承担代理，代理 QUIC/UDP 稳定性应由 OpenClash 层处理。
-7. 启用的 Toolkit 广告、URL Cleaner、HTTPDNS、App 专用模块仍可作为 iPhone 本机净化层使用。
-8. Shadowrocket“场景”可按家庭 Wi-Fi SSID 使用 Home Clean，蜂窝网络使用移动主配置。
+6. `proxy-stability.sgmodule` 不要求因回家而关闭。它的 `block-quic = all-proxy` 只作用于 Shadowrocket 自己的 PROXY 连接；Home Clean 正常流量均为 DIRECT，所以模块保持开启时通常基本不生效。家庭实际代理 QUIC/UDP 稳定性仍由 OpenClash 层处理。
+7. 如果用户在移动模式决定启用 `proxy-stability.sgmodule`，可以让模块长期保持开启，无需随家庭 Wi-Fi / 蜂窝网络场景手工切换；只有移动端实测体验变差时才关闭。
+8. 启用的 Toolkit 广告、URL Cleaner、HTTPDNS、App 专用模块仍可作为 iPhone 本机净化层使用。
+9. Shadowrocket“场景”可按家庭 Wi-Fi SSID 使用 Home Clean，蜂窝网络使用移动主配置。
 
 ## 长期约定
 
@@ -92,7 +93,7 @@ WebRTC Privacy 当前在移动主配置和家庭配置中默认启用：使用 `
 
 广告和清理功能模块化、可独立关闭；不使用全局 MITM，脚本优先自托管并在解析失败时原样放行。修改模块前读取 `toolkit/README.md`、目标 module/script 与当前所用正式配置相关字段，避免重复或冲突。
 
-`proxy-stability.sgmodule`（`block-quic = all-proxy`）仍属于可选实验增强；移动模式按需开启，家庭 Home Clean 默认关闭。
+`proxy-stability.sgmodule`（`block-quic = all-proxy`）仍属于可选实验增强。是否启用主要由移动模式实测决定；一旦决定启用，可以长期保持模块开启，因为 Home Clean 下正常流量是 DIRECT，`all-proxy` 通常不会作用于这些连接。不要要求用户因场景切换而反复开关模块。
 
 `webrtc-privacy.sgmodule` 仅作为独立备用模块；两个正式配置已默认包含等价的 STUN 隐私字段，不建议重复启用。实时音视频异常时，它属于第一优先排查对象。
 
