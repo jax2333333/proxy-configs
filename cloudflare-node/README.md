@@ -1,222 +1,157 @@
 # JAX Cloudflare Node
 
-一个尽量精简、完全自用的 Cloudflare Workers VLESS 节点实现。
+> [!IMPORTANT]
+> ## 🚨 新对话 / ChatGPT 快速接管
+> 仓库 `jax2333333/proxy-configs`，分支 `main`。先读根 `README.md` 和 `docs/KNOWLEDGE-INDEX.md`，再读本 README；修改前重新读取 `main` 当前实际文件。真实 ADMIN / UUID / KEY / Token / 订阅链接 / 优选 IP / 认证信息不得写入 Public GitHub。
 
-## 设计目标
+本目录维护 JAX 的自用 Cloudflare 节点方案。当前采用“两代并存”结构：**v2 edgetunnel 为优先方案，v1 自写 Worker 保留为基线、排错和回滚。**
 
-- Cloudflare Workers Free 可部署
-- VLESS + WebSocket + TLS
-- 只支持 TCP，不支持 UDP / MUX / BT / PT
-- 不依赖公共 ProxyIP
-- 不依赖第三方订阅转换服务
-- 不在 GitHub 中保存真实 UUID、WS Path、Token、API Key
-- 可用于 Shadowrocket、Clash Verge Rev、OpenClash / Mihomo
-- GitHub `main` 分支作为代码唯一正式版本
-
-## 文件
-
-- `worker.js`：Worker 主程序
-- `wrangler.jsonc`：Cloudflare Workers / GitHub Builds 正式部署配置，不包含秘密
-- `wrangler.toml.example`：Wrangler TOML 参考模板
-- `.gitignore`：避免本地 secrets / Wrangler 文件误提交
-
-## 1. 准备 UUID 和 WS Path
-
-在本地生成 UUID：
-
-```bash
-uuidgen | tr '[:upper:]' '[:lower:]'
-```
-
-生成随机 WebSocket Path：
-
-```bash
-printf '/jax-%s\n' "$(openssl rand -hex 12)"
-```
-
-示例仅用于说明：
+## 当前结构
 
 ```text
-UUID    = 00000000-0000-4000-8000-000000000000
-WS_PATH = /jax-0123456789abcdef01234567
+cloudflare-node/
+├─ README.md                     # 本入口
+├─ worker.js                     # v1 自写最简 VLESS Worker
+├─ wrangler.jsonc                # v1 Workers 配置
+├─ wrangler.toml.example         # v1 参考模板
+├─ WINDOWS10-SETUP.md            # v1 / Windows 历史操作教程
+├─ RESEARCH-VIDEOS.md            # 视频研究汇总（历史/研究，不是正式配置）
+├─ research/                     # 分视频/专项研究笔记
+└─ edgetunnel-v2/
+   ├─ README.md                  # v2 设计与安全边界
+   ├─ DEPLOY.md                  # Pages 从零部署
+   ├─ UPSTREAM.md                # 固定上游 commit / blob SHA
+   ├─ sync-upstream.mjs          # 构建时下载并校验固定上游
+   └─ .gitignore
 ```
 
-不要把真实值提交到本仓库。
+## 当前优先方案：edgetunnel v2
 
-## 2. 推荐：GitHub → Cloudflare 自动部署
+正式读取顺序：
 
-Cloudflare Dashboard：
+1. `edgetunnel-v2/README.md`
+2. `edgetunnel-v2/UPSTREAM.md`
+3. `edgetunnel-v2/sync-upstream.mjs`
+4. 部署任务再读 `edgetunnel-v2/DEPLOY.md`
+5. 排障/优选再读根 `docs/OPERATIONS.md` 与 `docs/TROUBLESHOOTING.md`
 
-1. 进入 `Workers & Pages`。
-2. 选择 `Create application`。
-3. 在 `Import a repository` 旁选择 `Get started`。
-4. 连接 GitHub，并选择仓库 `jax2333333/proxy-configs`。
-5. Production branch 选择 `main`。
-6. Worker / Project name 必须设置为：
+长期架构：
 
 ```text
-jax-cf-node
+GitHub main
+→ 固定 cmliu/edgetunnel 上游快照
+→ sync-upstream.mjs 校验 Git blob SHA
+→ Cloudflare Pages
+→ Production Secrets + KV
+→ 专用自定义域名
+→ VLESS + TLS + WebSocket
+→ CF 优选入口
+→ edgetunnel / ProxyIP / 可选链式出站
 ```
 
-7. Root directory 设置为：
+当前已经验证：
+
+- Pages Git build 可以从本仓库自动构建固定上游；
+- ADMIN / KV / 节点生成可正常工作；
+- 自定义域名和 TLS 可正常使用；
+- Clash Verge 可使用 edgetunnel 原生 VLESS / 自适应订阅；
+- CFData-WEB 本地优选能显著改善中国大陆移动网络到 Cloudflare 的实际吞吐；
+- 优选时 `server` 可换成 CF 优选 IP，但 `Host` / `SNI` 必须保持实际自定义域名；
+- CF 优选入口与 ProxyIP 是两层不同问题。
+
+真实部署域名、ADMIN、UUID、KEY、订阅 Token、优选 IP、ProxyIP 凭据不在本 Public 仓库保存。需要当前值时从 Cloudflare Dashboard / 本地客户端读取。
+
+## v2 Secrets / KV 原则
+
+敏感值在 Cloudflare Production 环境配置：
 
 ```text
-cloudflare-node
+ADMIN = 高强度随机密码（Secret）
+UUID  = UUIDv4（Secret）
+KEY   = 高强度随机密钥（Secret）
+OFF_LOG = 1
+DEBUG = 默认不设置
 ```
 
-8. Build command 留空。
-9. Deploy command 使用默认：
+KV binding 名称固定为：
 
 ```text
-npx wrangler deploy
+KV
 ```
 
-10. 保存并部署。
+注意：当前固定 edgetunnel 上游不是“零第三方依赖”。如果没有自定义 `PROXYIP`，上游可能使用作者默认 fallback；面板还支持公共优选/订阅服务。正式长期使用应把这些都视为可替换外部依赖。
 
-部署完成以后，后续修改 `cloudflare-node/` 并提交到 GitHub `main`，Cloudflare 可以自动构建并重新部署。
+## Cloudflare 优选长期原则
 
-当前 Cloudflare Builds 配置应保持：
+- 优选 IP 优化的是 **客户端 → Cloudflare**；
+- ProxyIP / SOCKS5 / HTTP(S) 优化的是 **Cloudflare → 目标站**；
+- 不只看 ping，必须看丢包、延迟稳定性和真实吞吐；
+- Windows 10 当前优先使用 CFData-WEB 本地 Web UI；
+- 实际吞吐测速尽量单线程/单候选，避免多个 IP 互抢带宽；
+- 最终保留少量 3～5 个高速候选即可；
+- 视频验证看 YouTube Stats for Nerds 的 Connection Speed / Buffer Health 等实际指标；
+- 本地优选时如果必须关闭 Clash，而后台默认域名直连不可达，可用 SwitchHosts / Hosts 临时固定到已验证 CF IP；运行映射不写 Public GitHub。
 
-```text
-Production branch: main
-Root directory: cloudflare-node
-Build command: 留空
-Deploy command: npx wrangler deploy
-```
+## v1：自写 Worker 基线
 
-连接 GitHub 后，对 `cloudflare-node/` 的任意提交都应触发 Cloudflare Workers Build。
+v1 文件：
 
-建议在 Cloudflare 的 Build watch paths 中只包含：
+- `worker.js`
+- `wrangler.jsonc`
+- `wrangler.toml.example`
+- `WINDOWS10-SETUP.md`
 
-```text
-cloudflare-node/**
-```
+设计目标：精简、VLESS + WebSocket + TLS、TCP-only、Secrets 与源码分离。
 
-这样修改 Shadowrocket、Clash Verge 或 OpenClash 配置时不会触发 CF Worker 重建。
+v1 已完成协议基线验证，但功能少于 v2，历史上还遇到：
 
-## 3. 设置 Cloudflare Secrets
+- Cloudflare Workers Git 自动 Build 未真正触发；
+- 线上仍停留 `Hello world` 默认 Worker；
+- `workers.dev` 在实际网络中解析/可达性异常；
+- 入口正确后仍需要考虑 Cloudflare 出站限制。
 
-进入：
+因此 v1 当前不作为首选长期方案，但保留用于：
 
-```text
-Workers & Pages
-→ jax-cf-node
-→ Settings
-→ Variables and Secrets
-```
+- 协议排错；
+- v2 故障隔离；
+- 回滚基线；
+- 验证 Cloudflare Workers Runtime 行为。
 
-新增两个 `Secret`：
+## 上游更新规则
 
-```text
-UUID
-WS_PATH
-```
+v2 不自动追随 `cmliu/edgetunnel/main`。
 
-值分别填写你在第 1 步生成的真实 UUID 和随机路径。
+更新必须：
 
-注意：必须选择 `Secret`，不要使用普通明文变量。保存后执行 Deploy。
+1. 读取当前 `UPSTREAM.md`；
+2. 审查上游最新 release / changelog / `_worker.js`；
+3. 检查 ADMIN、KV、ProxyIP、订阅、链式代理和日志兼容性；
+4. 同时更新固定 commit 与对应 Git blob SHA；
+5. Preview/Test；
+6. Clash Verge / Shadowrocket + Google / YouTube / ChatGPT 实测；
+7. 再进入生产。
 
-## 4. 可选：Wrangler 手动部署
+不要在 Cloudflare Dashboard 直接手改 `_worker.js` 作为正式长期维护方式。
 
-如果不使用 GitHub Builds，可进入本目录直接运行：
+## 安全红线
 
-```bash
-npx wrangler secret put UUID
-npx wrangler secret put WS_PATH
-npx wrangler deploy
-```
+禁止提交：
 
-本仓库的 `wrangler.jsonc` 本身不保存任何 Secret。
+- ADMIN / UUID / KEY；
+- Cloudflare API Token / API Key；
+- 订阅 Token / 完整分享链接；
+- Cookie / Authorization / 密码；
+- ProxyIP / SOCKS5 / HTTP(S) 认证凭据；
+- 私钥和其它账号认证信息。
 
-## 5. 域名
+研究视频、公开第三方方案和公共 ProxyIP 只能作为参考，不自动升级为正式依赖。
 
-优先推荐给 Worker 绑定自己的 Cloudflare Custom Domain，例如：
+## 文档入口
 
-```text
-cf.example.com
-```
-
-也可以先使用 Cloudflare 自动分配的：
-
-```text
-jax-cf-node.<你的 workers.dev 子域>.workers.dev
-```
-
-客户端中的 `server`、`Host`、`SNI/servername` 必须使用你实际部署的域名。
-
-## 6. Shadowrocket
-
-手动添加 VLESS 节点：
-
-```text
-类型：VLESS
-地址：cf.example.com
-端口：443
-UUID：<YOUR_UUID>
-传输：WebSocket
-TLS：开启
-SNI：cf.example.com
-Host：cf.example.com
-Path：<YOUR_WS_PATH>
-UDP：关闭
-```
-
-节点名称建议：
-
-```text
-☁️ CF-Auto
-```
-
-## 7. Clash Verge Rev / OpenClash / Mihomo
-
-模板：
-
-```yaml
-proxies:
-  - name: "☁️ CF-Auto"
-    type: vless
-    server: cf.example.com
-    port: 443
-    uuid: YOUR_UUID
-    network: ws
-    tls: true
-    servername: cf.example.com
-    udp: false
-    ws-opts:
-      path: /YOUR_WS_PATH
-      headers:
-        Host: cf.example.com
-```
-
-注意：真实 UUID、域名和 WS Path 应只保存在客户端本地配置或 Cloudflare Secrets 中，不要直接提交到这个 Public 仓库。
-
-## 8. 当前限制
-
-本项目刻意保持精简：
-
-- 只处理 VLESS TCP 请求。
-- 不实现 UDP 转发，因此不适合作为游戏节点。
-- 不提供固定国家 / 地区出口，不能把 Cloudflare Worker 当成固定日本、美国或新加坡 VPS。
-- 不适合 BT / PT、大流量下载、长期 4K 视频主力线路。
-- Cloudflare Workers 的出站 TCP 无法连接 Cloudflare 自身 IP 范围，因此部分目标可能无法通过此最简实现访问。
-- 第一阶段不使用 ProxyIP；如果实际测试确实存在必要，再单独评估自建或可信 ProxyIP，而不是直接接入公共 ProxyIP。
-
-## 9. 建议测试顺序
-
-部署完成后依次测试：
-
-1. Google
-2. GitHub
-3. ChatGPT
-4. YouTube
-5. Telegram
-6. 移动网络 / 家宽分别测速和稳定性测试
-
-如果基础版本稳定，再考虑增加第二个 `☁️ CF-Best` 优选入口节点。优选 IP 只优化“客户端 → Cloudflare”这一段，不代表获得固定国家出口。
-
-## 安全约定
-
-- 本目录所在仓库为 Public。
-- 禁止提交真实 UUID、Cloudflare API Token、Account ID、私有 Cookie、密码、真实机场订阅地址等敏感信息。
-- 修改 `worker.js` 前以 GitHub `main` 分支最新版为准。
-- 不默认引入第三方 ProxyIP、订阅转换器或外部节点池。
+- 当前跨项目状态：`../docs/CURRENT-STATE.md`
+- 日常维护 / CFData 优选 / 后台直连：`../docs/OPERATIONS.md`
+- 常见故障：`../docs/TROUBLESHOOTING.md`
+- 历史迁移：`../docs/HISTORY.md`
+- v2 设计：`edgetunnel-v2/README.md`
+- v2 部署：`edgetunnel-v2/DEPLOY.md`
+- v2 上游固定：`edgetunnel-v2/UPSTREAM.md`
