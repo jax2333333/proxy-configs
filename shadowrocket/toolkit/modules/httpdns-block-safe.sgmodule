@@ -1,0 +1,55 @@
+#!name=JAX HTTPDNS Safe
+#!desc=阻止常见 App 自带 HTTPDNS 绕过系统解析；纯规则、零 MITM、可独立关闭。2026-09-04
+
+# 设计原则：
+# - 只拦截高置信度 HTTPDNS 专用域名与少量专用 IP。
+# - 不 MITM 微信、支付宝、京东等业务 API。
+# - 不拦截普通 DNS 服务器本身；传统 53/UDP 仍由主配置 hijack-dns 处理。
+# - 若某 App 出现解析/登录异常，先单独关闭本模块做 A/B。
+
+[Rule]
+# Tencent / WeChat / JD / Weibo
+DOMAIN,dns.jd.com,REJECT
+DOMAIN,dns.weibo.cn,REJECT
+DOMAIN,dns.weixin.qq.com,REJECT
+DOMAIN,dns.weixin.qq.com.cn,REJECT
+
+# Alibaba / AliCDN
+DOMAIN,httpdns-api.aliyuncs.com,REJECT
+DOMAIN,httpdns-sc.aliyuncs.com,REJECT
+DOMAIN,httpdns.alicdn.com,REJECT
+
+# Baidu
+DOMAIN,httpdns.baidu.com,REJECT
+DOMAIN,httpdns.baidubce.com,REJECT
+DOMAIN,httpsdns.baidu.com,REJECT
+
+# Bilibili / Huawei CDN / other dedicated HTTPDNS
+DOMAIN,httpdns.bilivideo.com,REJECT
+DOMAIN,httpdns.c.cdnhwc2.com,REJECT
+DOMAIN,httpdns.calorietech.com,REJECT
+
+# Meituan
+DOMAIN,httpdns.meituan.com,REJECT
+DOMAIN,httpdnsvip.meituan.com,REJECT
+
+# NetEase
+DOMAIN,httpdns.music.163.com,REJECT
+DOMAIN,httpdns.n.netease.com,REJECT
+DOMAIN,lofter.httpdns.c.163.com,REJECT
+DOMAIN,music.httpdns.c.163.com,REJECT
+DOMAIN,httpdns.yunxindns.com,REJECT
+
+# Oppo / Volcengine
+DOMAIN,httpdns.push.oppomobile.com,REJECT
+DOMAIN,httpdns.volcengineapi.com,REJECT
+
+# Generic dedicated HTTPDNS suffix
+DOMAIN-SUFFIX,httpdns.pro,REJECT
+
+# High-confidence dedicated HTTPDNS endpoints.
+# Keep this list deliberately short to reduce stale-IP false positives.
+IP-CIDR,119.29.29.98/32,REJECT,no-resolve
+IP-CIDR,119.29.29.99/32,REJECT,no-resolve
+IP-CIDR,180.76.76.200/32,REJECT,no-resolve
+IP-CIDR,203.107.1.0/24,REJECT,no-resolve
