@@ -83,10 +83,17 @@ https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/opencl
 
 - Apple 默认直连，但保留手动代理选择；Apple Intelligence / Relay 交给 `🍎 Apple`。
 - `push.apple.com` 高优先级直连。
-- Steam 国内下载 CDN 与商店规则分离。
-- ZeroTier 9993 直连。
+- Steam 国内下载 CDN 与商店规则分离；当前国内下载规则使用 MetaCubeX `steam@cn.mrs`，继续进入 `📥 Steam 下载`。
+- ZeroTier 控制 / 打洞只对 **UDP 9993** 设置高优先级直连，不再无条件放行 TCP 9993。
 - `browserleaks.com` 在中国大陆规则之前强制走 `🔮 节点选择`，防止 `cn_domain` 误分类直连。
 - 广告规则集进入全局拦截。
+
+### 规则源维护原则
+
+- 路由器端主规则优先使用 MetaCubeX `meta-rules-dat` 的 MRS `domain` / `ipcidr` 规则集，减少重复来源和大型 classical 规则。
+- `meta-rules-dat` 的部分分类本身已经合并 blackmatrix7 / `ios_rule_script` 数据，例如 `cn`、`onedrive`、`steam@cn`；存在等价 MRS 时，不重复叠加同类 classical 规则。
+- `jax2333333/ios_rule_script` 可用于核对规则来源或补充 MetaCubeX 没有的专项规则，但不作为整套 OpenClash 规则的默认替代源。
+- 不为了“规则更多”直接加入超大型 `AdvertisingLite`、`ChinaMaxNoIP` 或 Apple/Microsoft classical 大合集；如发生误分流，优先添加精确例外或选择更合适的专项 MRS。
 
 ## 6. Smart 设计
 
