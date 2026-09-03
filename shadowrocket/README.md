@@ -2,8 +2,7 @@
 
 > [!IMPORTANT]
 > ## 新对话 / ChatGPT 快速接管
-> 仓库：`jax2333333/proxy-configs`；唯一正式分支：`main`。
-> **先读本文件，再按 `docs/KNOWLEDGE-INDEX.md` 定位资料；修改前必须重新读取 GitHub `main` 的最新实际文件。**
+> 仓库 jax2333333/proxy-configs，分支 main。读取 shadowrocket/README.md 顶部“新对话 / ChatGPT 快速接管”说明并按其指引接管项目。
 
 本目录维护 iPhone / iOS 的 Shadowrocket 主配置和可独立启停的 Toolkit 模块。
 
