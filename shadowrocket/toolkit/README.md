@@ -2,8 +2,8 @@
 
 一套与主配置解耦、可以单独开关的 Shadowrocket 工具模块。
 
-> 维护原则：`shadowrocket/Jax-shadowrocket-v6.conf` 仍是正式主配置；Toolkit 只放增强功能，不把脚本逻辑直接塞进主配置。
-> 旧仓库 `jax2333333/shadowrocket-config` 不再作为模块维护源；模块统一迁移到本目录。
+> 维护原则：`shadowrocket/Jax-shadowrocket-v6.conf` 仍是正式主配置；Toolkit 只放增强功能，不把实验脚本逻辑直接塞进主配置。
+> 模块统一由 `jax2333333/proxy-configs` 的 `main` 维护；修改前始终重新读取 GitHub 实际文件。
 
 ## 统一目录
 
@@ -12,8 +12,11 @@ shadowrocket/toolkit/
 ├── README.md
 ├── modules/
 │   ├── privacy-lite.sgmodule
-│   ├── url-cleaner-safe.sgmodule
 │   ├── network-health.sgmodule
+│   ├── url-cleaner-safe.sgmodule
+│   ├── httpdns-block-safe.sgmodule
+│   ├── proxy-stability.sgmodule
+│   ├── webrtc-privacy.sgmodule
 │   ├── general-adblock-safe.module
 │   ├── splash-adblock-safe.module
 │   ├── amap-clean.module
@@ -38,19 +41,29 @@ shadowrocket/toolkit/
     └── app-adblock-template.js
 ```
 
-## 最终启用方案
+当前共 **22 个模块**。
 
-### ① 建议常开
+## ① 基础推荐
 
 | 模块 | 建议 | MITM | 说明 |
 |---|---|---|---|
-| `privacy-lite.sgmodule` | ✅ 常开 | 否 | 高置信度广告/统计域名，低误伤；不全局封 AppsFlyer / Adjust / Branch |
-| `network-health.sgmodule` | ✅ 常开 | 否 | 每天 09:05 检查出口与 Google / GitHub / YouTube；异常才通知 |
-| `url-cleaner-safe.sgmodule` | ✅ 推荐 | 是，少量域名 | 清理 UTM、fbclid、gclid、YouTube `si` 等追踪参数 |
+| `privacy-lite.sgmodule` | ✅ 常开 | 否 | 高置信度广告/统计域名，低误伤 |
+| `network-health.sgmodule` | ✅ 常开 | 否 | 每天 09:05 检查出口与 Google / GitHub / YouTube，异常才通知 |
+| `url-cleaner-safe.sgmodule` | ✅ 推荐 | 少量明确域名 | 清理 UTM、fbclid、gclid、YouTube `si` 等追踪参数 |
+| `httpdns-block-safe.sgmodule` | ✅ 推荐，先观察 | 否 | 阻止常见 App 自带 HTTPDNS 绕过系统解析；不 MITM 业务 API |
 
-URL Cleaner 只 MITM Google、YouTube、Reddit、X/Twitter、Instagram、Facebook 等明确站点，不使用 `hostname=*`。
+`httpdns-block-safe.sgmodule` 只使用高置信度 HTTPDNS 专用域名与少量专用 IP，不照搬社区规则中的微信、支付宝、京东等业务 API MITM。若某 App 出现解析、登录或加载异常，先单独关闭本模块做 A/B。
 
-### ② 按实际使用的 App 开启
+## ② 网络 / 隐私实验模块
+
+| 模块 | 默认 | 用途 | 风险 / 回退 |
+|---|---|---|---|
+| `proxy-stability.sgmodule` | ❌ 按需 | `block-quic = all-proxy`，仅让代理流量从 QUIC 回落 TCP/HTTP2 | 可能改变延迟、功耗或部分 App 行为；异常直接关闭 |
+| `webrtc-privacy.sgmodule` | ❌ 按需 | 用替代 STUN 地址降低 WebRTC 暴露真实网络地址的风险 | 可能影响 FaceTime、Meet、Discord、网页实时音视频 |
+
+这两个模块故意不写进主配置，确保可以单独 A/B 和快速回退。
+
+## ③ 按实际使用的 App 开启
 
 | 模块 | 用途 | MITM |
 |---|---|---|
@@ -69,40 +82,46 @@ URL Cleaner 只 MITM Google、YouTube、Reddit、X/Twitter、Instagram、Faceboo
 
 YouTube 模块只保留这一份。不要同时启用旧仓库 URL、重复导入副本或其它作用相同的 YouTube MITM 模块，以免同一响应被重复改写。
 
-### ③ 网页专用净化
+## ④ 网页专用净化
 
 | 模块 | 用途 | MITM |
 |---|---|---|
-| `51cg1-clean.sgmodule` | 清理 51cg1.com 的外链图片横幅、外部 iframe、明显广告容器与残留占位 | `51cg1.com`、`www.51cg1.com` |
+| `51cg1-clean.sgmodule` | 清理 51cg1.com 外链图片横幅、外部 iframe、明显广告容器与残留占位 | `51cg1.com`、`www.51cg1.com` |
 
-`51cg1-clean.sgmodule` 为站点专用，不做全局网页过滤。脚本只处理本机已截获的 HTML，不主动联网、不上传 Cookie/Header/浏览历史。若该站改变页面结构，未命中部分会原样放行，再按实际页面更新脚本。
+站点专用模块不做全局网页过滤；脚本只处理本机已截获内容，不主动外发 Cookie、Header 或浏览历史。
 
-### ④ 通用广告模块：按需，不建议一开始全部打开
+## ⑤ 通用广告模块：按需
 
-`general-adblock-safe.module` 与 `splash-adblock-safe.module` 都会拦截常见广告 SDK，和 Privacy Lite、番茄、七猫、WEBTOON、豌豆等模块存在规则重叠。
+`general-adblock-safe.module` 与 `splash-adblock-safe.module` 会和 Privacy Lite、App 专用模块产生一定规则重叠，因此默认不双开。
 
-推荐策略：
+推荐顺序：
 
 ```text
-默认：先不开通用广告模块
+基础推荐 + 对应 App 专用模块
 ↓
-使用常开基础模块 + 对应 App/网站专用模块
+仍有大量第三方 App SDK 广告 → general-adblock-safe.module
 ↓
-如果仍有大量第三方 App 开屏/SDK 广告
-再开启 general-adblock-safe.module
-↓
-如果主要问题是开屏广告，可再测试 splash-adblock-safe.module
+主要问题仍是开屏广告 → 单独测试 splash-adblock-safe.module
 ```
 
-`general-adblock-safe.module` 和 `splash-adblock-safe.module` 可以技术上同时开启，但收益有较多重复，出现 App 异常时排查更困难，因此不建议默认双开。
+`splash-adblock-safe.module` 不再封整个 `baidustatic.com`，避免正常静态资源被 Safe 模块误伤。
 
-### ⑤ 开发模板
+异常排查顺序：
 
-`app-adblock-template.sgmodule`：❌ 不启用。
+```text
+1. 先关闭 webrtc-privacy / proxy-stability 等实验模块
+2. 再关闭 splash-adblock-safe.module
+3. 再关闭 general-adblock-safe.module
+4. 再关闭对应 App / 网站专用模块
+5. HTTPDNS / URL Cleaner 做单独 A/B
+6. 最后才检查基础 privacy-lite
+```
 
-仅作为以后制作某个 App API 级净化模块的模板。
+## ⑥ 开发模板
 
-## 推荐的日常组合
+`app-adblock-template.sgmodule`：❌ 不启用，仅作为以后制作 App API 级净化模块的模板。
+
+## 推荐日常组合
 
 ### 稳定优先
 
@@ -110,44 +129,29 @@ YouTube 模块只保留这一份。不要同时启用旧仓库 URL、重复导�
 ✅ privacy-lite.sgmodule
 ✅ network-health.sgmodule
 ✅ url-cleaner-safe.sgmodule
-✅ youtube-adblock.sgmodule（需要 YouTube 去广告时）
+✅ httpdns-block-safe.sgmodule（首次开启后观察常用 App）
 ✅ 自己实际使用的 App 专用模块
+✅ youtube-adblock.sgmodule（需要 YouTube 去广告时）
 ✅ 51cg1-clean.sgmodule（访问该网站时）
+❌ proxy-stability.sgmodule（出现代理 QUIC 稳定性问题再开）
+❌ webrtc-privacy.sgmodule（有明确 WebRTC 隐私需求再开）
 ❌ general-adblock-safe.module
 ❌ splash-adblock-safe.module
 ❌ app-adblock-template.sgmodule
 ```
 
-### 广告拦截加强版
-
-在稳定优先组合基础上，再增加：
-
-```text
-✅ general-adblock-safe.module
-```
-
-如果仍有明显开屏广告，再单独测试：
-
-```text
-✅ splash-adblock-safe.module
-```
-
-一旦出现 App 启动异常、图片缺失、登录/加载失败，排查顺序：
-
-```text
-1. 先关闭 splash-adblock-safe.module
-2. 再关闭 general-adblock-safe.module
-3. 再关闭对应 App/网站专用模块
-4. 最后才检查基础 privacy-lite / URL Cleaner
-```
-
-## 19 个模块最新地址
+## 22 个模块 Raw 地址
 
 ```text
 # 基础工具
 https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/modules/privacy-lite.sgmodule
 https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/modules/network-health.sgmodule
 https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/modules/url-cleaner-safe.sgmodule
+https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/modules/httpdns-block-safe.sgmodule
+
+# 可选网络 / 隐私
+https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/modules/proxy-stability.sgmodule
+https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/modules/webrtc-privacy.sgmodule
 
 # 通用广告
 https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/modules/general-adblock-safe.module
@@ -174,54 +178,14 @@ https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/too
 https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/modules/app-adblock-template.sgmodule
 ```
 
-## iPhone 迁移 / 安装
-
-旧 `shadowrocket-config` Raw 地址已经不再维护。iPhone 上如果还保存旧模块，建议：
-
-```text
-Shadowrocket → 配置 → 模块
-1. 删除旧 shadowrocket-config 地址导入的模块
-2. 使用上面的 proxy-configs 新地址重新添加
-3. 按“稳定优先”组合启用
-4. 确认 YouTube、淘宝/闲鱼、小红书、51cg1 等常用服务正常
-5. 再逐步开启更多专用或通用广告模块
-```
-
-## Raw 地址规则
-
-所有模块统一使用：
-
-```text
-https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/modules/<模块文件名>
-```
-
-所有脚本统一使用：
-
-```text
-https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/scripts/<脚本文件名>
-```
-
-YouTube 模块当前脚本地址：
-
-```text
-https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/scripts/youtube-adblock-local.js
-```
-
-51CG1 网页净化脚本地址：
-
-```text
-https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/scripts/51cg1-clean.js
-```
-
 ## MITM / 隐私原则
 
-- 不使用 `hostname = *`。
+- 禁止 `hostname = *`。
 - MITM 只给确实需要修改 HTTPS 内容的明确域名。
 - 银行、支付、Apple ID、密码管理器等敏感服务不加入 Toolkit MITM。
-- 不在 GitHub 保存机场订阅地址、Token、Cookie、账号密码或证书私钥。
+- 不在 GitHub 保存机场订阅地址、Token、Cookie、账号密码、UUID、API Key 或证书私钥。
 - App/网站净化采用“一服务一模块”，出现问题可以单独关闭。
-- YouTube 与 51CG1 脚本均不主动联网，仅处理 Shadowrocket 本地截获的响应。
-- 修改前以 GitHub `main` 分支最新版为准。
+- JS 默认 fail-open，不主动外发认证材料或浏览数据。
 
 ## 与正式主配置的关系
 
@@ -231,4 +195,4 @@ Toolkit 不替代：
 shadowrocket/Jax-shadowrocket-v6.conf
 ```
 
-主配置负责节点、策略组、DNS 和基础分流；Toolkit 负责可选增强功能。除非明确需要，不把 Toolkit 内容合并进主配置。
+主配置负责策略组、DNS 和长期稳定分流；`shadowrocket/rules/` 保存 JAX 自托管规则集；Toolkit 负责可选增强功能。
