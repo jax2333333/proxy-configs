@@ -2,13 +2,13 @@
 
 ## 两个正式配置
 
-### 外出 4G / 5G
+### 外出 / 蜂窝 / 非家庭 Wi-Fi
 
 ```text
 https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/Jax-shadowrocket-v6.conf
 ```
 
-用途：Shadowrocket 自己负责 DNS、规则分流、策略组和代理节点。
+用途：Shadowrocket 自己负责 DNS、规则分流、策略组和代理节点。除明确受信家庭 SSID 外，酒店、公司、商场、咖啡店、机场、朋友家等其它 Wi-Fi 也应使用此配置。
 
 ### 家庭 Wi-Fi：只净化，不代理
 
@@ -24,19 +24,24 @@ https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/Jax
 2. 在 Shadowrocket 中分别导入或更新移动主配置与 Home Clean 配置。
 3. 按需添加 Toolkit 模块；涉及 MITM 时确认 Shadowrocket 证书已正确安装并信任。
 4. 高风险模块逐个启用和测试，不一次性开启全部实验功能。
-5. 使用“场景”把家庭 Wi-Fi SSID 绑定 Home Clean，把蜂窝网络绑定移动主配置。
+5. 使用“场景”建立三层兜底：家庭指定 SSID → Home Clean；蜂窝 → Mobile；默认/其它网络 → Mobile。
 
-## 设置家庭 Wi-Fi / 蜂窝网络自动切换
+## 设置家庭 Wi-Fi / 蜂窝 / 其它 Wi-Fi 自动切换
 
 目标：
 
 ```text
-家庭 Wi-Fi
+家庭指定 Wi-Fi
 → Jax-shadowrocket-home-clean.conf
 → Shadowrocket 只净化
 → OpenClash 代理/分流
 
-蜂窝网络 / 外出
+蜂窝网络
+→ Jax-shadowrocket-v6.conf
+→ Shadowrocket 自己代理/分流
+
+其它 Wi-Fi / 未命中网络
+→ 默认场景
 → Jax-shadowrocket-v6.conf
 → Shadowrocket 自己代理/分流
 ```
@@ -74,6 +79,8 @@ SSID：家里 Wi-Fi 的实际名称（必须完全一致）
 备注：JAX Home Clean
 ```
 
+只把**明确确认后端有 OpenWrt / OpenClash** 的家庭 SSID 加入 Home Clean。不要创建“所有 Wi-Fi → Home Clean”的泛化规则。
+
 ### 3. 新建蜂窝网络场景
 
 继续添加：
@@ -87,7 +94,39 @@ SSID：家里 Wi-Fi 的实际名称（必须完全一致）
 
 默认蜂窝接口通常不需要额外填写；如果设备存在多个蜂窝网络接口，再通过 Shadowrocket“设置 → 诊断 → 网络”确认实际接口。
 
-### 4. 启用场景模式
+### 4. 新建默认兜底场景
+
+继续添加：
+
+```text
+网络类型：默认
+路由模式：配置
+配置文件：Jax-shadowrocket-v6.conf
+备注：JAX Default / External Wi-Fi
+```
+
+这个场景负责所有没有命中家庭指定 SSID、也不是明确蜂窝规则的网络。它是外部 Wi-Fi 的安全兜底。
+
+典型行为：
+
+```text
+酒店 Wi-Fi
+公司 Wi-Fi
+商场 / 咖啡店 Wi-Fi
+机场 Wi-Fi
+朋友家 Wi-Fi
+其它未知 Wi-Fi
+        ↓
+没有命中家庭 SSID
+        ↓
+默认场景
+        ↓
+Jax-shadowrocket-v6.conf
+```
+
+**不要让这些网络回落 Home Clean。** Home Clean 的最终规则是 `FINAL,DIRECT`，其设计前提是后端家庭网关继续由 OpenClash 代理；外部 Wi-Fi 通常没有这个条件。
+
+### 5. 启用场景模式
 
 回到：
 
@@ -100,6 +139,20 @@ Shadowrocket 首页
 保持 Shadowrocket 隧道开启。若需要脚本、模块、MITM 持续工作，优先使用“始终开启”或合适的按需求连接设置。
 
 首次按 SSID 建场景时，如果系统要求位置相关权限，需要允许 Shadowrocket 获取识别 Wi-Fi SSID 所需的权限；否则场景列表的网络识别状态可能不能正常更新。
+
+### 6. 场景最终检查表
+
+建议最终只有以下职责关系：
+
+```text
+家庭指定 SSID → Home Clean
+蜂窝数据      → Mobile
+默认/其它网络 → Mobile
+```
+
+如果家里以后增加第二个 SSID / AP，或有个人旅行路由器且也明确由 OpenClash 接管，可单独再添加一个受信 Wi-Fi 场景；不要修改默认场景为 Home Clean。
+
+SSID 不是强身份校验。如果在其它地点碰到与家里完全同名的 SSID，有疑问时手动确认当前配置并优先使用 Mobile。
 
 ## 家庭 Home Clean 验证
 
@@ -167,6 +220,25 @@ httpdns-block-safe.sgmodule
 ```
 
 加入 `tun-excluded-routes`。如果 OpenClash 使用该 Fake-IP 网段，直接从 Shadowrocket TUN 排除它可能让相关连接绕开 Toolkit 净化层。
+
+## 外部 Wi-Fi 验证
+
+连接一个非家庭 Wi-Fi 后，确认场景使用：
+
+```text
+Jax-shadowrocket-v6.conf
+```
+
+而不是 Home Clean。
+
+如果外部 Wi-Fi 下看到当前配置仍是 Home Clean，优先检查：
+
+1. 家庭场景是否误写成任意 Wi-Fi；
+2. 默认场景是否缺失；
+3. 默认场景是否错误指向 Home Clean；
+4. 外部 Wi-Fi 是否恰好与家庭 SSID 同名。
+
+修复原则是让未知/公共网络回落移动主配置，而不是给 Home Clean 增加代理规则。
 
 ## 家庭模式模块建议
 
