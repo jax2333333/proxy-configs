@@ -3,9 +3,10 @@
 | 任务 | 必读 |
 |---|---|
 | 新对话接管 | `README.md` → `CHATGPT-MAINTENANCE-PROMPT.md` → 本索引 |
-| 修改外出 4G / 5G 主配置 | `CURRENT-CONFIG.md` + `main` 中的 `Jax-shadowrocket-v6.conf` |
+| 修改外出 / 蜂窝 / 非家庭 Wi-Fi 主配置 | `CURRENT-CONFIG.md` + `main` 中的 `Jax-shadowrocket-v6.conf` |
 | 修改家庭 Wi-Fi 只净化配置 | `CURRENT-CONFIG.md` + `OPERATIONS.md` + `main` 中的 `Jax-shadowrocket-home-clean.conf`；必须保持正常流量 `FINAL,DIRECT`、DNS `system`、不复制 OpenClash 代理分流 |
-| 设置 Wi-Fi / 蜂窝自动切换 | `OPERATIONS.md` → Shadowrocket 场景 + 两个正式配置 |
+| 设置 Wi-Fi / 蜂窝自动切换 | `OPERATIONS.md` → 三层场景：家庭指定 SSID → Home Clean；蜂窝 → Mobile；默认/其它 Wi-Fi → Mobile |
+| 外部 / 公共 Wi-Fi 走错配置 | `OPERATIONS.md` → “外部 Wi-Fi 验证” + `CURRENT-CONFIG.md`；Home Clean 只允许明确受信且后端有 OpenClash 的家庭 SSID，未知 Wi-Fi 必须回落 Mobile |
 | 修改 JAX 自托管规则 | `CURRENT-CONFIG.md` + 当前 `rules/*.list` + 移动主配置对应 RULE-SET |
 | 修改 Toolkit 模块 | `CURRENT-CONFIG.md` + `toolkit/README.md` + 当前目标 module/script |
 | HTTPDNS 防绕过 | `CURRENT-CONFIG.md` + `TROUBLESHOOTING.md` + 当前 `httpdns-block-safe.sgmodule` |
@@ -15,6 +16,16 @@
 | DNS / IPv6 / QUIC / WebRTC | `TROUBLESHOOTING.md` + 当前所用配置 `[General]` + 对应 Toolkit 模块 |
 | 分析 Shadowrocket `.db` | `TROUBLESHOOTING.md` |
 | 模块安装、更新、回滚 | `OPERATIONS.md` |
+
+## 场景安全原则
+
+```text
+家庭指定 SSID → Home Clean
+蜂窝数据      → Mobile
+默认/其它网络 → Mobile
+```
+
+Home Clean 是窄范围例外，Mobile 是安全兜底。不要将“所有 Wi-Fi”泛化绑定 Home Clean。
 
 ## 权威性顺序
 
