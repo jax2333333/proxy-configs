@@ -31,17 +31,22 @@ shadowrocket/toolkit/
 │   ├── webtoon-adblock.module
 │   ├── wandou-privacy.module
 │   ├── youtube-adblock.sgmodule
-│   ├── 51cg1-clean.sgmodule
+│   ├── tiktok-douyin-adblock.module
+│   ├── site-cleaner.sgmodule
 │   └── app-adblock-template.sgmodule
 └── scripts/
-    ├── url-cleaner.js
+    ├── app-adblock-template.js
+    ├── bilibili-splash-clean.js
+    ├── douyin-feed-adblock.js
     ├── network-health.js
-    ├── youtube-adblock-local.js
-    ├── 51cg1-clean.js
-    └── app-adblock-template.js
+    ├── site-cleaner.js
+    ├── url-cleaner.js
+    └── youtube-adblock-local.js
 ```
 
-当前共 **22 个模块**。
+当前共 **23 个模块**、**7 个脚本**。实际清单始终以 `main` 的 `toolkit/modules/` 与 `toolkit/scripts/` 目录为准。
+
+> `51cg1-clean.sgmodule` / `51cg1-clean.js` 已不再作为独立模块维护。51cg1 现统一由 `site-cleaner.sgmodule` + `site-cleaner.js` 管理，手机端不要继续保留旧的 51cg1 独立模块副本。
 
 ## ① 基础推荐
 
@@ -83,18 +88,21 @@ shadowrocket/toolkit/
 | `webtoon-adblock.module` | WEBTOON 广告 SDK / 广告关键词 | 否 |
 | `wandou-privacy.module` | 豌豆清单广告/追踪保护 | 否 |
 | `youtube-adblock.sgmodule` | YouTube / YouTube Music 去广告实验模块 | YouTube 明确域名 |
+| `tiktok-douyin-adblock.module` | TikTok 安全优先；拦截高置信度字节广告域名，并过滤抖音 `amemv.com` JSON Feed / 短剧明确广告对象 | `*.amemv.com` |
 
 这些 App 专用模块同样可用于 Home Clean：Shadowrocket 只负责本机净化，随后把剩余正常流量交给 OpenClash。
 
+`tiktok-douyin-adblock.module` 属于干预程度较高的专项模块：它会对 `*.amemv.com` 做 HTTPS response 脚本处理。若抖音出现观看历史、推荐流、短剧、搜索、评论或账号页异常，优先关闭本模块做 A/B，不要先扩大 MITM 或封锁整个 ByteDance 共享域名。
+
 YouTube 模块只保留这一份。不要同时启用旧仓库 URL、重复导入副本或其它作用相同的 YouTube MITM 模块，以免同一响应被重复改写。
 
-## ④ 网页专用净化
+## ④ 网站净化中心
 
 | 模块 | 用途 | MITM |
 |---|---|---|
-| `51cg1-clean.sgmodule` | 清理 51cg1.com 外链图片横幅、外部 iframe、明显广告容器与残留占位 | `51cg1.com`、`www.51cg1.com` |
+| `site-cleaner.sgmodule` | JAX 统一网页净化中心：51cg1.com、wnacg.com 使用网页响应净化；missav.ws 当前只做网络级广告域名拦截；另含抖音历史记录精确直连修复 | `51cg1.com`、`www.51cg1.com`、`wnacg.com`、`www.wnacg.com` |
 
-站点专用模块不做全局网页过滤；脚本只处理本机已截获内容，不主动外发 Cookie、Header 或浏览历史。
+网站净化采用统一模块维护，不再“一网站一个旧模块”。当前 `site-cleaner.sgmodule` 明确不对 `missav.ws` 主站 MITM，以避免 Cloudflare 验证循环；脚本只处理本机已截获内容，不主动外发 Cookie、Header 或浏览历史。
 
 ## ⑤ 通用广告模块：按需
 
@@ -110,19 +118,20 @@ YouTube 模块只保留这一份。不要同时启用旧仓库 URL、重复导�
 主要问题仍是开屏广告 → 单独测试 splash-adblock-safe.module
 ```
 
-`splash-adblock-safe.module` 不再封整个 `baidustatic.com`，避免正常静态资源被 Safe 模块误伤。
+`splash-adblock-safe.module` 不再封整个 `baidustatic.com`，避免正常静态资源被 Safe 模块误伤。已经大量启用 App 专用净化模块时，通常不建议再常开它；否则会增加规则重叠和排障变量。
 
 异常排查顺序：
 
 ```text
 1. WebRTC / 实时音视频异常 → 先查重复 webrtc-privacy，再撤销当前配置 STUN 字段
-2. 移动代理 QUIC 异常 → 关闭 proxy-stability.sgmodule 做 A/B
-3. Home Clean 国外访问异常 → 先查 OpenClash / 场景 / DNS，不给 Home Clean 加代理组
-4. 再关闭 splash-adblock-safe.module
-5. 再关闭 general-adblock-safe.module
-6. 再关闭对应 App / 网站专用模块
-7. HTTPDNS / URL Cleaner 做单独 A/B
-8. 最后才检查基础 privacy-lite
+2. 抖音 Feed / 历史 / 短剧 / 评论异常 → 先关闭 tiktok-douyin-adblock.module 做 A/B
+3. 移动代理 QUIC 异常 → 关闭 proxy-stability.sgmodule 做 A/B
+4. Home Clean 国外访问异常 → 先查 OpenClash / 场景 / DNS，不给 Home Clean 加代理组
+5. 再关闭 splash-adblock-safe.module
+6. 再关闭 general-adblock-safe.module
+7. 再关闭对应 App / 网站专用模块
+8. HTTPDNS / URL Cleaner 做单独 A/B
+9. 最后才检查基础 privacy-lite
 ```
 
 ## ⑥ 开发模板
@@ -141,11 +150,12 @@ YouTube 模块只保留这一份。不要同时启用旧仓库 URL、重复导�
 ✅ httpdns-block-safe.sgmodule（首次开启后观察常用 App）
 ✅ 自己实际使用的 App 专用模块
 ✅ youtube-adblock.sgmodule（需要 YouTube 去广告时）
-✅ 51cg1-clean.sgmodule（访问该网站时）
+✅ site-cleaner.sgmodule（需要网站净化时）
+🟠 tiktok-douyin-adblock.module（需要抖音/TikTok 广告净化时；出现 App 功能异常优先关闭 A/B）
 ⚙️ proxy-stability.sgmodule（按需；若实测有收益可长期保持开启）
 ℹ️ webrtc-privacy.sgmodule（备用，不与正式配置重复启用）
 ❌ general-adblock-safe.module
-❌ splash-adblock-safe.module
+❌ splash-adblock-safe.module（大量 App 专用模块已开启时建议关闭）
 ❌ app-adblock-template.sgmodule
 ```
 
@@ -157,17 +167,19 @@ YouTube 模块只保留这一份。不要同时启用旧仓库 URL、重复导�
 ✅ network-health.sgmodule
 ✅ url-cleaner-safe.sgmodule
 ✅ httpdns-block-safe.sgmodule（首次开启后观察常用 App）
-✅ 自己实际使用的 App / 网站专用模块
+✅ 自己实际使用的 App 专用模块
 ✅ youtube-adblock.sgmodule（需要时）
+✅ site-cleaner.sgmodule（需要网站净化时）
+🟠 tiktok-douyin-adblock.module（需要时；异常优先单独关闭 A/B）
 
 ✅/按需 proxy-stability.sgmodule（可以保持开启；Home Clean 下通常基本不生效）
 ℹ️ webrtc-privacy.sgmodule（Home Clean 已内置，不重复开启）
-❌ general-adblock-safe.module（基础/专用模块不够时再测试）
-❌ splash-adblock-safe.module（最后单独测试）
+❌ general-adblock-safe.module（除非基础/专用模块仍不够）
+❌ splash-adblock-safe.module（大量 App 专用模块已开启时建议关闭）
 ❌ app-adblock-template.sgmodule
 ```
 
-## 22 个模块 Raw 地址
+## 23 个模块 Raw 地址
 
 ```text
 # 基础工具
@@ -197,9 +209,10 @@ https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/too
 https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/modules/webtoon-adblock.module
 https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/modules/wandou-privacy.module
 https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/modules/youtube-adblock.sgmodule
+https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/modules/tiktok-douyin-adblock.module
 
-# 网页专用
-https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/modules/51cg1-clean.sgmodule
+# 网站净化中心
+https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/modules/site-cleaner.sgmodule
 
 # 开发模板
 https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/modules/app-adblock-template.sgmodule
