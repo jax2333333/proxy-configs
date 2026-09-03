@@ -1,6 +1,10 @@
-# openclash_by_jax_v5.4
-# 基于 V5.3 修改
+# openclash_by_jax_v5.5
+# 基于 V5.4 修改
 # 目标：防 DNS 泄漏 / 国内低延迟直连 / 国外高性能 / Smart 内核 / 节点过滤优化
+#
+# V5.5 更新：
+# 1. Steam 国内下载规则由 ios_rule_script classical YAML 改为 MetaCubeX steam@cn.mrs
+# 2. ZeroTier 9993 直连规则收窄为仅 UDP，减少无关 TCP 9993 流量被放行
 #
 # V5.4 更新：
 # 1. Airport1 仅加入原有智能/地区/故障转移分组
@@ -380,16 +384,12 @@ rule-providers:
 
   # ----------------------------------------------------------
   # Steam 国内下载 / CDN
-  # 来自 jax2333333/ios_rule_script
+  # 使用 MetaCubeX steam@cn.mrs，数据已合并 ios_rule_script/SteamCN
   # ----------------------------------------------------------
 
   steam_cn:
-    type: http
-    interval: 86400
-    behavior: classical
-    format: yaml
-    url: "https://raw.githubusercontent.com/jax2333333/ios_rule_script/master/rule/Clash/SteamCN/SteamCN.yaml"
-    path: "./rule_provider/steam_cn.yaml"
+    <<: *domain
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/steam@cn.mrs"
 
 
   # ----------------------------------------------------------
@@ -434,10 +434,10 @@ rules:
 
 # ------------------------------------------------------------
 # ZeroTier
-# 主控制 / 打洞端口直连
+# 主控制 / 打洞端口直连，仅 UDP 9993
 # ------------------------------------------------------------
 
-- DST-PORT,9993,🚀 直连
+- AND,((NETWORK,UDP),(DST-PORT,9993)),🚀 直连
 
 
 # ------------------------------------------------------------
