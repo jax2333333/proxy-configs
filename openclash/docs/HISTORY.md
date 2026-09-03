@@ -33,7 +33,16 @@
 - `🌐 全部节点` 仍包含所有 Provider。
 - `🔮 节点选择` 增加 `♻️ 备用智能选择` 选项；其它功能组不直接增加该选项。
 
-后续版本请直接读 YAML 头部注释和 Git 历史，不在本文件假定最新版仍是 V5.4。
+### V5.5
+
+- Steam 国内下载规则源从 `jax2333333/ios_rule_script` 的 classical `SteamCN.yaml` 改为 MetaCubeX `steam@cn.mrs`。
+- `steam_cn` 因此统一复用 `domain` MRS anchor，减少一个单独的 classical rule-provider 类型。
+- MetaCubeX 的 `steam@cn` 本身已合并 `ios_rule_script/SteamCN` 数据，因此不再重复维护等价规则源。
+- ZeroTier 直连规则从所有 `DST-PORT 9993` 收窄为 `NETWORK=UDP + DST-PORT=9993`，避免无关 TCP 9993 被高优先级直连。
+
+这一版之前做过一次 `ios_rule_script` 与当前 MetaCubeX 规则源交叉审计，形成的长期维护结论是：**OpenClash 路由器端继续以 MetaCubeX MRS 规则为主；`ios_rule_script` 用于规则来源核对或补充没有等价 MRS 的专项规则，不为了“规则更多”重复叠加大型 classical 规则集。**
+
+后续版本请直接读 YAML 头部注释和 Git 历史，不在本文件假定某个版本号仍是最新版。
 
 ## 2. DNS Strict 历史验证
 
