@@ -180,14 +180,16 @@ httpdns-block-safe.sgmodule
 ✅ 实际使用的 App / 网站专用模块
 ✅ youtube-adblock.sgmodule（有需求时）
 
-❌ proxy-stability.sgmodule
+✅/按需 proxy-stability.sgmodule（若外出移动模式需要，可长期保持开启；Home Clean 下通常基本不生效）
 ℹ️ webrtc-privacy.sgmodule（两个正式配置已经内置，不重复开启）
 ❌ general-adblock-safe.module（除非基础/专用模块仍不够）
 ❌ splash-adblock-safe.module（最后单独测试）
 ❌ app-adblock-template.sgmodule
 ```
 
-`proxy-stability.sgmodule` 的 `block-quic = all-proxy` 针对 Shadowrocket 自己的代理连接；Home Clean 没有 Shadowrocket 代理流量，因此家庭模式默认不启用。代理 QUIC 稳定性应在 OpenClash 层处理。
+`proxy-stability.sgmodule` 的 `block-quic = all-proxy` 只针对 Shadowrocket 自己的代理连接。Home Clean 的正常流量最终 `FINAL,DIRECT`，因此即使模块保持开启，通常也没有 Shadowrocket PROXY 流量可供它阻断 QUIC；家庭实际代理 QUIC 仍由 OpenClash 负责。
+
+如果外出移动模式已经确认开启 `proxy-stability.sgmodule` 有收益，可以让它长期保持开启，**不需要回家关闭、出门再打开**。只有移动模式出现延迟升高、耗电变化或 App 兼容性问题时，才关闭该模块做 A/B。
 
 ## WebRTC / 实时音视频 P0 回退
 
