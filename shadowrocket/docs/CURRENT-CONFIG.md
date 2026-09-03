@@ -4,7 +4,7 @@
 
 ## 正式边界
 
-- 外出 4G / 5G 主配置：`shadowrocket/Jax-shadowrocket-v6.conf`
+- 外出 / 公共网络主配置：`shadowrocket/Jax-shadowrocket-v6.conf`
 - 家庭 Wi-Fi 净化配置：`shadowrocket/Jax-shadowrocket-home-clean.conf`
 - 自托管规则：`shadowrocket/rules/`
 - Toolkit：`shadowrocket/toolkit/`
@@ -12,7 +12,7 @@
 
 ## 两种正式运行模式
 
-### 1. 外出 4G / 5G
+### 1. 外出 / 蜂窝 / 非家庭 Wi-Fi
 
 `Jax-shadowrocket-v6.conf` 由 Shadowrocket 自己负责：
 
@@ -22,9 +22,11 @@
 - 实际代理节点选择；
 - Toolkit 广告/隐私/脚本增强。
 
+此配置不仅用于 4G / 5G，也必须作为 **所有未明确受信 Wi-Fi 的兜底配置**，包括酒店、公司、商场、咖啡店、机场、朋友家等网络。
+
 ### 2. 家庭 Wi-Fi：只净化，不代理
 
-`Jax-shadowrocket-home-clean.conf` 专门用于家里已经由 OpenWrt / OpenClash 负责透明代理的网络。
+`Jax-shadowrocket-home-clean.conf` 专门用于已经明确确认由 OpenWrt / OpenClash 负责透明代理的受信家庭网络。
 
 固定职责链：
 
@@ -48,7 +50,27 @@ iPhone
 6. `proxy-stability.sgmodule` 不要求因回家而关闭。它的 `block-quic = all-proxy` 只作用于 Shadowrocket 自己的 PROXY 连接；Home Clean 正常流量均为 DIRECT，所以模块保持开启时通常基本不生效。家庭实际代理 QUIC/UDP 稳定性仍由 OpenClash 层处理。
 7. 如果用户在移动模式决定启用 `proxy-stability.sgmodule`，可以让模块长期保持开启，无需随家庭 Wi-Fi / 蜂窝网络场景手工切换；只有移动端实测体验变差时才关闭。
 8. 启用的 Toolkit 广告、URL Cleaner、HTTPDNS、App 专用模块仍可作为 iPhone 本机净化层使用。
-9. Shadowrocket“场景”可按家庭 Wi-Fi SSID 使用 Home Clean，蜂窝网络使用移动主配置。
+9. Home Clean **只允许绑定明确确认后端有 OpenWrt / OpenClash 的受信 Wi-Fi SSID**。酒店、公司、商场、咖啡店、机场、朋友家或任何未知 Wi-Fi 不得使用 Home Clean。
+10. SSID 只是自动切换条件，不是强安全身份校验。如果其它地点出现与家庭相同的 SSID，不能仅凭 SSID 名称假设后端仍有 OpenClash；有疑问时使用移动主配置。
+
+## 场景固定兜底规则
+
+Shadowrocket“场景”长期采用三层结构：
+
+```text
+家庭指定 SSID
+→ Jax-shadowrocket-home-clean.conf
+
+蜂窝数据
+→ Jax-shadowrocket-v6.conf
+
+默认 / 其它所有未命中网络
+→ Jax-shadowrocket-v6.conf
+```
+
+长期原则：**Home Clean 是窄范围例外，Mobile 是安全兜底。** 不允许把“任意 Wi-Fi”绑定 Home Clean。
+
+如果以后增加第二个家庭 AP / SSID、个人旅行路由器或其它已确认由 OpenClash 承担代理的网络，应逐个明确加入受信场景；不要放宽成所有 Wi-Fi。
 
 ## 长期约定
 
@@ -112,4 +134,5 @@ WebRTC Privacy 当前在移动主配置和家庭配置中默认启用：使用 `
 - 没有公网 DoH / `hijack-dns`；
 - `198.18.0.0/15` 没有被加入 `tun-excluded-routes`；
 - `FINAL,DIRECT` 仍是最终兜底；
-- 没有把 OpenClash 应负责的国外分流逻辑复制到 Shadowrocket 家庭配置。
+- 没有把 OpenClash 应负责的国外分流逻辑复制到 Shadowrocket 家庭配置；
+- 场景只把明确受信家庭 SSID 绑定 Home Clean；默认/未知网络仍回落移动主配置。
