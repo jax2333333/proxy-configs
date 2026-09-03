@@ -60,8 +60,9 @@ OpenClash 生成运行时配置 → Mihomo
 - Apple 默认直连，同时保留代理可选项；Apple Intelligence / Relay 统一交给 `🍎 Apple`。
 - APNs / `push.apple.com` 优先直连。
 - AI、YouTube、Telegram、GitHub、Netflix、TikTok、Steam、Microsoft、OneDrive 等保持独立策略语义。
-- Steam 国内下载规则优先直连，商店流量单独分组。
-- ZeroTier 控制/打洞端口保持直连规则。
+- 路由器端规则以 MetaCubeX `meta-rules-dat` 的 MRS 规则为主；`ios_rule_script` 主要用于规则来源核对或补充没有等价 MRS 的专项规则，避免重复叠加大型 classical 规则集。
+- Steam 国内下载规则使用 MetaCubeX `steam@cn.mrs` 并优先直连，商店流量单独分组。
+- ZeroTier 控制 / 打洞仅对 **UDP 9993** 设置高优先级直连。
 - 智能选择通常排除明显“免费 / 0.01 倍率”等低质量节点；是否进一步排除其它倍率，必须读当前 YAML 后再改。
 - `browserleaks.com` 保留高优先级代理规则，避免被 `cn_domain` 误分类后直连。
 - DNS 当前设计为：境外默认使用海外加密 DNS；中国域名和 DIRECT 使用国内 DoH；节点域名使用国内 DoH 避免启动死循环。详细字段以当前 YAML 为准。
