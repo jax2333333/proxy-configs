@@ -17,7 +17,16 @@
 
 App 自带 HTTPDNS 属于另一层解析绕过。当前采用独立 `toolkit/modules/httpdns-block-safe.sgmodule` 做高置信度纯规则阻断，不在主配置中扩大业务 API MITM。
 
-WebRTC Privacy 当前在正式主配置中默认启用：使用 `stun-response-ip` / `stun-response-ipv6` 为 STUN 返回替代地址，降低真实网络地址通过 WebRTC 暴露的风险。该设置可能影响 FaceTime、Google Meet、Discord 语音或网页实时音视频；若出现异常，优先撤销这两个字段做 A/B。`toolkit/modules/webrtc-privacy.sgmodule` 仅保留为独立备用/迁移模块，不需要与主配置重复启用。
+WebRTC Privacy 当前在正式主配置中默认启用：使用 `stun-response-ip` / `stun-response-ipv6` 为 STUN 返回替代地址，降低真实网络地址通过 WebRTC 暴露的风险。`toolkit/modules/webrtc-privacy.sgmodule` 仅保留为独立备用/迁移模块，不需要与主配置重复启用。
+
+#### WebRTC 固定排障优先级
+
+凡出现 **FaceTime、Google Meet、Discord 语音、网页视频会议**等实时音视频的建连失败、单向音频、无视频、通话中断或明显异常，**优先排查 WebRTC Privacy 层**，不要先改 DNS、节点、QUIC 或扩大 MITM：
+
+1. 第一优先检查 `toolkit/modules/webrtc-privacy.sgmodule` 是否被启用、重复导入或与主配置同时生效；如已启用，先关闭该模块复测。
+2. 若模块未启用或关闭后仍异常，再临时撤销主配置 `[General]` 中 `stun-response-ip` 与 `stun-response-ipv6` 两个字段，重新加载配置并复测。
+3. 只有 WebRTC Privacy A/B 无法解释问题时，才继续检查 `proxy-stability.sgmodule`、UDP/QUIC、策略组、节点、DNS、MITM 或目标服务自身状态。
+4. 后续 ChatGPT 接管项目时，遇到上述实时音视频故障，应主动提醒用户先执行这一优先排查流程。
 
 ### 路由
 
@@ -42,7 +51,7 @@ WebRTC Privacy 当前在正式主配置中默认启用：使用 `stun-response-i
 
 `proxy-stability.sgmodule`（`block-quic = all-proxy`）仍属于可选实验增强，不写死到主配置；出现兼容性问题直接关闭模块做 A/B。
 
-`webrtc-privacy.sgmodule` 仅作为独立备用模块；正式主配置已默认包含等价的 STUN 隐私字段，不建议重复启用。
+`webrtc-privacy.sgmodule` 仅作为独立备用模块；正式主配置已默认包含等价的 STUN 隐私字段，不建议重复启用。实时音视频异常时，它属于第一优先排查对象。
 
 ## 修改前检查
 
