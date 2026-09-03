@@ -18,7 +18,7 @@
 
 ```text
 shadowrocket/
-├── Jax-shadowrocket-v6.conf          # 外出 4G / 5G：Shadowrocket 自己负责代理与分流
+├── Jax-shadowrocket-v6.conf          # 外出 / 蜂窝 / 非家庭 Wi-Fi：Shadowrocket 自己负责代理与分流
 ├── Jax-shadowrocket-home-clean.conf  # 家庭 Wi-Fi：Shadowrocket 只净化，OpenClash 负责代理与分流
 ├── README.md                         # 本入口与长期架构
 ├── rules/                            # JAX 自托管规则集（如 ai-core.list）
@@ -29,7 +29,7 @@ shadowrocket/
     └── scripts/
 ```
 
-- `Jax-shadowrocket-v6.conf`：移动网络正式主配置，负责网络基础、策略组、DNS 与长期稳定分流。
+- `Jax-shadowrocket-v6.conf`：外出正式主配置，负责网络基础、策略组、DNS 与长期稳定分流；不仅用于 4G / 5G，也作为酒店、公司、商场、咖啡店、机场、朋友家等非家庭 Wi-Fi 的默认兜底。
 - `Jax-shadowrocket-home-clean.conf`：家庭 Wi-Fi 专用净化配置，不包含代理节点/策略组，正常流量 `FINAL,DIRECT` 交给 OpenWrt / OpenClash；DNS 使用 `system`，不在 Shadowrocket 层指定公网 DoH 或 `hijack-dns`。
 - `rules/` 只保存经过筛选、需要由 JAX 自己控制边界的规则集；不复制大而全社区列表。
 - Toolkit 负责广告净化、URL 清理、HTTPDNS 防绕过、可选网络稳定性增强与专项脚本。
@@ -38,7 +38,7 @@ shadowrocket/
 
 ## 当前稳定设计
 
-### 外出 4G / 5G
+### 外出 / 蜂窝 / 非家庭 Wi-Fi
 
 - 移动主配置当前为 V6.3 系列；实际版本号必须读取 `Jax-shadowrocket-v6.conf`。
 - `[Rule]` 顶部保留 `JAX Overrides`，仅放已验证且不与 TikTok 共享基础设施冲突的国内稳定补丁。
@@ -46,6 +46,7 @@ shadowrocket/
 - GitHub 使用独立 `💻 GitHub` 策略组。
 - 已验证映射的核心社区规则优先引用用户同步维护的 `jax2333333/ios_rule_script` fork；没有确认等价映射的规则源不盲目替换。
 - TikTok 规则始终位于抖音 DIRECT 规则之前；不把共享 ByteDance 域名直接判为国内。
+- 所有未知 / 公共 / 非家庭 Wi-Fi 应由“默认”场景回落到此移动主配置，不得误用 Home Clean。
 
 ### 家庭 Wi-Fi
 
@@ -71,7 +72,30 @@ iPhone
 - 不把 OpenClash Fake-IP 常用的 `198.18.0.0/15` 加入 `tun-excluded-routes`，避免相关连接绕开 Shadowrocket Toolkit 净化层。
 - `proxy-stability.sgmodule` **不要求因回家而关闭**。它只作用于 Shadowrocket 自己的 PROXY 连接；Home Clean 正常流量均为 DIRECT，所以保持开启时通常基本不生效。家庭实际代理 QUIC 仍由 OpenClash 层负责。
 - 如果外出移动模式需要 `proxy-stability.sgmodule`，可以让模块长期保持开启，无需随 Wi-Fi / 蜂窝场景来回切换；只有移动端实测出现延迟、功耗或兼容性变差时才关闭。
-- 可以通过 Shadowrocket“场景”按家庭 Wi-Fi SSID 自动使用家庭配置，蜂窝网络自动使用移动配置。
+- Home Clean 只绑定明确确认后端有 OpenWrt / OpenClash 的家庭 SSID；不要绑定“任意 Wi-Fi”。
+
+### 场景自动切换固定规则
+
+```text
+家庭指定 SSID
+→ Jax-shadowrocket-home-clean.conf
+
+蜂窝数据
+→ Jax-shadowrocket-v6.conf
+
+默认 / 其它所有未命中网络
+→ Jax-shadowrocket-v6.conf
+```
+
+核心原则：**Home Clean 是窄范围例外，Mobile 是安全兜底。**
+
+因此：
+
+- 家里 → Home Clean；
+- 4G / 5G → Mobile；
+- 酒店 / 公司 / 商场 / 咖啡店 / 机场 / 朋友家 / 其它未知 Wi-Fi → Mobile。
+
+SSID 仅用于自动切换，不是强身份校验。如果其它地点存在与家里同名的 SSID，有疑问时优先使用 Mobile。
 
 ## 稳定维护原则
 
