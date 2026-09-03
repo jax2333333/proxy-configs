@@ -59,6 +59,47 @@
 3. 只有 WebRTC/STUN A/B 无法解释问题时，才继续检查 QUIC、DNS、节点、策略组、MITM、运营商或目标服务自身。
 4. 后续 ChatGPT 接管时，只要用户提到 FaceTime、Meet、Discord 语音或网页视频会议异常，应主动提醒这一优先级。
 
+## 2026-09-04：家庭 Wi-Fi Home Clean 架构
+
+新增正式配置：
+
+```text
+shadowrocket/Jax-shadowrocket-home-clean.conf
+```
+
+### 背景
+
+家庭网络已经由 OpenWrt / OpenClash 负责透明代理。若 iPhone 在家仍使用移动版 Shadowrocket 代理规则，会形成职责重复：Shadowrocket 先决定代理，再经过 OpenClash 二次处理，增加双层代理、DNS 竞争和故障定位复杂度。
+
+因此新增独立 Home Clean 模式，把职责拆开：
+
+```text
+iPhone
+→ Shadowrocket：广告/追踪/Rewrite/Script/MITM 净化
+→ 正常流量 FINAL,DIRECT
+→ 家庭 OpenWrt / OpenClash：DNS、国内/国外分流、最终代理节点
+```
+
+### 固定设计决策
+
+- Home Clean 不包含机场节点、代理组、AI/TikTok/YouTube 等国外代理分流 RULE-SET。
+- 正常流量统一 `FINAL,DIRECT`；Shadowrocket 的 DIRECT 只表示“不使用 Shadowrocket 节点”，并不绕过当前 Wi-Fi 网关。
+- Home Clean 使用 `dns-server = system` / `fallback-dns-server = system`，不设置公网 DoH 与 `hijack-dns`，优先让家庭 OpenClash DNS 链路负责解析。
+- 保持 IPv6 关闭，与当前 JAX 网络偏好一致。
+- Home Clean 同样内置 WebRTC/STUN 隐私字段，因此 `webrtc-privacy.sgmodule` 不重复开启；实时音视频异常继续按 WebRTC P0 流程回退。
+- `proxy-stability.sgmodule` 在 Home Clean 默认关闭，因为它只针对 Shadowrocket 自身的代理 QUIC，而家庭模式的实际代理由 OpenClash 完成。
+- 不把 OpenClash Fake-IP 常用 `198.18.0.0/15` 加入 Home Clean 的 `tun-excluded-routes`。目标是让 Fake-IP 对应连接仍通过 Shadowrocket Toolkit 净化层，再以 DIRECT 交给网关/OpenClash。
+- 推荐使用 Shadowrocket“场景”：家庭 Wi-Fi SSID → Home Clean；蜂窝数据 → `Jax-shadowrocket-v6.conf`。
+
+### 维护边界
+
+Home Clean 的目标是“本机净化层”，不能逐步膨胀成第二套 OpenClash。以后新增家庭规则时，先判断它属于：
+
+- 广告/追踪/URL 清理/本机脚本 → Shadowrocket Toolkit；
+- 国内/国外代理分流、节点选择、DNS/Fake-IP、代理 QUIC → OpenClash。
+
+如果功能属于后一类，不应塞进 Home Clean。
+
 ## 抖音 / TikTok 去广告
 
 ### 域名 REJECT
