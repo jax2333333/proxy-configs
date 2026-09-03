@@ -1,0 +1,9 @@
+#!name=JAX WebRTC Privacy
+#!desc=为 STUN 返回替代地址，降低 WebRTC 暴露真实网络地址的风险；可能影响实时音视频，按需启用。2026-09-04
+
+# 不建议默认常开：FaceTime、Google Meet、Discord 语音和网页 WebRTC 可能受影响。
+# 需要增强浏览器隐私时单独开启；出现通话异常时首先关闭本模块。
+
+[General]
+stun-response-ip = 1.0.0.1
+stun-response-ipv6 = ::1
