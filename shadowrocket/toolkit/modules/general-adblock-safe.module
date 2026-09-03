@@ -51,7 +51,8 @@ DOMAIN,open.e.kuaishou.com,REJECT
 DOMAIN,open.e.kuaishou.cn,REJECT
 
 # Umeng / common analytics trackers
-DOMAIN,cnlogs.umeng.com,REJECT
+# cnlogs.umeng.com intentionally not blocked here: the main Shadowrocket config
+# keeps it DIRECT for domestic-service stability and to avoid policy conflicts.
 DOMAIN,errlog.umeng.com,REJECT
 DOMAIN,ulogs.umeng.com,REJECT
 DOMAIN,log.umtrack.com,REJECT
