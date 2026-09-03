@@ -6,6 +6,59 @@
 
 历史上进行过 Apple PCC / Private Relay 分流修正、国内服务最小直连补丁、TikTok 与抖音规则梳理，以及 DNS、IPv6、UDP/QUIC 日志检查。当前是否仍保留某项实现，以 `main` 为准。
 
+## 2026-09-04：P0 整理与 V6.3 / V6.3.1
+
+本轮维护先处理两个 P0，再推进后续结构优化。
+
+### P0：`ios_rule_script` fork 整理
+
+- `jax2333333/ios_rule_script` 旧 `master` 与 Blackmatrix7 上游已分叉，不能继续假设它是最新规则源。
+- 检查发现 fork 的独有提交主要为历史 `github-actions[bot]` 自动生成更新，没有用户本人提交需要保留为正式差异。
+- 先建立归档分支 `archive/pre-upstream-sync-20260904` 保存旧状态，再将 fork `master` 对齐当时 Blackmatrix7 上游当前 SHA。
+- 后续该 fork 可作为受控规则镜像，但使用前仍要确认是否与上游同步；不得因为“是自己的 fork”就默认它永远最新。
+
+### P0：Umeng 规则冲突
+
+- 主配置明确将 `cnlogs.umeng.com` 设为 DIRECT，以国内服务稳定性为优先。
+- `general-adblock-safe.module` 曾同时包含 `DOMAIN,cnlogs.umeng.com,REJECT`，模块优先级可能覆盖主配置意图。
+- 已从通用广告 Safe 模块移除该 REJECT，保留主配置 DIRECT；以后 Safe 模块不得重新制造这一冲突。
+
+### V6.3：结构与规则源优化
+
+- 新增 `[Rule]` 顶部 `JAX Overrides`，只放已验证的国内独立服务补丁；TikTok / 抖音共享 ByteDance 域名不得放入该区提前 DIRECT。
+- 新增独立 `💻 GitHub` 策略组与 GitHub RULE-SET，便于 GitHub / Raw / GitHubusercontent 单独换节点和排障。
+- 新增 `shadowrocket/rules/ai-core.list`，仅维护 OpenAI/ChatGPT、Claude、Gemini/AI Studio、明确 Copilot 等高置信度 AI 核心域名；避免 Stripe、Auth0、Sentry、Segment 等共享 SaaS 被宽泛归入 AI。
+- 已逐项确认映射的核心 RULE-SET 迁移到同步后的 `jax2333333/ios_rule_script` fork；没有确认等价目录的规则仍保留原来源，不靠猜目录批量替换。
+- TikTok 规则继续保持在抖音 DIRECT 规则之前；共享基础设施冲突时仍以 TikTok 地区/账号稳定优先。
+- 用户明确要求跳过“统一所有地区节点倍率过滤”，因此该项未实施。
+
+### 新增安全增强模块
+
+- `httpdns-block-safe.sgmodule`：高置信度 HTTPDNS 专用域名/IP 纯规则阻断，零 MITM，用于降低 App 自带 HTTPDNS 绕过系统解析的机会。
+- `proxy-stability.sgmodule`：`block-quic = all-proxy`，仅在需要时让代理 QUIC 回落 TCP/HTTP2；默认不写死进主配置。
+- `webrtc-privacy.sgmodule`：最初设计为可选 WebRTC/STUN 隐私模块，后在 V6.3.1 将等价字段直接写入正式主配置；该模块现仅作为备用/迁移文件。
+- `splash-adblock-safe.module` 收窄过宽规则，移除整个 `baidustatic.com` 的 REJECT，降低正常静态资源误伤风险。
+
+### V6.3.1：WebRTC Privacy 默认启用
+
+正式主配置 `[General]` 默认加入：
+
+- `stun-response-ip = 1.0.0.1`
+- `stun-response-ipv6 = ::1`
+
+目的是让 STUN 返回替代地址，降低 WebRTC 暴露真实网络地址的风险。
+
+已明确接受的兼容性代价：FaceTime、Google Meet、Discord 语音、网页视频会议等实时音视频可能出现建连失败、单向音频、视频异常或断开。
+
+#### 固定排障决策
+
+以后出现上述实时音视频异常时，**WebRTC Privacy 是 P0 第一优先级**：
+
+1. 先检查 `webrtc-privacy.sgmodule` 是否被启用、重复导入或与主配置同时生效；如启用，先关闭模块。
+2. 若仍异常，再临时撤销主配置 `stun-response-ip` / `stun-response-ipv6` 做 A/B。
+3. 只有 WebRTC/STUN A/B 无法解释问题时，才继续检查 QUIC、DNS、节点、策略组、MITM、运营商或目标服务自身。
+4. 后续 ChatGPT 接管时，只要用户提到 FaceTime、Meet、Discord 语音或网页视频会议异常，应主动提醒这一优先级。
+
 ## 抖音 / TikTok 去广告
 
 ### 域名 REJECT
