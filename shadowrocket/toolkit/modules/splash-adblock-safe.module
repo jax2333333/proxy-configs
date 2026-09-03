@@ -1,5 +1,5 @@
 #!name=JAX - 开屏广告拦截
-#!desc=隐私优先轻量版：常见开屏/广告 SDK 域名拦截；Bilibili 使用自托管响应脚本清空开屏广告；无第三方 JS、无外部 Worker、无全局 MITM。2026-08-30
+#!desc=隐私优先轻量版：常见开屏/广告 SDK 域名拦截；Bilibili 使用自托管响应脚本清空开屏广告；无第三方 JS、无外部 Worker、无全局 MITM。2026-09-04
 
 # 这是对 adultraplus 类模块的安全化替代：
 # - 优先用域名规则，不解密不必要的 HTTPS。
@@ -33,7 +33,7 @@ DOMAIN-SUFFIX,adukwai.com,REJECT
 
 # Baidu Ads
 DOMAIN,mobads.baidu.com,REJECT
-DOMAIN-SUFFIX,baidustatic.com,REJECT
+# Do not block the whole baidustatic.com suffix in a Safe module: it also carries normal static resources.
 
 # Generic mobile ad SDKs
 DOMAIN-SUFFIX,googlesyndication.com,REJECT
