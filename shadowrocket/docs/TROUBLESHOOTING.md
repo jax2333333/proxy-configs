@@ -52,11 +52,33 @@ YouTube 异常按模块逐层停用，不直接改主配置。IPv6 当前默认�
 4. 对比 4G/5G 与 Wi-Fi；
 5. 若没有明确收益则保持关闭。
 
-## WebRTC / STUN
+## WebRTC / STUN — 实时音视频故障 P0 排查
 
-`webrtc-privacy.sgmodule` 使用 `stun-response-ip` / `stun-response-ipv6` 返回替代地址以降低 WebRTC 暴露真实网络地址的风险。
+当前正式主配置 V6.3.1 已默认启用 WebRTC Privacy：`[General]` 中包含 `stun-response-ip` / `stun-response-ipv6`。`toolkit/modules/webrtc-privacy.sgmodule` 仅保留为备用模块，不应与主配置重复启用。
 
-它可能影响 FaceTime、Google Meet、Discord 语音、网页视频会议等实时通信，因此默认按需启用。出现通话建立失败、单向音频或视频异常时，首先关闭该模块复测。
+### 适用症状
+
+只要出现以下任一情况，**先执行本节，不要先改 DNS、节点、QUIC 或 MITM**：
+
+- FaceTime 无法建立通话、接通后无声音/无画面；
+- Google Meet 建连失败、单向音频、视频异常；
+- Discord 语音无法加入、无声音、频繁断开；
+- Safari/浏览器网页视频会议、WebRTC 通话异常；
+- 其它实时音视频出现与代理开启明显相关的兼容性问题。
+
+### P0 固定排查顺序
+
+1. **第一优先检查 `webrtc-privacy.sgmodule`**：确认它是否被启用、重复导入，或与主配置的 STUN 隐私字段同时生效；若已启用，先关闭该模块。
+2. 重新加载 Shadowrocket 配置，完全退出并重开 FaceTime / Meet / Discord / 浏览器后复测。
+3. 若 `webrtc-privacy.sgmodule` 本来就未启用，或关闭后仍异常，则临时撤销主配置 `[General]` 中：
+   - `stun-response-ip = 1.0.0.1`
+   - `stun-response-ipv6 = ::1`
+4. 再次重新加载配置并复测。若恢复，优先判定为 WebRTC/STUN 隐私设置兼容性问题。
+5. 只有上述 A/B 无法解释问题时，才继续检查 `proxy-stability.sgmodule`、UDP/QUIC、策略组/节点、DNS、MITM、目标服务状态或运营商网络。
+
+### ChatGPT 接管规则
+
+后续任何新对话中，只要用户反馈 **FaceTime、Google Meet、Discord 语音、网页视频会议**等实时音视频异常，ChatGPT 应主动提醒：**先排查 `webrtc-privacy.sgmodule` / WebRTC Privacy 层，这是 P0 第一优先级。**
 
 ## 规则源与策略组
 
