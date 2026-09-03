@@ -69,7 +69,8 @@ iPhone
 - `dns-server = system`，让家庭 OpenWrt / OpenClash DNS 链路继续负责解析；不配置公网 DoH 与 `hijack-dns`。
 - `FINAL,DIRECT` 必须保持为最后兜底。
 - 不把 OpenClash Fake-IP 常用的 `198.18.0.0/15` 加入 `tun-excluded-routes`，避免相关连接绕开 Shadowrocket Toolkit 净化层。
-- `proxy-stability.sgmodule` 在家庭净化模式下默认关闭；代理 QUIC 应由 OpenClash 层处理。
+- `proxy-stability.sgmodule` **不要求因回家而关闭**。它只作用于 Shadowrocket 自己的 PROXY 连接；Home Clean 正常流量均为 DIRECT，所以保持开启时通常基本不生效。家庭实际代理 QUIC 仍由 OpenClash 层负责。
+- 如果外出移动模式需要 `proxy-stability.sgmodule`，可以让模块长期保持开启，无需随 Wi-Fi / 蜂窝场景来回切换；只有移动端实测出现延迟、功耗或兼容性变差时才关闭。
 - 可以通过 Shadowrocket“场景”按家庭 Wi-Fi SSID 自动使用家庭配置，蜂窝网络自动使用移动配置。
 
 ## 稳定维护原则
@@ -86,7 +87,7 @@ iPhone
 
 抖音原生广告与短剧集间广告属于持续实验。不能从聊天推断某个 v2/v3 仍为正式版，必须读取 `main` 中当前 module/script。素材 CDN 的 REJECT 不等于服务器插入视频广告必然消失；扩大 response Script / MITM 范围会增加回归风险。
 
-HTTPDNS 仍由 `httpdns-block-safe.sgmodule` 独立 A/B；`proxy-stability.sgmodule` 保持按需启用。WebRTC Privacy 当前已经写入正式移动配置和家庭配置；`webrtc-privacy.sgmodule` 只保留为备用/迁移模块，不要与正式配置重复开启。FaceTime、Google Meet、Discord 语音或网页视频会议异常时，第一优先排查 WebRTC Privacy / STUN 层。
+HTTPDNS 仍由 `httpdns-block-safe.sgmodule` 独立 A/B。`proxy-stability.sgmodule` 是按需功能，但如果用户决定在移动模式启用，可以保持模块长期打开：Home Clean 因 `FINAL,DIRECT` 基本不会触发 `all-proxy`，不需要为了回家/出门手动切模块。WebRTC Privacy 当前已经写入正式移动配置和家庭配置；`webrtc-privacy.sgmodule` 只保留为备用/迁移模块，不要与正式配置重复开启。FaceTime、Google Meet、Discord 语音或网页视频会议异常时，第一优先排查 WebRTC Privacy / STUN 层。
 
 ## 文档入口
 
