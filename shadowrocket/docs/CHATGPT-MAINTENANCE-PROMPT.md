@@ -6,7 +6,7 @@
 
 Shadowrocket 当前有两个正式配置，职责不同：
 
-- `shadowrocket/Jax-shadowrocket-v6.conf`：外出 4G / 5G，Shadowrocket 自己负责 DNS、分流、策略组与代理。
+- `shadowrocket/Jax-shadowrocket-v6.conf`：外出 / 蜂窝 / 非家庭 Wi-Fi，Shadowrocket 自己负责 DNS、分流、策略组与代理。
 - `shadowrocket/Jax-shadowrocket-home-clean.conf`：家庭 Wi-Fi，Shadowrocket 只负责广告/追踪/Rewrite/Script/MITM 等本机净化；正常流量 `FINAL,DIRECT` 给家庭 OpenWrt / OpenClash，由 OpenClash 负责 DNS、国内/国外分流与实际代理。
 
 不得把两者职责混在一起。
@@ -27,6 +27,29 @@ Shadowrocket 当前有两个正式配置，职责不同：
 3. 本任务所需文档
 4. `main` 中真正要修改的配置、模块或脚本
 
+## 场景自动切换固定规则
+
+长期默认采用：
+
+```text
+家庭指定 SSID
+→ Jax-shadowrocket-home-clean.conf
+
+蜂窝数据
+→ Jax-shadowrocket-v6.conf
+
+默认 / 其它所有未命中网络
+→ Jax-shadowrocket-v6.conf
+```
+
+核心原则：**Home Clean 是窄范围例外，Mobile 是安全兜底。**
+
+- 只有明确确认后端有 OpenWrt / OpenClash 的受信家庭 Wi-Fi 才允许绑定 Home Clean。
+- 酒店、公司、商场、咖啡店、机场、朋友家以及未知 Wi-Fi 默认使用移动主配置。
+- 不得把“任意 Wi-Fi”或“所有 Wi-Fi”绑定 Home Clean。
+- SSID 只是自动切换条件，不是强身份校验；其它地点若出现同名 SSID，有疑问时优先使用 Mobile。
+- 用户反馈“在外接 Wi-Fi 后国外网站不能代理”时，第一优先检查是否误用了 Home Clean、是否缺少“默认 → Mobile”场景，而不是给 Home Clean 添加代理策略。
+
 ## 两种配置的稳定边界
 
 ### 移动主配置
@@ -35,6 +58,7 @@ Shadowrocket 当前有两个正式配置，职责不同：
 - TikTok 的地区、账号和连接稳定优先；共享字节域名冲突时不应破坏 TikTok。
 - Apple 保持既有直连优先设计，策略组名称不随意重命名。
 - DNS、IPv6、UDP/QUIC 改动必须评估误绕行和泄漏风险，但不承诺零泄漏。
+- 它不仅服务蜂窝数据，也是所有非家庭/未知 Wi-Fi 的默认兜底配置。
 
 ### 家庭 Home Clean
 
@@ -44,8 +68,9 @@ Shadowrocket 当前有两个正式配置，职责不同：
 - 正常流量最终 `FINAL,DIRECT`；DIRECT 只表示不使用 Shadowrocket 节点，流量仍交给 Wi-Fi 网关/OpenClash。
 - DNS 使用 `system`；不要把移动版公网 DoH / `hijack-dns` 复制进 Home Clean。
 - 不把 OpenClash Fake-IP 常用 `198.18.0.0/15` 加入 Home Clean 的 `tun-excluded-routes`，避免相关连接绕过 Toolkit 净化层。
-- `proxy-stability.sgmodule` 在 Home Clean 默认关闭；代理 QUIC/UDP 稳定性属于 OpenClash 层。
+- `proxy-stability.sgmodule` 不要求因 Home Clean 而关闭：它只影响 Shadowrocket 自己的 PROXY 连接，而 Home Clean 正常流量是 DIRECT；若移动模式实测需要，可让模块长期保持开启。
 - 家庭模式某国外网站/AI/YouTube 不通时，先区分 Shadowrocket 净化层与 OpenClash 网关层，不要第一反应给 Home Clean 加代理策略。
+- Home Clean 不得作为公共/陌生 Wi-Fi 的兜底配置。
 
 ## WebRTC P0
 
