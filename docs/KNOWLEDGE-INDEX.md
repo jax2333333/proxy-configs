@@ -10,7 +10,7 @@
 2. 本文件 `docs/KNOWLEDGE-INDEX.md`
 3. `AGENTS.md`
 4. 目标子目录 `README.md`
-5. `main` 中的实际目标配置 / 脚本
+5. `main` 中的实际目标配置 / 脚本或实际运行状态
 
 然后只读取当前任务对应的专项资料。
 
@@ -31,6 +31,8 @@
 - `cloudflare-node/edgetunnel-v2/sync-upstream.mjs`（v2 构建与 pin）
 - `cloudflare-node/edgetunnel-v2/UPSTREAM.md`（v2 固定上游信息）
 
+OpenWrt / ImmortalWrt 系统运行值目前以 R2S 实机为权威，不在 Public GitHub 镜像整份 `/etc/config/*`。
+
 动态值必须从这些文件或实际运行环境重新读取。
 
 ### 当前状态说明
@@ -39,6 +41,7 @@
 - Shadowrocket：`shadowrocket/README.md` + `shadowrocket/docs/` 中的 CURRENT 文档
 - Clash Verge：`clash-verge/README.md` + `clash-verge/docs/`
 - OpenClash：`openclash/README.md` + `openclash/docs/CURRENT-STATE.md`
+- OpenWrt / ImmortalWrt：`openwrt/README.md` + `openwrt/docs/CURRENT-STATE.md`
 - Cloudflare：`cloudflare-node/README.md` + `cloudflare-node/edgetunnel-v2/README.md`
 
 ### 操作教程
@@ -47,6 +50,7 @@
 - Shadowrocket：`shadowrocket/docs/OPERATIONS.md`
 - Clash Verge：`clash-verge/docs/INSTALL-AND-RECOVERY.md`
 - OpenClash：`openclash/docs/OPERATIONS.md`
+- OpenWrt / ImmortalWrt：`openwrt/docs/OPERATIONS.md` + 专项 docs
 - Cloudflare v1 Windows：`cloudflare-node/WINDOWS10-SETUP.md`
 - Cloudflare v2 Pages：`cloudflare-node/edgetunnel-v2/DEPLOY.md`
 
@@ -115,7 +119,7 @@
 
 真实机场 Provider URL 在本地 Merge，不从聊天复制到 GitHub。
 
-### 5. OpenClash / R2S / ImmortalWrt
+### 5. OpenClash / R2S / ImmortalWrt 代理配置
 
 读取：
 
@@ -127,7 +131,20 @@
 
 真实 Provider URL 在 R2S 本地覆写，不写 GitHub。
 
-### 6. Cloudflare 免费节点 — 总览
+### 6. OpenWrt / ImmortalWrt 系统运维 / R2S 性能
+
+读取：
+
+- `openwrt/README.md`
+- `openwrt/docs/KNOWLEDGE-INDEX.md`
+- `openwrt/docs/CHATGPT-MAINTENANCE-PROMPT.md`
+- `openwrt/docs/CURRENT-STATE.md`
+- 任务相关 `openwrt/docs/*.md`
+- R2S 实机当前状态
+
+默认只改 `openwrt/`。涉及 OpenClash YAML 时，再进入 `openclash/`，不要复制配置到 `openwrt/`。
+
+### 7. Cloudflare 免费节点 — 总览
 
 先读：
 
@@ -137,7 +154,7 @@
 
 然后判断是 v1 还是 v2。
 
-### 7. Cloudflare v2 / edgetunnel / Pages / KV / 优选
+### 8. Cloudflare v2 / edgetunnel / Pages / KV / 优选
 
 读取：
 
@@ -150,7 +167,7 @@
 
 注意：真实 ADMIN、UUID、KEY、订阅 Token、运行域名、优选 IP、ProxyIP 凭据通常不在 Public GitHub。需要时从 Cloudflare Dashboard / 本地客户端读取，不要从旧聊天硬编码。
 
-### 8. Cloudflare v1 / 自写 Worker
+### 9. Cloudflare v1 / 自写 Worker
 
 读取：
 
@@ -161,7 +178,7 @@
 
 v1 当前主要用于基线、排错和回滚。不要因 v2 已验证就删除。
 
-### 9. Cloudflare 上游升级
+### 10. Cloudflare 上游升级
 
 读取：
 
@@ -172,7 +189,7 @@ v1 当前主要用于基线、排错和回滚。不要因 v2 已验证就删除�
 
 必须人工审查后同时更新 commit 和 blob SHA，先 Preview/Test，再生产验证。
 
-### 10. 故障排查
+### 11. 故障排查
 
 先读：
 
@@ -182,7 +199,7 @@ v1 当前主要用于基线、排错和回滚。不要因 v2 已验证就删除�
 
 不要先改配置再找原因。
 
-### 11. 历史原因 / “为什么这样设计”
+### 12. 历史原因 / “为什么这样设计”
 
 读取：
 

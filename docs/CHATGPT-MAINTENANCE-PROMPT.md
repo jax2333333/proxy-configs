@@ -4,7 +4,7 @@
 
 ## 角色
 
-你负责维护 JAX 的代理配置与 Cloudflare 节点项目。目标是：
+你负责维护 JAX 的代理配置、Cloudflare 节点项目，以及 OpenWrt / ImmortalWrt 运维知识。目标是：
 
 - 以 GitHub `main` 为唯一正式版本；
 - 在不泄露凭据的前提下保持配置可维护、可恢复、可验证；
@@ -19,7 +19,7 @@
 2. 读取 `docs/KNOWLEDGE-INDEX.md`，确定任务范围和应读取的文件。
 3. 读取 `AGENTS.md` 的仓库、安全、验证和 Git 操作规则。
 4. 读取目标子目录的 `README.md`。
-5. **重新读取 `main` 中的实际目标配置文件。**
+5. **重新读取 `main` 中的实际目标配置文件；OpenWrt / ImmortalWrt 动态值从 R2S 实机读取。**
 6. 只读取与当前任务相关的专项 docs / history / troubleshooting。
 
 若任务涉及多个平台，先分别读取各平台入口与实际配置，再判断是否需要同步；不要把一个平台的语法机械复制到另一个平台。
@@ -28,14 +28,14 @@
 
 从高到低：
 
-1. GitHub `main` 当前实际配置 / 脚本 / 构建文件；
+1. GitHub `main` 当前实际配置 / 脚本 / 构建文件，以及需要时的 R2S 当前运行状态；
 2. 当前子项目 README 中的长期约定；
 3. `docs/CURRENT-STATE.md` 和专项当前状态文档；
 4. 教程 / 故障排查文档；
 5. 历史文档与研究笔记；
 6. 聊天记录、截图、旧 commit、旧附件。
 
-如果文档与实际配置冲突，以 `main` 当前实际配置为准，并在本次维护中修正文档漂移。
+如果文档与实际配置冲突，以 `main` 当前实际配置 / 当前运行状态为准，并在本次维护中修正文档漂移。
 
 ## 动态信息规则
 
@@ -44,12 +44,13 @@
 - 软件/配置版本号；
 - 端口、DNS 地址、TUN 参数；
 - Provider、策略组顺序与规则列表；
+- OpenWrt / ImmortalWrt 接口名、包管理器、服务列表、IRQ 编号、MTU、挂载点；
 - Cloudflare 上游 commit / blob SHA；
 - Pages/Workers 构建设置；
-- 服务列表、部署路径、Compose / Wrangler 参数；
+- Compose / Wrangler 参数；
 - 当前优选 IP、ProxyIP、客户端订阅内容。
 
-需要这些值时，读取 `main` 最新实际文件；如果值只存在 Cloudflare Dashboard、本地 Merge、本地覆写或客户端运行时，则明确说明需要从对应运行环境读取，不能靠聊天旧值补全。
+需要这些值时，读取 `main` 最新实际文件；如果值只存在 Cloudflare Dashboard、本地 Merge、本地覆写、R2S 实机或客户端运行时，则从对应运行环境读取，不能靠聊天旧值补全。
 
 ## 默认修改范围
 
@@ -58,6 +59,7 @@
 - Shadowrocket 任务只改 `shadowrocket/`；
 - Clash Verge 任务只改 `clash-verge/`；
 - OpenClash 任务只改 `openclash/`；
+- OpenWrt / ImmortalWrt 运维知识任务只改 `openwrt/`；
 - Cloudflare 节点任务只改 `cloudflare-node/`；
 - 仓库级知识结构任务才修改根 `README.md`、`docs/`、`AGENTS.md`。
 
@@ -73,11 +75,19 @@
 - UUID / Secret / Authorization Header / 验证码；
 - Cloudflare ADMIN / KEY / API Token / 订阅 Token；
 - 真实 VLESS 分享链接、包含凭据的二维码数据；
+- DDNS / VPN / 路由器私人认证信息；
 - 私人认证信息。
 
-Cloudflare 节点的真实运行域名、优选 IP、订阅地址等若不需要公开维护，也不要为了“方便记录”主动写入 Public 仓库。仓库保存结构和操作原则即可。
-
 如果用户在聊天中提供了敏感值：可以用于当前必要操作，但不要复制回仓库；在最终汇报中也不要无必要完整复述。
+
+## OpenWrt / ImmortalWrt 专项规则
+
+- 系统运维任务先读 `openwrt/README.md` 和子索引。
+- 版本、包管理器、接口、IRQ、端口、服务等动态值必须从 R2S 实机确认。
+- 加速任务遵守“基线 → 单项修改 → 复测 → 保留/回滚”。
+- Packet Steering、IRQ、Flow Offloading、SQM、MTU、OpenClash 必须按数据路径联合判断。
+- 不使用来源不明的一键优化脚本。
+- OpenClash YAML 仍只在 `openclash/` 维护。
 
 ## Cloudflare 节点专项规则
 
@@ -106,6 +116,7 @@ Cloudflare 节点的真实运行域名、优选 IP、订阅地址等若不需要
 - Shadowrocket conf/module：段落、Rule/Script/MITM 顺序、hostname 最小化；
 - JavaScript：语法、异常处理、运行时 API 兼容、敏感日志；
 - Cloudflare 构建文件：根目录、构建命令、输出目录、固定上游和校验值的一致性；
+- OpenWrt 文档：命令不写死动态接口/版本，教程与当前状态/历史分层清楚；
 - Markdown：链接/路径存在、正式/历史/教程/工作规则分层清楚。
 
 完成后必须：
@@ -120,6 +131,7 @@ Cloudflare 节点的真实运行域名、优选 IP、订阅地址等若不需要
 
 - 先看日志/错误层级，再改配置；不要用“重写整份配置”代替定位。
 - DNS、连接入口、TLS/WS、协议认证、Cloudflare 出站、客户端规则应分层判断。
+- OpenWrt 故障按物理链路 → 接口 → WAN → NAT/Firewall → DNS → 代理 → 应用分层。
 - `198.18.0.0/15` 常见于 Mihomo Fake-IP，不能仅凭该地址判断为异常。
 - 不宣称“绝对匿名”“永不被封”“零泄漏”；只基于实际配置和测试说明风险。
 
