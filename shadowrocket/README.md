@@ -45,6 +45,7 @@ shadowrocket/
 - AI 使用 `rules/ai-core.list`，避免把 Stripe、Auth0、Sentry 等共享 SaaS 域名宽泛送入 AI 策略。
 - GitHub 使用独立 `💻 GitHub` 策略组。
 - 已验证映射的核心社区规则优先引用用户同步维护的 `jax2333333/ios_rule_script` fork；没有确认等价映射的规则源不盲目替换。
+- `⚙️ 手动选择`、`♻️ ALL`、`🤖️ 人工智能` 不把机场具体节点名作为长期硬编码默认；`♻️ ALL` / `🤖️ 人工智能` 依靠 `url-test + policy-regex-filter` 从当前订阅自动选择。`🚀 策略选择` 可继续默认选中内部稳定策略组 `♻️ ALL`。
 - TikTok 规则始终位于抖音 DIRECT 规则之前；不把共享 ByteDance 域名直接判为国内。
 - 所有未知 / 公共 / 非家庭 Wi-Fi 应由“默认”场景回落到此移动主配置，不得误用 Home Clean。
 
@@ -117,6 +118,7 @@ HTTPDNS 仍由 `httpdns-block-safe.sgmodule` 独立 A/B。`proxy-stability.sgmod
 
 - `docs/CHATGPT-MAINTENANCE-PROMPT.md`：ChatGPT 工作规则
 - `docs/KNOWLEDGE-INDEX.md`：按任务定位资料
+- `docs/OPERATIONS-KEYWORDS.md`：可复制操作关键词、授权边界与对应执行流程
 - `docs/IOS-NEW-DEVICE-SETUP.md`：新增 iPhone / iPad 从零部署与验收的完整流程
 - `docs/CURRENT-CONFIG.md`：当前配置读取原则
 - `docs/CURRENT-MITM-CERTIFICATE.md`：当前设备内共享 MITM CA 设计与多设备安全原则
