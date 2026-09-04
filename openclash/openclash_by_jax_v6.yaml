@@ -15,7 +15,7 @@
 
 proxy-providers:
   Airport-A:
-    url: "https://example.com/airport-a.yaml"
+    url: "https://d8bdo.no-mad-sub.one/link/DlR4i30HFFU75ly9?clash=3&extend=1"
     type: http
     interval: 86400
     health-check:
@@ -26,7 +26,7 @@ proxy-providers:
       additional-prefix: "A|"
 
   Airport-B:
-    url: "https://example.com/airport-b.yaml"
+    url: "https://liangxin.xyz/api/v1/liangxin?OwO=05a26ec01448353168213ce3c9888260"
     type: http
     interval: 86400
     health-check:
@@ -203,40 +203,40 @@ proxy-groups:
 
 - name: "🔮 节点选择"
   type: select
-  proxies: &common-app-options
+  proxies:
     - "♻️智能选择"
-    - "A|香港智能"
-    - "B|香港智能"
-    - "A|日本智能"
-    - "B|日本智能"
-    - "A|新加坡智能"
-    - "B|新加坡智能"
-    - "A|美国智能"
-    - "B|美国智能"
-    - "A|台湾智能"
-    - "B|台湾智能"
-    - "A|韩国智能"
-    - "B|韩国智能"
-    - "A|英国智能"
-    - "B|英国智能"
-    - "A|德国智能"
-    - "B|德国智能"
-    - "A|香港节点"
-    - "B|香港节点"
-    - "A|日本节点"
-    - "B|日本节点"
-    - "A|新加坡节点"
-    - "B|新加坡节点"
-    - "A|美国节点"
-    - "B|美国节点"
-    - "A|台湾节点"
-    - "B|台湾节点"
-    - "A|韩国节点"
-    - "B|韩国节点"
-    - "A|英国节点"
-    - "B|英国节点"
-    - "A|德国节点"
-    - "B|德国节点"
+    - "🇭🇰 A|香港智能"
+    - "🇭🇰 B|香港智能"
+    - "🇯🇵 A|日本智能"
+    - "🇯🇵 B|日本智能"
+    - "🇸🇬 A|新加坡智能"
+    - "🇸🇬 B|新加坡智能"
+    - "🇺🇸 A|美国智能"
+    - "🇺🇸 B|美国智能"
+    - "🇹🇼 A|台湾智能"
+    - "🇹🇼 B|台湾智能"
+    - "🇰🇷 A|韩国智能"
+    - "🇰🇷 B|韩国智能"
+    - "🇬🇧 A|英国智能"
+    - "🇬🇧 B|英国智能"
+    - "🇩🇪 A|德国智能"
+    - "🇩🇪 B|德国智能"
+    - "🇭🇰 A|香港测速"
+    - "🇭🇰 B|香港测速"
+    - "🇯🇵 A|日本测速"
+    - "🇯🇵 B|日本测速"
+    - "🇸🇬 A|新加坡测速"
+    - "🇸🇬 B|新加坡测速"
+    - "🇺🇸 A|美国测速"
+    - "🇺🇸 B|美国测速"
+    - "🇹🇼 A|台湾测速"
+    - "🇹🇼 B|台湾测速"
+    - "🇰🇷 A|韩国测速"
+    - "🇰🇷 B|韩国测速"
+    - "🇬🇧 A|英国测速"
+    - "🇬🇧 B|英国测速"
+    - "🇩🇪 A|德国测速"
+    - "🇩🇪 B|德国测速"
     - "🌐 全部节点"
     - "🚀 直连"
 
@@ -248,38 +248,78 @@ proxy-groups:
 - name: "🤖 AI"
   type: select
   proxies:
+    - "🔮 节点选择"
     - "♻️AI智能选择"
-    - "A|日本智能"
-    - "B|日本智能"
-    - "A|新加坡智能"
-    - "B|新加坡智能"
-    - "A|美国智能"
-    - "B|美国智能"
-    - "A|台湾智能"
-    - "B|台湾智能"
-    - "A|韩国智能"
-    - "B|韩国智能"
-    - "A|英国智能"
-    - "B|英国智能"
-    - "A|德国智能"
-    - "B|德国智能"
-    - "A|日本节点"
-    - "B|日本节点"
-    - "A|新加坡节点"
-    - "B|新加坡节点"
-    - "A|美国节点"
-    - "B|美国节点"
-    - "A|台湾节点"
-    - "B|台湾节点"
-    - "A|韩国节点"
-    - "B|韩国节点"
-    - "A|英国节点"
-    - "B|英国节点"
-    - "A|德国节点"
-    - "B|德国节点"
+    - "🇯🇵 A|日本智能"
+    - "🇯🇵 B|日本智能"
+    - "🇸🇬 A|新加坡智能"
+    - "🇸🇬 B|新加坡智能"
+    - "🇺🇸 A|美国智能"
+    - "🇺🇸 B|美国智能"
+    - "🇹🇼 A|台湾智能"
+    - "🇹🇼 B|台湾智能"
+    - "🇰🇷 A|韩国智能"
+    - "🇰🇷 B|韩国智能"
+    - "🇬🇧 A|英国智能"
+    - "🇬🇧 B|英国智能"
+    - "🇩🇪 A|德国智能"
+    - "🇩🇪 B|德国智能"
+    - "🇯🇵 A|日本测速"
+    - "🇯🇵 B|日本测速"
+    - "🇸🇬 A|新加坡测速"
+    - "🇸🇬 B|新加坡测速"
+    - "🇺🇸 A|美国测速"
+    - "🇺🇸 B|美国测速"
+    - "🇹🇼 A|台湾测速"
+    - "🇹🇼 B|台湾测速"
+    - "🇰🇷 A|韩国测速"
+    - "🇰🇷 B|韩国测速"
+    - "🇬🇧 A|英国测速"
+    - "🇬🇧 B|英国测速"
+    - "🇩🇪 A|德国测速"
+    - "🇩🇪 B|德国测速"
     - "🚀 直连"
 
-- {name: "📺 YouTube", type: select, proxies: *common-app-options}
+- name: "📺 YouTube"
+  type: select
+  proxies: &common-app-options
+    - "🔮 节点选择"
+    - "♻️智能选择"
+    - "🇭🇰 A|香港智能"
+    - "🇭🇰 B|香港智能"
+    - "🇯🇵 A|日本智能"
+    - "🇯🇵 B|日本智能"
+    - "🇸🇬 A|新加坡智能"
+    - "🇸🇬 B|新加坡智能"
+    - "🇺🇸 A|美国智能"
+    - "🇺🇸 B|美国智能"
+    - "🇹🇼 A|台湾智能"
+    - "🇹🇼 B|台湾智能"
+    - "🇰🇷 A|韩国智能"
+    - "🇰🇷 B|韩国智能"
+    - "🇬🇧 A|英国智能"
+    - "🇬🇧 B|英国智能"
+    - "🇩🇪 A|德国智能"
+    - "🇩🇪 B|德国智能"
+    - "🇭🇰 A|香港测速"
+    - "🇭🇰 B|香港测速"
+    - "🇯🇵 A|日本测速"
+    - "🇯🇵 B|日本测速"
+    - "🇸🇬 A|新加坡测速"
+    - "🇸🇬 B|新加坡测速"
+    - "🇺🇸 A|美国测速"
+    - "🇺🇸 B|美国测速"
+    - "🇹🇼 A|台湾测速"
+    - "🇹🇼 B|台湾测速"
+    - "🇰🇷 A|韩国测速"
+    - "🇰🇷 B|韩国测速"
+    - "🇬🇧 A|英国测速"
+    - "🇬🇧 B|英国测速"
+    - "🇩🇪 A|德国测速"
+    - "🇩🇪 B|德国测速"
+    - "🌐 全部节点"
+    - "🚀 直连"
+
 
 - {name: "✈️ Telegram", type: select, proxies: *common-app-options}
 
@@ -290,40 +330,41 @@ proxy-groups:
 - name: "🍎 Apple"
   type: select
   proxies:
+    - "🔮 节点选择"
     - "🚀 直连"
     - "♻️智能选择"
-    - "A|香港智能"
-    - "B|香港智能"
-    - "A|日本智能"
-    - "B|日本智能"
-    - "A|新加坡智能"
-    - "B|新加坡智能"
-    - "A|美国智能"
-    - "B|美国智能"
-    - "A|台湾智能"
-    - "B|台湾智能"
-    - "A|韩国智能"
-    - "B|韩国智能"
-    - "A|英国智能"
-    - "B|英国智能"
-    - "A|德国智能"
-    - "B|德国智能"
-    - "A|香港节点"
-    - "B|香港节点"
-    - "A|日本节点"
-    - "B|日本节点"
-    - "A|新加坡节点"
-    - "B|新加坡节点"
-    - "A|美国节点"
-    - "B|美国节点"
-    - "A|台湾节点"
-    - "B|台湾节点"
-    - "A|韩国节点"
-    - "B|韩国节点"
-    - "A|英国节点"
-    - "B|英国节点"
-    - "A|德国节点"
-    - "B|德国节点"
+    - "🇭🇰 A|香港智能"
+    - "🇭🇰 B|香港智能"
+    - "🇯🇵 A|日本智能"
+    - "🇯🇵 B|日本智能"
+    - "🇸🇬 A|新加坡智能"
+    - "🇸🇬 B|新加坡智能"
+    - "🇺🇸 A|美国智能"
+    - "🇺🇸 B|美国智能"
+    - "🇹🇼 A|台湾智能"
+    - "🇹🇼 B|台湾智能"
+    - "🇰🇷 A|韩国智能"
+    - "🇰🇷 B|韩国智能"
+    - "🇬🇧 A|英国智能"
+    - "🇬🇧 B|英国智能"
+    - "🇩🇪 A|德国智能"
+    - "🇩🇪 B|德国智能"
+    - "🇭🇰 A|香港测速"
+    - "🇭🇰 B|香港测速"
+    - "🇯🇵 A|日本测速"
+    - "🇯🇵 B|日本测速"
+    - "🇸🇬 A|新加坡测速"
+    - "🇸🇬 B|新加坡测速"
+    - "🇺🇸 A|美国测速"
+    - "🇺🇸 B|美国测速"
+    - "🇹🇼 A|台湾测速"
+    - "🇹🇼 B|台湾测速"
+    - "🇰🇷 A|韩国测速"
+    - "🇰🇷 B|韩国测速"
+    - "🇬🇧 A|英国测速"
+    - "🇬🇧 B|英国测速"
+    - "🇩🇪 A|德国测速"
+    - "🇩🇪 B|德国测速"
     - "🌐 全部节点"
 
 - {name: "💻 Microsoft", type: select, proxies: *common-app-options}
@@ -350,65 +391,65 @@ proxy-groups:
 - name: "♻️智能选择"
   type: select
   proxies:
-    - "A|香港智能"
-    - "B|香港智能"
-    - "A|日本智能"
-    - "B|日本智能"
-    - "A|新加坡智能"
-    - "B|新加坡智能"
-    - "A|美国智能"
-    - "B|美国智能"
-    - "A|台湾智能"
-    - "B|台湾智能"
-    - "A|韩国智能"
-    - "B|韩国智能"
-    - "A|英国智能"
-    - "B|英国智能"
-    - "A|德国智能"
-    - "B|德国智能"
+    - "🇭🇰 A|香港智能"
+    - "🇭🇰 B|香港智能"
+    - "🇯🇵 A|日本智能"
+    - "🇯🇵 B|日本智能"
+    - "🇸🇬 A|新加坡智能"
+    - "🇸🇬 B|新加坡智能"
+    - "🇺🇸 A|美国智能"
+    - "🇺🇸 B|美国智能"
+    - "🇹🇼 A|台湾智能"
+    - "🇹🇼 B|台湾智能"
+    - "🇰🇷 A|韩国智能"
+    - "🇰🇷 B|韩国智能"
+    - "🇬🇧 A|英国智能"
+    - "🇬🇧 B|英国智能"
+    - "🇩🇪 A|德国智能"
+    - "🇩🇪 B|德国智能"
 
 - {name: "♻️AI智能选择", type: smart, use: [Airport-A, Airport-B], url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false, filter: '(?i)日本|日|\bJP\b|Japan|Tokyo|Osaka|新加坡|狮城|坡|\bSG\b|Singapore|美国|美|\bUSA?\b|United States|America|Los Angeles|San Jose|台湾|台|\bTW\b|Taiwan|韩国|韩|韓|\bKR\b|Korea|Seoul|英国|英|\bUK\b|United Kingdom|Britain|London|德国|德|Germany|Frankfurt', exclude-filter: '(?i)香港|港|\bHK\b|Hong ?Kong|免费|0\.01|x0\.1', exclude-type: direct}
 
 - {name: 🌐 全部节点, type: select, include-all: true, exclude-type: direct}
 
-- {name: "A|香港智能", type: smart, use: [Airport-A], filter: "(?i)香港|港|HK|Hong Kong|HongKong", exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
-- {name: "B|香港智能", type: smart, use: [Airport-B], filter: "(?i)香港|港|HK|Hong Kong|HongKong", exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
-- {name: "A|日本智能", type: smart, use: [Airport-A], filter: "(?i)日本|日|JP|Japan|Tokyo|Osaka", exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
-- {name: "B|日本智能", type: smart, use: [Airport-B], filter: "(?i)日本|日|JP|Japan|Tokyo|Osaka", exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
-- {name: "A|新加坡智能", type: smart, use: [Airport-A], filter: "(?i)新加坡|狮城|坡|SG|Singapore", exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
-- {name: "B|新加坡智能", type: smart, use: [Airport-B], filter: "(?i)新加坡|狮城|坡|SG|Singapore", exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
-- {name: "A|美国智能", type: smart, use: [Airport-A], filter: '(?i)美国|美|\bUSA?\b|United States|America|Los Angeles|San Jose', exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
-- {name: "B|美国智能", type: smart, use: [Airport-B], filter: '(?i)美国|美|\bUSA?\b|United States|America|Los Angeles|San Jose', exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
-- {name: "A|台湾智能", type: smart, use: [Airport-A], filter: "(?i)台湾|台|TW|Taiwan", exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
-- {name: "B|台湾智能", type: smart, use: [Airport-B], filter: "(?i)台湾|台|TW|Taiwan", exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
-- {name: "A|韩国智能", type: smart, use: [Airport-A], filter: "(?i)韩国|韩|韓|KR|Korea|Seoul", exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
-- {name: "B|韩国智能", type: smart, use: [Airport-B], filter: "(?i)韩国|韩|韓|KR|Korea|Seoul", exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
-- {name: "A|英国智能", type: smart, use: [Airport-A], filter: "(?i)英国|英|UK|United Kingdom|Britain|London", exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
-- {name: "B|英国智能", type: smart, use: [Airport-B], filter: "(?i)英国|英|UK|United Kingdom|Britain|London", exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
-- {name: "A|德国智能", type: smart, use: [Airport-A], filter: "(?i)德国|德|Germany|Frankfurt", exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
-- {name: "B|德国智能", type: smart, use: [Airport-B], filter: "(?i)德国|德|Germany|Frankfurt", exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
+- {name: "🇭🇰 A|香港智能", type: smart, use: [Airport-A], filter: "(?i)香港|港|HK|Hong Kong|HongKong", exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
+- {name: "🇭🇰 B|香港智能", type: smart, use: [Airport-B], filter: "(?i)香港|港|HK|Hong Kong|HongKong", exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
+- {name: "🇯🇵 A|日本智能", type: smart, use: [Airport-A], filter: "(?i)日本|日|JP|Japan|Tokyo|Osaka", exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
+- {name: "🇯🇵 B|日本智能", type: smart, use: [Airport-B], filter: "(?i)日本|日|JP|Japan|Tokyo|Osaka", exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
+- {name: "🇸🇬 A|新加坡智能", type: smart, use: [Airport-A], filter: "(?i)新加坡|狮城|坡|SG|Singapore", exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
+- {name: "🇸🇬 B|新加坡智能", type: smart, use: [Airport-B], filter: "(?i)新加坡|狮城|坡|SG|Singapore", exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
+- {name: "🇺🇸 A|美国智能", type: smart, use: [Airport-A], filter: '(?i)美国|美|\bUSA?\b|United States|America|Los Angeles|San Jose', exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
+- {name: "🇺🇸 B|美国智能", type: smart, use: [Airport-B], filter: '(?i)美国|美|\bUSA?\b|United States|America|Los Angeles|San Jose', exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
+- {name: "🇹🇼 A|台湾智能", type: smart, use: [Airport-A], filter: "(?i)台湾|台|TW|Taiwan", exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
+- {name: "🇹🇼 B|台湾智能", type: smart, use: [Airport-B], filter: "(?i)台湾|台|TW|Taiwan", exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
+- {name: "🇰🇷 A|韩国智能", type: smart, use: [Airport-A], filter: "(?i)韩国|韩|韓|KR|Korea|Seoul", exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
+- {name: "🇰🇷 B|韩国智能", type: smart, use: [Airport-B], filter: "(?i)韩国|韩|韓|KR|Korea|Seoul", exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
+- {name: "🇬🇧 A|英国智能", type: smart, use: [Airport-A], filter: "(?i)英国|英|UK|United Kingdom|Britain|London", exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
+- {name: "🇬🇧 B|英国智能", type: smart, use: [Airport-B], filter: "(?i)英国|英|UK|United Kingdom|Britain|London", exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
+- {name: "🇩🇪 A|德国智能", type: smart, use: [Airport-A], filter: "(?i)德国|德|Germany|Frankfurt", exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
+- {name: "🇩🇪 B|德国智能", type: smart, use: [Airport-B], filter: "(?i)德国|德|Germany|Frankfurt", exclude-filter: '免费|0\.01|x0\.1', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 100, uselightgbm: false, collectdata: false}
 
 
 # ------------------------------------------------------------
 # 地区手动选择
 # ------------------------------------------------------------
 
-- {name: "A|香港节点", type: select, use: [Airport-A], filter: "(?i)香港|港|HK|Hong Kong|HongKong", exclude-type: direct}
-- {name: "B|香港节点", type: select, use: [Airport-B], filter: "(?i)香港|港|HK|Hong Kong|HongKong", exclude-type: direct}
-- {name: "A|日本节点", type: select, use: [Airport-A], filter: "(?i)日本|日|JP|Japan|Tokyo|Osaka", exclude-type: direct}
-- {name: "B|日本节点", type: select, use: [Airport-B], filter: "(?i)日本|日|JP|Japan|Tokyo|Osaka", exclude-type: direct}
-- {name: "A|新加坡节点", type: select, use: [Airport-A], filter: "(?i)新加坡|狮城|坡|SG|Singapore", exclude-type: direct}
-- {name: "B|新加坡节点", type: select, use: [Airport-B], filter: "(?i)新加坡|狮城|坡|SG|Singapore", exclude-type: direct}
-- {name: "A|美国节点", type: select, use: [Airport-A], filter: '(?i)美国|美|\bUSA?\b|United States|America|Los Angeles|San Jose', exclude-type: direct}
-- {name: "B|美国节点", type: select, use: [Airport-B], filter: '(?i)美国|美|\bUSA?\b|United States|America|Los Angeles|San Jose', exclude-type: direct}
-- {name: "A|台湾节点", type: select, use: [Airport-A], filter: "(?i)台湾|台|TW|Taiwan", exclude-type: direct}
-- {name: "B|台湾节点", type: select, use: [Airport-B], filter: "(?i)台湾|台|TW|Taiwan", exclude-type: direct}
-- {name: "A|韩国节点", type: select, use: [Airport-A], filter: "(?i)韩国|韩|韓|KR|Korea|Seoul", exclude-type: direct}
-- {name: "B|韩国节点", type: select, use: [Airport-B], filter: "(?i)韩国|韩|韓|KR|Korea|Seoul", exclude-type: direct}
-- {name: "A|英国节点", type: select, use: [Airport-A], filter: "(?i)英国|英|UK|United Kingdom|Britain|London", exclude-type: direct}
-- {name: "B|英国节点", type: select, use: [Airport-B], filter: "(?i)英国|英|UK|United Kingdom|Britain|London", exclude-type: direct}
-- {name: "A|德国节点", type: select, use: [Airport-A], filter: "(?i)德国|德|Germany|Frankfurt", exclude-type: direct}
-- {name: "B|德国节点", type: select, use: [Airport-B], filter: "(?i)德国|德|Germany|Frankfurt", exclude-type: direct}
+- {name: "🇭🇰 A|香港测速", type: url-test, use: [Airport-A], filter: "(?i)香港|港|HK|Hong Kong|HongKong", exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 50}
+- {name: "🇭🇰 B|香港测速", type: url-test, use: [Airport-B], filter: "(?i)香港|港|HK|Hong Kong|HongKong", exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 50}
+- {name: "🇯🇵 A|日本测速", type: url-test, use: [Airport-A], filter: "(?i)日本|日|JP|Japan|Tokyo|Osaka", exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 50}
+- {name: "🇯🇵 B|日本测速", type: url-test, use: [Airport-B], filter: "(?i)日本|日|JP|Japan|Tokyo|Osaka", exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 50}
+- {name: "🇸🇬 A|新加坡测速", type: url-test, use: [Airport-A], filter: "(?i)新加坡|狮城|坡|SG|Singapore", exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 50}
+- {name: "🇸🇬 B|新加坡测速", type: url-test, use: [Airport-B], filter: "(?i)新加坡|狮城|坡|SG|Singapore", exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 50}
+- {name: "🇺🇸 A|美国测速", type: url-test, use: [Airport-A], filter: '(?i)美国|美|\bUSA?\b|United States|America|Los Angeles|San Jose', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 50}
+- {name: "🇺🇸 B|美国测速", type: url-test, use: [Airport-B], filter: '(?i)美国|美|\bUSA?\b|United States|America|Los Angeles|San Jose', exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 50}
+- {name: "🇹🇼 A|台湾测速", type: url-test, use: [Airport-A], filter: "(?i)台湾|台|TW|Taiwan", exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 50}
+- {name: "🇹🇼 B|台湾测速", type: url-test, use: [Airport-B], filter: "(?i)台湾|台|TW|Taiwan", exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 50}
+- {name: "🇰🇷 A|韩国测速", type: url-test, use: [Airport-A], filter: "(?i)韩国|韩|韓|KR|Korea|Seoul", exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 50}
+- {name: "🇰🇷 B|韩国测速", type: url-test, use: [Airport-B], filter: "(?i)韩国|韩|韓|KR|Korea|Seoul", exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 50}
+- {name: "🇬🇧 A|英国测速", type: url-test, use: [Airport-A], filter: "(?i)英国|英|UK|United Kingdom|Britain|London", exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 50}
+- {name: "🇬🇧 B|英国测速", type: url-test, use: [Airport-B], filter: "(?i)英国|英|UK|United Kingdom|Britain|London", exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 50}
+- {name: "🇩🇪 A|德国测速", type: url-test, use: [Airport-A], filter: "(?i)德国|德|Germany|Frankfurt", exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 50}
+- {name: "🇩🇪 B|德国测速", type: url-test, use: [Airport-B], filter: "(?i)德国|德|Germany|Frankfurt", exclude-type: direct, url: "https://www.gstatic.com/generate_204", interval: 300, tolerance: 50}
 
 
 # ============================================================
