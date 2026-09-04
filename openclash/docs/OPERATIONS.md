@@ -81,7 +81,35 @@ OpenClash `[YAML]` 覆写会对 Hash 做深度合并，因此本地可以只覆�
 
 不要为了这个问题修改 GitHub 中的占位 URL，也不要无脑删除整个 `proxy_provider/` 目录。
 
-**长期自动化方向：Provider URL 指纹守卫。** 推荐只在 R2S 本地维护，不写入正式 YAML：读取本地 `local-airport.txt` 中各 Provider 的真实 URL，仅保存其 SHA256 指纹；OpenClash 启动时若发现某个 Provider 的 URL 指纹发生变化，只删除该 Provider 的旧缓存，再让 Mihomo 按新 URL 自动拉取。URL 不变时不删缓存。这样既避免每次手工替换，也避免每次重启都清缓存造成不必要的网络依赖。
+**已验证的长期方案：Provider URL 指纹守卫。** 仓库中的 `toolkit/scripts/provider-cache-guard.sh` 直接读取 R2S 本地 `local-airport.txt`，自动识别 `proxy-providers` 下的 Provider 和 URL，只把 `Provider 名<TAB>SHA256` 保存到 `/etc/openclash/provider-url-sha256`。这里的 SHA256 是根据 URL 计算的指纹；真实 URL 不写入状态文件，也不输出到日志。
+
+守卫行为：
+
+- 第一次运行：建立 URL 指纹，不删除任何缓存。
+- URL 未变化：保留该 Provider 缓存。
+- URL 变化：先把同名缓存备份到 `/etc/openclash/provider-cache-backup/<时间-进程号>/`，再只删除 `/etc/openclash/proxy_provider/` 下该 Provider 的无扩展名、`.yaml` 或 `.yml` 文件，最后更新指纹。
+- URL 文件不可读、无法识别 Provider、缺少 SHA256 工具或备份失败：保留缓存；备份/删除失败时不更新该 Provider 指纹，供下次启动重试。
+- 不使用通配符清理，也不删除整个 `proxy_provider/` 目录。
+
+仓库文件与 R2S 部署路径：
+
+| 仓库文件 | R2S 路径 |
+|---|---|
+| `openclash/toolkit/scripts/provider-cache-guard.sh` | `/etc/openclash/scripts/provider-cache-guard.sh` |
+| `openclash/toolkit/scripts/openclash_custom_overwrite.sh` | `/etc/openclash/custom/openclash_custom_overwrite.sh` |
+
+两个脚本部署后应设为 `0755`。`openclash_custom_overwrite.sh` 是最小启动钩子模板；若 R2S 的同名文件已有其它自定义逻辑，应先备份并只合并对 `/etc/openclash/scripts/provider-cache-guard.sh` 的调用，不能整文件覆盖。启动链路为：
+
+```text
+OpenClash restart
+  → openclash_custom_overwrite.sh
+  → provider-cache-guard.sh
+  → 比较本地 Provider URL SHA256
+  → 必要时备份并清理对应缓存
+  → Mihomo 按运行时 Provider URL 加载或重新下载
+```
+
+2026-09-04 已在 R2S（ImmortalWrt + OpenClash + Mihomo Meta）验证上述启动链路、首次运行不清缓存、URL 不变保留缓存，以及 URL 变化后定向清理并重新下载节点。
 
 注意 OpenClash 官方覆写执行顺序：`[Overwrite]` 与 `[YAML]` 都在 OpenClash 自身 `yml_change.sh` / `yml_rules_change.sh` 之后执行，但同一轮中 `[Overwrite]` 先于 `[YAML]`。因此缓存守卫若做成独立 `[Overwrite]` 模块，应直接读取本地私密文件 `/etc/openclash/overwrite/local-airport.txt` 的 URL 来计算指纹，而不能假设此时运行时 YAML 已经完成 `local-airport.txt` 的 `[YAML]` URL 合并。
 

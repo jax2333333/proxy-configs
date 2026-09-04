@@ -20,6 +20,7 @@
 | 修改主/备用智能选择、地区组、故障转移 | 当前 YAML + `CURRENT-STATE.md` | Mihomo proxy-groups / Smart 资料 |
 | R2S 更新不到 GitHub 最新配置 | `OPERATIONS.md` + `TROUBLESHOOTING.md` | OpenClash `12-subscribe-config.md` |
 | 本地 `local-airport.txt` 覆写 | `OPERATIONS.md` | OpenClash `16-overwrite-module-format.md` |
+| Provider URL 已变化但节点不更新 | `OPERATIONS.md` + `TROUBLESHOOTING.md` + `../toolkit/scripts/` | OpenClash `01-architecture.md`、`16-overwrite-module-format.md` |
 | DNS 泄漏、Fake-IP、DNS 策略 | 当前 YAML + `CURRENT-STATE.md` + `TROUBLESHOOTING.md` | OpenClash `09-settings-dns-ac-ipv6.md` + Mihomo DNS 文档 |
 | 运行模式 / TUN / Mix / 性能 | `HISTORY.md` + `TROUBLESHOOTING.md` | OpenClash `08-settings-mode-traffic.md` |
 | Hysteria2 / TUIC / QUIC 异常 | `TROUBLESHOOTING.md` | OpenClash `08-settings-mode-traffic.md`、`14-diagnostics.md`、Mihomo Issues |
@@ -44,6 +45,7 @@
 
 - `OPERATIONS.md`
 - 只记录“怎么做”，不作为当前运行配置副本。
+- `../toolkit/scripts/` 保存可部署到 R2S 的无凭据工具脚本；脚本默认路径和实际状态仍应在路由器上核对。
 
 ### 故障与诊断
 

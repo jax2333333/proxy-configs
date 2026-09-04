@@ -146,7 +146,22 @@ OpenClash fw4 环境的 Fake-IP/TUN/Mix 都依赖 `kmod-nft-tproxy`，TUN/Mix �
 
 2026-09-04 已验证的恢复方式：先备份旧 Provider 文件，再将有效的新 Provider 文件原位替换，重启 OpenClash。重启后新 SHA 保持不变，OpenClash 后台重新加载新节点。
 
-长期方案优先采用**本地 Provider URL 指纹守卫**：只在 R2S 保存各真实 URL 的 SHA256 指纹；发现某个 Provider 的 URL 指纹变化时，只清除该 Provider 的旧缓存，让 Mihomo 启动时重新拉取。真实 URL 和指纹状态都不进入 GitHub。不要采用“每次重启都删除整个 Provider 缓存”的粗暴方式，因为机场暂时不可达时会降低启动可靠性。
+已部署并验证的自动方案是**本地 Provider URL 指纹守卫**：
+
+- `/etc/openclash/custom/openclash_custom_overwrite.sh` 在 OpenClash 启动阶段调用 `/etc/openclash/scripts/provider-cache-guard.sh`。
+- 守卫直接解析 `/etc/openclash/overwrite/local-airport.txt`，自动识别 Provider，仅在 `/etc/openclash/provider-url-sha256` 保存 Provider 名和 URL 的 SHA256，不保存真实 URL。
+- 首次运行或首次发现某个 Provider 时只建立指纹，不清缓存；后续仅在该 Provider URL 指纹变化时备份并清除其精确缓存文件。
+- 任一步骤失败时启动钩子不会阻止 OpenClash 继续启动；对应旧缓存会保留，失败 Provider 的旧指纹也会保留以便下次重试。
+
+守卫异常时按以下顺序检查：
+
+1. 确认两个脚本存在且权限为 `0755`，不要打印 `local-airport.txt` 内容。
+2. 用 `logread -e openclash-provider-cache-guard` 查看守卫日志；日志只应包含 Provider 名和处理结果，不应出现 URL。
+3. 确认 `/etc/openclash/provider-url-sha256` 只包含 Provider 名和 64 位 SHA256；该文件不应包含 `http://` 或 `https://`。
+4. URL 变化后，确认旧文件进入 `/etc/openclash/provider-cache-backup/<时间-进程号>/`，并且只删除了对应 Provider 的缓存。
+5. 若本地覆写使用了非标准结构，先对照 `OPERATIONS.md` 的 `[YAML]` → `proxy-providers` → Provider → `url` 层级；不要通过扩大删除范围来绕过解析失败。
+
+真实 URL、Provider 节点内容和认证字段都只保留在 R2S 本地，不上传 GitHub。不要采用“每次重启都删除整个 Provider 缓存”的方式，因为机场暂时不可达时会降低启动可靠性。
 
 实现自动守卫时要注意官方覆写顺序：`[Overwrite]` 与 `[YAML]` 都在 OpenClash 自身 YAML 处理之后运行，但第二阶段中 `[Overwrite]` 先执行、随后才合并 `[YAML]`。因此独立的缓存守卫 `[Overwrite]` 不应读取运行时 YAML 来期待看到 `local-airport.txt` 的新 URL，而应直接读取 R2S 本地私密 `local-airport.txt`，只计算 URL 指纹并决定是否删除对应缓存。
 

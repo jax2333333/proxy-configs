@@ -33,16 +33,17 @@ https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/opencl
 
 ```text
 GitHub main
-  └─ openclash/openclash_by_jax_v5.yaml
-       │ 只含 Provider 占位 URL
-       ▼
-R2S OpenClash 配置订阅
-       │
-       ├─ GitHub 正式 YAML
-       └─ 本地覆写 local-airport.txt
-            └─ 只保存真实机场订阅 URL，不进 GitHub
-       ▼
-OpenClash 生成运行时配置 → Mihomo
+  ├─ openclash/openclash_by_jax_v5.yaml
+  │    └─ 只含 Provider 占位 URL
+  └─ openclash/toolkit/scripts/
+       └─ Provider URL 缓存守卫及启动钩子模板
+            ▼
+R2S OpenClash 配置订阅 + 本地部署工具脚本
+  ├─ GitHub 正式 YAML
+  └─ 本地覆写 local-airport.txt
+       └─ 只保存真实机场订阅 URL，不进 GitHub
+            ▼
+OpenClash 启动时检查 URL 指纹 → 必要时清理对应 Provider 缓存 → Mihomo
 ```
 
 ### Provider / 策略分工
@@ -54,6 +55,12 @@ OpenClash 生成运行时配置 → Mihomo
 | `Airport3` | `网上搜刮|` | ❌ | ✅ | ✅ |
 
 `🔮 节点选择` 可以选择 `♻️ 备用智能选择`；其它功能策略组不直接新增“备用智能选择”。具体以最新 YAML 为准。
+
+### Provider URL 缓存守卫
+
+R2S 已验证：同名 HTTP Provider 更换 URL 后，OpenClash 可能继续使用 `/etc/openclash/proxy_provider/` 中的旧缓存。仓库提供 [`provider-cache-guard.sh`](./toolkit/scripts/provider-cache-guard.sh) 和 [`openclash_custom_overwrite.sh`](./toolkit/scripts/openclash_custom_overwrite.sh) 部署模板，在启动阶段比较 URL 的 SHA256；只有 URL 变化时才备份并清除对应 Provider 缓存。首次运行只建立指纹，不删除缓存，真实 URL 永远不会写入状态文件或日志。
+
+部署、回滚与验证步骤见 [`docs/OPERATIONS.md`](./docs/OPERATIONS.md)；故障判断见 [`docs/TROUBLESHOOTING.md`](./docs/TROUBLESHOOTING.md)。本地已有自定义覆写逻辑时，只合并守卫调用，不要直接覆盖原文件。
 
 ## 当前长期偏好
 
