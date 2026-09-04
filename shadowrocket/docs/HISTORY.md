@@ -100,6 +100,24 @@ Home Clean 的目标是“本机净化层”，不能逐步膨胀成第二套 Op
 
 如果功能属于后一类，不应塞进 Home Clean。
 
+## 2026-09-04：Bilibili / 美团首批 JAX 化与设备部署
+
+### 首批 JAX 化
+
+- 新增 `toolkit/modules/bilibili-clean-safe.module`：Bilibili 开屏、明确 Feed 广告对象与直播购物接口；只 MITM `app.bilibili.com`、`api.live.bilibili.com`，不处理 VIP、画质、账号资料、首页 Tab 或 Protobuf 广泛过滤。
+- 新增 `toolkit/scripts/bilibili-feed-clean.js`：只识别明确广告标记（如 `ad_info` / `ad_info_v2` / `ad_av` / `vertical_ad_av`），自托管、无主动外联，解析或运行异常时 fail-open。
+- Bilibili 原开屏脚本 `bilibili-splash-clean.js` 继续复用。
+- 新增 `toolkit/modules/meituan-clean-safe.module`：只处理高置信度广告/统计域名、明确广告图片路径和营销接口；只 MITM `img.meituan.net`、`sqt.meituan.com`，不解密 `apimobile.meituan.com` 等核心业务 API，也不引入第三方 JS。
+- `splash-adblock-safe.module` 已移除 Bilibili 专项 Script / MITM，恢复为通用广告 SDK / 开屏域名的网络级 REJECT 模块，避免与独立 Bilibili 模块重复。
+
+### 当前设备部署状态
+
+- 用户已在当前 iPhone 的 Shadowrocket 中完成 `bilibili-clean-safe.module` 与 `meituan-clean-safe.module` 的安装/启用。
+- 这表示“部署完成”，**不等同于已确认长期稳定或所有广告场景均已净化**；后续仍以实际使用和日志为准。
+- Bilibili 后续重点观察：首页推荐、竖屏 Feed、直播、播放历史、评论、搜索；异常时先单独关闭 `bilibili-clean-safe.module` 做 A/B。
+- 美团后续重点观察：首页、外卖、订单、支付和图片加载；异常时先单独关闭 `meituan-clean-safe.module` 做 A/B。
+- 两个模块均可在移动主配置和 Home Clean 场景下使用；Home Clean 仍保持“Shadowrocket 只净化、OpenClash 负责代理/分流”的职责边界。
+
 ## 抖音 / TikTok 去广告
 
 ### 域名 REJECT
