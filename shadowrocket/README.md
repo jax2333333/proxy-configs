@@ -117,7 +117,10 @@ HTTPDNS 仍由 `httpdns-block-safe.sgmodule` 独立 A/B。`proxy-stability.sgmod
 
 - `docs/CHATGPT-MAINTENANCE-PROMPT.md`：ChatGPT 工作规则
 - `docs/KNOWLEDGE-INDEX.md`：按任务定位资料
+- `docs/IOS-NEW-DEVICE-SETUP.md`：新增 iPhone / iPad 从零部署与验收的完整流程
 - `docs/CURRENT-CONFIG.md`：当前配置读取原则
+- `docs/CURRENT-MITM-CERTIFICATE.md`：当前设备内共享 MITM CA 设计与多设备安全原则
+- `docs/OPERATIONS-MITM-CERTIFICATE.md`：共享 MITM 证书操作教程
 - `docs/HISTORY.md`：历史与实验边界
 - `docs/TROUBLESHOOTING.md`：日志和故障排查
 - `docs/OPERATIONS.md`：恢复、更新、场景切换与回滚教程

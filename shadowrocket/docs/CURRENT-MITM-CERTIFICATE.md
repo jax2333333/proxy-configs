@@ -19,6 +19,22 @@ JAX MITM Certificate
 
 其作用是让 Mobile 与 Home Clean 共用同一张已经在 iOS 中安装并“完全信任”的 Shadowrocket CA。
 
+## 多设备固定原则
+
+新增第二台、第三台 iPhone / iPad 时，默认采用：
+
+```text
+每台设备生成自己的 Shadowrocket CA
+→ 该设备内部用 JAX MITM Certificate
+→ 只在该设备的 Mobile 与 Home Clean 之间共享
+```
+
+不把同一份 CA 私钥作为“全家设备通用证书”批量复制。这样即使某一台设备的本地证书材料泄露，也不会自动扩大到其它设备。
+
+只有明确执行旧机迁移、且确实需要保留原 CA 时，才考虑通过受信任的设备到设备方式迁移；日常新增设备优先重新生成独立 CA。
+
+完整新设备流程见：`IOS-NEW-DEVICE-SETUP.md`。
+
 ## 固定安全边界
 
 - `ca-p12`、CA 私钥、证书密码 / passphrase 不得写入 `jax2333333/proxy-configs`。

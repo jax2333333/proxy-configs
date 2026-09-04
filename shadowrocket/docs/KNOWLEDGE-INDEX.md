@@ -3,6 +3,7 @@
 | 任务 | 必读 |
 |---|---|
 | 新对话接管 | `README.md` → `CHATGPT-MAINTENANCE-PROMPT.md` → 本索引 |
+| 新增 iPhone / iPad，从零复制当前 Shadowrocket 架构 | **`IOS-NEW-DEVICE-SETUP.md`** → `CURRENT-CONFIG.md` → `CURRENT-MITM-CERTIFICATE.md` → `toolkit/README.md`；每台设备默认生成独立 CA，私人订阅与证书私钥只保存在设备本机 |
 | 修改外出 / 蜂窝 / 非家庭 Wi-Fi 主配置 | `CURRENT-CONFIG.md` + `main` 中的 `Jax-shadowrocket-v6.conf` |
 | 修改家庭 Wi-Fi 只净化配置 | `CURRENT-CONFIG.md` + `OPERATIONS.md` + `main` 中的 `Jax-shadowrocket-home-clean.conf`；必须保持正常流量 `FINAL,DIRECT`、DNS `system`、不复制 OpenClash 代理分流 |
 | 设置 Wi-Fi / 蜂窝自动切换 | `OPERATIONS.md` → 三层场景：家庭指定 SSID → Home Clean；蜂窝 → Mobile；默认/其它 Wi-Fi → Mobile |
