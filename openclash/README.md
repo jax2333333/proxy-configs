@@ -2,7 +2,7 @@
 
 > [!IMPORTANT]
 > ## 🚨 新对话 / ChatGPT 快速接管
-> **给新 ChatGPT：** 这是 `jax2333333/proxy-configs` 的 OpenClash 子项目。`main` 是唯一正式版本。先读本 README，再按 `docs/KNOWLEDGE-INDEX.md` 读取 `docs/CHATGPT-MAINTENANCE-PROMPT.md`、当前 YAML 和任务相关文档。**修改前必须重新读取 main；默认只改 `openclash/`；禁止把任何真实订阅或凭据写入 GitHub。**
+> **给新 ChatGPT：** 这是 `jax2333333/proxy-configs` 的 OpenClash 子项目。`main` 是唯一正式版本。读取 openclash/README.md ，再按 `docs/KNOWLEDGE-INDEX.md` 读取 `docs/CHATGPT-MAINTENANCE-PROMPT.md`、当前 YAML 和任务相关文档。**修改前必须重新读取 main；默认只改 `openclash/`；禁止把任何真实订阅或凭据写入 GitHub。**
 
 ## 项目目标
 
