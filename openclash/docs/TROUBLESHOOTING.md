@@ -45,7 +45,7 @@ Debug 日志会包含系统信息、依赖、内核、插件/覆写设置、配�
 正式 Raw：
 
 ```text
-https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/openclash_by_jax_v5.yaml
+https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/openclash_by_jax_v6.yaml
 ```
 
 检查“配置订阅”实际地址和运行日志中的下载地址。OpenClash 更新流程会下载、YAML 校验、新旧对比后再替换配置；不能只看 GitHub 页面判断路由器已更新。

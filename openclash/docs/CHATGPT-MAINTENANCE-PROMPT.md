@@ -21,7 +21,7 @@ https://raw.githubusercontent.com/vernesong/OpenClash/dev/.github/skills/opencla
 1. `openclash/README.md`
 2. `openclash/docs/KNOWLEDGE-INDEX.md`
 3. 本文件
-4. `openclash/openclash_by_jax_v5.yaml` 的 **main 最新版**
+4. `openclash/openclash_by_jax_v6.yaml` 的 **main 最新版**
 5. 与任务对应的专项文档
 6. OpenClash 官方用户指南入口及相关子章节
 7. 如涉及异常，读取用户刚生成的最新 Debug 日志
@@ -100,7 +100,7 @@ YAML 修改后至少检查：
 
 ## 9. 当前设计不要写死到提示词
 
-Provider 数量、节点前缀、Smart 参数、DNS 地址、端口和策略组都可能继续变化。新的 AI 应从 `openclash/openclash_by_jax_v5.yaml` 读取当前真实设计；`CURRENT-STATE.md` 只用于快速理解，不替代 YAML。
+Provider 数量、节点前缀、Smart 参数、DNS 地址、端口和策略组都可能继续变化。新的 AI 应从 `openclash/openclash_by_jax_v6.yaml` 读取当前真实设计；`CURRENT-STATE.md` 只用于快速理解，不替代 YAML。
 
 ## 10. 用户固定偏好
 
@@ -110,5 +110,5 @@ Provider 数量、节点前缀、Smart 参数、DNS 地址、端口和策略组�
 - 国内流量尽量低延迟直连。
 - 国外流量优先实际吞吐和稳定性。
 - Apple 默认直连；AI/YouTube/Telegram/TikTok/Steam 等保持独立策略语义。
-- 备用/搜刮类机场不要无意混进主机场的功能、地区和故障转移组；当前精确关系必须读取 YAML。
+- `Airport-A` 与 `Airport-B` 的地区 Smart / 手动组保持独立；当前精确关系必须读取 YAML。
 - 不宣称配置“绝对匿名”或“不可识别”，只能基于配置和测试讨论 DNS/IP/绕过风险。

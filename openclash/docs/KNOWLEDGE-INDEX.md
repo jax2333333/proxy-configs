@@ -6,7 +6,7 @@
 
 1. `../README.md` — 项目入口、边界、当前架构摘要。
 2. `CHATGPT-MAINTENANCE-PROMPT.md` — AI 行为、读取顺序、安全与 GitHub 规则。
-3. `../openclash_by_jax_v5.yaml` — **当前正式配置，main 最新版永远优先。**
+3. `../openclash_by_jax_v6.yaml` — **当前正式配置，main 最新版永远优先。**
 4. 根据任务选择下面的专项文档。
 5. OpenClash 官方用户指南入口：`https://raw.githubusercontent.com/vernesong/OpenClash/dev/.github/skills/openclash-user-guide/SKILL.md`，按其路由表读取对应章节。
 
@@ -17,7 +17,7 @@
 | 了解当前架构、Provider、DNS、策略组 | `CURRENT-STATE.md` + 当前 YAML | OpenClash 指南相关章节 |
 | 修改任何 YAML | 当前 YAML + `CHATGPT-MAINTENANCE-PROMPT.md` | Mihomo Wiki / OpenClash 指南 |
 | 新增/删除机场 Provider | `OPERATIONS.md` + 当前 YAML | Mihomo proxy-providers 文档 |
-| 修改主/备用智能选择、地区组、故障转移 | 当前 YAML + `CURRENT-STATE.md` | Mihomo proxy-groups / Smart 资料 |
+| 修改 A/B 地区 Smart、手动节点组或 AI 选择 | 当前 YAML + `CURRENT-STATE.md` | Mihomo proxy-groups / Smart 资料 |
 | R2S 更新不到 GitHub 最新配置 | `OPERATIONS.md` + `TROUBLESHOOTING.md` | OpenClash `12-subscribe-config.md` |
 | 本地 `local-airport.txt` 覆写 | `OPERATIONS.md` | OpenClash `16-overwrite-module-format.md` |
 | Provider URL 已变化但节点不更新 | `OPERATIONS.md` + `TROUBLESHOOTING.md` + `../toolkit/scripts/` | OpenClash `01-architecture.md`、`16-overwrite-module-format.md` |
@@ -32,7 +32,7 @@
 
 ### 当前正式配置
 
-- `../openclash_by_jax_v5.yaml`
+- `../openclash_by_jax_v6.yaml`
 - GitHub `main` 最新内容是唯一权威。
 - `CURRENT-STATE.md` 是便于阅读的说明，不允许覆盖 YAML 的事实。
 

@@ -7,7 +7,7 @@
 OpenClash 配置订阅应指向：
 
 ```text
-https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/openclash_by_jax_v5.yaml
+https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/openclash_by_jax_v6.yaml
 ```
 
 LuCI 中进入：`服务 → OpenClash → 配置订阅`，确认订阅地址是上面的 Raw 地址，然后保存并更新配置。
@@ -20,22 +20,19 @@ LuCI 中进入：`服务 → OpenClash → 配置订阅`，确认订阅地址是
 
 入口：`服务 → OpenClash → 运行状态 → 顶部「覆写模块」`。
 
-覆写文件必须有段头。当前三 Provider 的本地模板：
+覆写文件必须有段头。当前双 Provider 的本地模板：
 
 ```ini
 [YAML]
 proxy-providers:
-  Airport1:
+  Airport-A:
     url: "真实订阅地址 1"
 
-  Airport2:
+  Airport-B:
     url: "真实订阅地址 2"
-
-  Airport3:
-    url: "真实订阅地址 3"
 ```
 
-这三个真实 URL 只存在路由器本地。不要把这个文件原样上传仓库、Issue、公开聊天或截图。
+这两个真实 URL 只存在路由器本地。不要把这个文件原样上传仓库、Issue、公开聊天或截图。V5 升级到 V6 时必须同时把本地 Provider 键更新为 `Airport-A` / `Airport-B`，否则正式 YAML 中的占位 URL 不会被覆盖。
 
 ## 3. 为什么本地只写 URL
 
@@ -67,7 +64,7 @@ OpenClash `[YAML]` 覆写会对 Hash 做深度合并，因此本地可以只覆�
 
 ### 3.1 更换既有 Provider URL 时的缓存陷阱
 
-2026-09-04 在 R2S 实机确认：修改 `local-airport.txt` 中已有 `Airport1` / `Airport2` / `Airport3` 的真实订阅 URL 后，运行时 YAML 已成功得到新 URL，但节点仍可能继续来自旧 Provider 缓存。
+2026-09-04 在 R2S 实机确认：修改 `local-airport.txt` 中既有 Provider 的真实订阅 URL 后，运行时 YAML 已成功得到新 URL，但节点仍可能继续来自旧 Provider 缓存。
 
 原因不是订阅被写死在 GitHub，而是 OpenClash 会把 HTTP Provider 的 `path` 规范化为按 Provider 名固定的本地路径（例如 `./proxy_provider/<Provider名>.yaml`；不同版本运行时可能去掉扩展名），因此“同名 Provider 换 URL”仍可能复用 `/etc/openclash/proxy_provider/<Provider名>` 的旧文件。`health-check.interval` 只负责健康检查，不等同于重新下载订阅。
 
@@ -117,7 +114,7 @@ OpenClash restart
 
 任何 OpenClash 配置修改：
 
-1. 重新读取 `main` 当前 `openclash/openclash_by_jax_v5.yaml`，不要用聊天旧副本。
+1. 重新读取 `main` 当前 `openclash/openclash_by_jax_v6.yaml`，不要用聊天旧副本。
 2. 明确这次变更影响的 Provider / 策略组 / DNS / Rules。
 3. 只做必要的最小修改。
 4. 检查 YAML 语法、缩进、重复键、Provider/组/规则引用。
@@ -146,11 +143,12 @@ OpenClash restart
 
 更新 Provider / 策略组后至少确认：
 
-- `Airport1` 是否仍只进入主智能/地区/故转逻辑。
-- `Airport2`、`Airport3` 是否只进入备用智能和全部节点（除非用户后来明确修改了设计）。
-- `🔮 节点选择` 是否包含备用智能选择。
-- 其它功能组没有被误加备用组。
-- 节点名前缀是否正确，没有同名冲突。
+- `Airport-A` / `Airport-B` 是否分别只进入对应的 A/B 地区组。
+- 两个 Provider 的节点前缀是否分别为 `A|` / `B|`，没有同名冲突。
+- 八个地区是否各有 A/B Smart 和 A/B 手动节点组。
+- `♻️智能选择` 是否完整包含 16 个地区 Smart 组。
+- `🤖 AI` 与 `♻️AI智能选择` 是否没有任何香港入口。
+- 不存在备用智能组和 fallback 故障转移组。
 - DNS Strict、Apple、Steam、ZeroTier、browserleaks 等现有规则未被无关改动。
 
 ## 7. 配置订阅更新异常

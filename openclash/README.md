@@ -17,14 +17,14 @@
 
 ## 当前正式配置
 
-**唯一正式配置文件：** [`openclash_by_jax_v5.yaml`](./openclash_by_jax_v5.yaml)
+**唯一正式配置文件：** [`openclash_by_jax_v6.yaml`](./openclash_by_jax_v6.yaml)
 
 > 配置版本、端口、Provider、策略组、DNS 字段等会变化。**不要把本 README 当成运行配置副本；任何修改前都必须重新读取 YAML 最新内容。** 当前版本以 YAML 第一行注释为准。
 
 R2S 配置订阅应直接读取本仓库 Raw：
 
 ```text
-https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/openclash_by_jax_v5.yaml
+https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/openclash_by_jax_v6.yaml
 ```
 
 旧 Gist 不再作为正式源；如果 R2S 更新后仍是旧版本，先检查订阅地址是否仍指向旧 Gist。
@@ -33,7 +33,7 @@ https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/opencl
 
 ```text
 GitHub main
-  ├─ openclash/openclash_by_jax_v5.yaml
+  ├─ openclash/openclash_by_jax_v6.yaml
   │    └─ 只含 Provider 占位 URL
   └─ openclash/toolkit/scripts/
        └─ Provider URL 缓存守卫及启动钩子模板
@@ -48,13 +48,12 @@ OpenClash 启动时检查 URL 指纹 → 必要时清理对应 Provider 缓存 �
 
 ### Provider / 策略分工
 
-| Provider | 节点前缀 | 原有智能/地区/故转 | `♻️ 备用智能选择` | `🌐 全部节点` |
-|---|---|---:|---:|---:|
-| `Airport1` | `A1｜` | ✅ | ❌ | ✅ |
-| `Airport2` | `A2｜` | ❌ | ✅ | ✅ |
-| `Airport3` | `网上搜刮|` | ❌ | ✅ | ✅ |
+| Provider | 定位 | 节点前缀 | 地区 Smart | 地区手动组 | `🌐 全部节点` |
+|---|---|---|---:|---:|---:|
+| `Airport-A` | 主力机场 | `A|` | ✅ | ✅ | ✅ |
+| `Airport-B` | 辅助机场 | `B|` | ✅ | ✅ | ✅ |
 
-`🔮 节点选择` 可以选择 `♻️ 备用智能选择`；其它功能策略组不直接新增“备用智能选择”。具体以最新 YAML 为准。
+V6 对香港、日本、新加坡、美国、台湾、韩国、英国、德国分别建立 A/B 独立 Smart 与手动节点组。`♻️智能选择` 汇总 16 个地区 Smart 组；`♻️AI智能选择` 和 `🤖 AI` 排除全部香港路径。旧备用智能组和 fallback 故障转移组已删除。
 
 ### Provider URL 缓存守卫
 
@@ -68,7 +67,7 @@ R2S 已验证：同名 HTTP Provider 更换 URL 后，OpenClash 可能继续使�
 - APNs / `push.apple.com` 优先直连。
 - AI、YouTube、Telegram、GitHub、Netflix、TikTok、Steam、Microsoft、OneDrive 等保持独立策略语义。
 - 路由器端规则以 MetaCubeX `meta-rules-dat` 的 MRS 规则为主；`ios_rule_script` 主要用于规则来源核对或补充没有等价 MRS 的专项规则，避免重复叠加大型 classical 规则集。
-- Steam 国内下载规则使用 MetaCubeX `steam@cn.mrs` 并优先直连，商店流量单独分组。
+- Steam 国内下载与商店仍使用独立规则集识别，但统一进入 `🎮 Steam` 策略组。
 - ZeroTier 控制 / 打洞仅对 **UDP 9993** 设置高优先级直连。
 - 智能选择通常排除明显“免费 / 0.01 倍率”等低质量节点；是否进一步排除其它倍率，必须读当前 YAML 后再改。
 - `browserleaks.com` 保留高优先级代理规则，避免被 `cn_domain` 误分类后直连。

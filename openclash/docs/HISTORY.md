@@ -50,6 +50,17 @@
 - 最新 Debug 还捕获到目标为 Apple `17.x.x.x` 的 UDP 流量在无法恢复域名时落入 `🐟 漏网之鱼`，因此补充 `IP-CIDR,17.0.0.0/8,🍎 Apple,no-resolve`。
 - Smart 分组过滤差异按用户明确意图保持不变：仅 `♻️ 智能选择` 与 `♻️ 日本智能` 保留 `免费|0.01` 排除，不自动统一其它 Smart 组。
 
+### V6.0
+
+- 正式配置文件升级为 `openclash_by_jax_v6.yaml`。
+- Provider 重构为主力 `Airport-A` 和辅助 `Airport-B`，节点分别使用 `A|` / `B|` 前缀。
+- 香港、日本、新加坡、美国、台湾、韩国、英国、德国分别建立 A/B 独立 Smart 和手动节点组。
+- `♻️智能选择` 汇总全部 16 个地区 Smart 组；新增排除香港的 `♻️AI智能选择`。
+- 删除旧备用智能和 fallback 故障转移架构，改为“地区 Smart 自动选择 + 统一入口人工选择”。
+- 应用组统一支持地区 Smart、地区手动、全部节点和直连；AI 组为防止间接选择香港，不提供总智能或全部节点入口。
+- Steam 国内下载与商店仍分别匹配规则，但统一进入 `🎮 Steam`。
+- DNS、Fake-IP、Rule Provider、Apple、ZeroTier 和泄漏检测规则设计保持 V5.6 基线。
+
 后续版本请直接读 YAML 头部注释和 Git 历史，不在本文件假定某个版本号仍是最新版。
 
 ## 2. DNS Strict 历史验证
@@ -141,7 +152,7 @@ find-process-mode: 'off'
 长期结论：OpenClash 的正式订阅源是仓库 Raw：
 
 ```text
-https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/openclash_by_jax_v5.yaml
+https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/openclash_by_jax_v6.yaml
 ```
 
 ## 9. Hysteria2 未完成问题

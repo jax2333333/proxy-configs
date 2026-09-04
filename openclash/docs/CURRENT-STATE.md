@@ -1,6 +1,6 @@
 # 当前状态说明
 
-> 本文用于快速理解当前 OpenClash 设计。**真正的正式配置永远是 `main` 分支的 `openclash/openclash_by_jax_v5.yaml`。** 若本文与 YAML 不一致，以 YAML 为准并更新本文。
+> 本文用于快速理解当前 OpenClash 设计。**真正的正式配置永远是 `main` 分支的 `openclash/openclash_by_jax_v6.yaml`。** 若本文与 YAML 不一致，以 YAML 为准并更新本文。
 
 ## 1. 项目边界
 
@@ -15,13 +15,13 @@
 正式 YAML：
 
 ```text
-openclash/openclash_by_jax_v5.yaml
+openclash/openclash_by_jax_v6.yaml
 ```
 
 R2S 订阅源：
 
 ```text
-https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/openclash_by_jax_v5.yaml
+https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/openclash_by_jax_v6.yaml
 ```
 
 本地私密覆写：`local-airport.txt`。它只保存真实订阅 URL，并通过 `[YAML]` 深度合并覆盖 GitHub 中的 Provider 占位 URL。
@@ -30,19 +30,19 @@ https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/opencl
 
 ## 3. Provider 设计
 
-当前正式 YAML 定义三个 Provider，GitHub 中均使用占位 URL：
+当前正式 YAML 定义两个 Provider，GitHub 中均使用占位 URL：
 
-- `Airport1`：主机场，节点名前缀 `A1｜`。
-- `Airport2`：备用机场，节点名前缀 `A2｜`。
-- `Airport3`：搜刮来源，节点名前缀 `网上搜刮|`。
+- `Airport-A`：主力机场，节点名前缀 `A|`。
+- `Airport-B`：辅助机场，节点名前缀 `B|`。
 
 当前策略隔离原则：
 
-- 主智能选择、香港/日本/狮城/美国智能、地区手动组和地区故障转移只使用 `Airport1`。
-- `♻️ 备用智能选择` 只使用 `Airport2`、`Airport3`。
-- `🌐 全部节点` 使用所有 Provider。
-- `🔮 节点选择` 可以选择 `♻️ 备用智能选择`。
-- 其它功能策略组不直接增加 `♻️ 备用智能选择`；如果功能组通过 `🔮 节点选择` 间接选到备用组，这是正常的嵌套行为。
+- 香港、日本、新加坡、美国、台湾、韩国、英国、德国均建立 A/B 独立 Smart 组和手动节点组。
+- 每个 `A|地区智能/节点` 只使用 `Airport-A`；每个 `B|地区智能/节点` 只使用 `Airport-B`。
+- `♻️智能选择` 是 16 个 A/B 地区 Smart 组的统一入口。
+- `🌐 全部节点` 使用两个 Provider。
+- 不再使用备用智能组或 fallback 故障转移组。
+- `♻️AI智能选择` 只匹配非香港的七个地区；`🤖 AI` 不提供香港智能、香港手动节点、总智能或全部节点入口，避免间接选入香港出口。
 
 未来若 Provider 数量或名称变化，先修改正式 YAML，再同步更新本文；不要反过来根据本文覆盖 YAML。
 
@@ -69,16 +69,15 @@ https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/opencl
 当前配置保留独立策略语义：
 
 - `🤖 AI`
-- `📺 YouTuBe`
+- `📺 YouTube`
 - `✈️ Telegram`
 - `🐙 GitHub`
 - `🍎 Apple`
 - `💻 Microsoft`
-- `☁️ OneDriver`
-- `🎬 NETFLIX`
+- `☁️ OneDrive`
+- `🎬 Netflix`
 - `🎵 TikTok`
-- `🎮 Steam 商店`
-- `📥 Steam 下载`
+- `🎮 Steam`
 - `🐟 漏网之鱼`
 
 长期规则：
@@ -86,7 +85,7 @@ https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/opencl
 - Apple 默认直连，但保留手动代理选择；Apple Intelligence / Relay 交给 `🍎 Apple`。
 - `push.apple.com` 高优先级直连。
 - Apple 官方 IPv4 网段 `17.0.0.0/8` 交给 `🍎 Apple`，用于兜住无法恢复域名的纯 IP / QUIC 流量，避免掉入 `🐟 漏网之鱼`。
-- Steam 国内下载 CDN 与商店规则分离；当前国内下载规则使用 MetaCubeX `steam@cn.mrs`，继续进入 `📥 Steam 下载`。
+- Steam 国内下载 CDN 与商店仍由 `steam@cn.mrs` / `steam.mrs` 分别识别，但统一进入 `🎮 Steam`。
 - ZeroTier 控制 / 打洞只对 **UDP 9993** 设置高优先级直连，不再无条件放行 TCP 9993。
 - DNS / IP 泄漏检测域名在中国大陆规则之前强制走 `🔮 节点选择`，并配合 DNS `nameserver-policy` 使用海外 DoH，避免 `cn_domain` / `oc-cn-domain` 误分类导致国内解析器暴露。
 - 广告规则集进入全局拦截。
@@ -102,13 +101,13 @@ https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/opencl
 
 当前 YAML 使用 Mihomo Smart 策略组。是否启用 LightGBM、采集数据、容差、测速地址等参数必须读取当前 YAML，不在本文锁死。
 
-当前 Smart 过滤差异是**有意设计**，不是待修复问题：
+V6 Smart 结构：
 
-- `♻️ 智能选择` 与 `♻️ 日本智能` 当前使用 `exclude-filter: '免费|0\.01'`。
-- `♻️ 备用智能选择`、`♻️ 香港智能`、`♻️ 狮城智能`、`♻️ 美国智能` 当前不使用同一排除条件。
-- 后续全面体检不得因为“不一致”自动统一这些过滤条件；只有用户明确要求时才修改。
-
-备用智能选择主要用于 Airport2 / Airport3，不要无意把它们混回主地区组。
+- 两个 Provider 在八个地区中完全分组，形成 16 个地区 Smart 组。
+- 地区 Smart 组负责在单机场、单地区内自动选择；`♻️智能选择` 负责人工选择所需地区 Smart 入口。
+- `♻️AI智能选择` 同时使用两个 Provider，但通过正向地区过滤和香港排除过滤限制候选节点。
+- 所有 Smart 组继续排除明确免费、`0.01` 和 `x0.1` 低倍率节点；手动地区组仍保留完整候选以便诊断。
+- `uselightgbm`、`collectdata`、`interval` 和 `tolerance` 的当前值必须直接读取 YAML。
 
 ## 7. 运行模式与性能
 
