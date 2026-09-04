@@ -1,0 +1,46 @@
+name: Shadowrocket CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'shadowrocket/**'
+      - '.github/workflows/shadowrocket-ci.yml'
+      - '.github/scripts/validate-shadowrocket.mjs'
+  pull_request:
+    paths:
+      - 'shadowrocket/**'
+      - '.github/workflows/shadowrocket-ci.yml'
+      - '.github/scripts/validate-shadowrocket.mjs'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-shadowrocket:
+    name: Validate Shadowrocket
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+
+      - name: Validate Shadowrocket structure and safety invariants
+        run: node .github/scripts/validate-shadowrocket.mjs
+
+      - name: Check JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS= read -r -d '' file; do
+            echo "Checking ${file}"
+            node --check "${file}"
+          done < <(find shadowrocket/toolkit/scripts -type f -name '*.js' -print0)
