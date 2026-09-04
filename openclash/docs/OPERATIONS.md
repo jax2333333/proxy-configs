@@ -65,6 +65,26 @@ OpenClash `[YAML]` 覆写会对 Hash 做深度合并，因此本地可以只覆�
 
 如果反过来先在本地新增一个 GitHub 从未定义过的 Provider，而只写 `url`，Mihomo 会因为缺少 `type` 等必填字段而启动失败。这个问题历史上出现过：`parse proxy provider ... has unset fields: type`。
 
+### 3.1 更换既有 Provider URL 时的缓存陷阱
+
+2026-09-04 在 R2S 实机确认：修改 `local-airport.txt` 中已有 `Airport1` / `Airport2` / `Airport3` 的真实订阅 URL 后，运行时 YAML 已成功得到新 URL，但节点仍可能继续来自旧 Provider 缓存。
+
+原因不是订阅被写死在 GitHub，而是 OpenClash 会把 HTTP Provider 的 `path` 规范化为按 Provider 名固定的本地路径（例如 `./proxy_provider/<Provider名>.yaml`；不同版本运行时可能去掉扩展名），因此“同名 Provider 换 URL”仍可能复用 `/etc/openclash/proxy_provider/<Provider名>` 的旧文件。`health-check.interval` 只负责健康检查，不等同于重新下载订阅。
+
+本次已验证的诊断链：
+
+1. `/etc/openclash/config/<配置名>.yaml` 继续保留 GitHub 占位 URL 是正常现象；不要据此判断覆写失败。
+2. 检查 `/etc/openclash/<配置名>.yaml` 的运行时 `proxy-providers`，确认本地覆写已进入运行配置；输出时必须脱敏 URL。
+3. 直接从运行时 URL 下载到 `/tmp/<Provider>.fresh`，只比较 HTTP 状态、文件大小、节点数和 SHA256，不回显真实 URL 或节点认证信息。
+4. 若新订阅 HTTP 200、YAML 可解析且 SHA256 与 `/etc/openclash/proxy_provider/<Provider>` 不同，即可确认旧 Provider 缓存未更新。
+5. 修复时先备份旧缓存，再用新下载文件原位替换对应 Provider，重启 OpenClash；2026-09-04 已验证重启后新 SHA 保持不变，后台重新加载新节点。
+
+不要为了这个问题修改 GitHub 中的占位 URL，也不要无脑删除整个 `proxy_provider/` 目录。
+
+**长期自动化方向：Provider URL 指纹守卫。** 推荐只在 R2S 本地维护，不写入正式 YAML：读取本地 `local-airport.txt` 中各 Provider 的真实 URL，仅保存其 SHA256 指纹；OpenClash 启动时若发现某个 Provider 的 URL 指纹发生变化，只删除该 Provider 的旧缓存，再让 Mihomo 按新 URL 自动拉取。URL 不变时不删缓存。这样既避免每次手工替换，也避免每次重启都清缓存造成不必要的网络依赖。
+
+注意 OpenClash 官方覆写执行顺序：`[Overwrite]` 与 `[YAML]` 都在 OpenClash 自身 `yml_change.sh` / `yml_rules_change.sh` 之后执行，但同一轮中 `[Overwrite]` 先于 `[YAML]`。因此缓存守卫若做成独立 `[Overwrite]` 模块，应直接读取本地私密文件 `/etc/openclash/overwrite/local-airport.txt` 的 URL 来计算指纹，而不能假设此时运行时 YAML 已经完成 `local-airport.txt` 的 `[YAML]` URL 合并。
+
 ## 4. GitHub 维护标准流程
 
 任何 OpenClash 配置修改：
