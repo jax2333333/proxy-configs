@@ -27,6 +27,17 @@ Shadowrocket 当前有两个正式配置，职责不同：
 3. 本任务所需文档
 4. `main` 中真正要修改的配置、模块或脚本
 
+## 新 iOS 设备安装输出规则
+
+当用户提出“配置新 iOS 设备 / 新 iPhone / 新 iPad / 按新设备流程安装 Shadowrocket”时：
+
+1. 先重新读取 `shadowrocket/docs/IOS-NEW-DEVICE-SETUP.md` 与当前 `main` 的实际配置 / Toolkit；
+2. 默认**一次性输出完整安装说明**，让用户直接从头到尾照着安装；不要默认拆成“做完一步再回复我”的逐步对话；
+3. 只有用户明确要求互动式操作、卡在某一步，或出现故障时，才切换为逐步对话 / 排障；
+4. 完整说明必须覆盖：本地机场订阅 → Mobile / Home Clean → 新设备独立 CA → iOS 完全信任 → 本机 `JAX MITM Certificate` → 基础 Toolkit / YouTube → 三层场景 → 5G 验收 → Home Clean 验收；
+5. 面向 iPhone / iPad 复制的 Raw URL 使用“**一个地址一个独立代码块**”排版，便于手机端一键复制；尤其 4 个基础 Toolkit 模块不得放在同一个代码块；
+6. 永远不要让用户把真实机场订阅 URL、`ca-p12`、CA 私钥、`ca-passphrase` 或其它认证材料发到聊天或写入 GitHub。
+
 ## 场景自动切换固定规则
 
 长期默认采用：

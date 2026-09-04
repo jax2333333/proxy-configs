@@ -4,6 +4,16 @@
 >
 > 正式仓库：`jax2333333/proxy-configs`；唯一正式分支：`main`。开始安装前先读取 `shadowrocket/README.md` 与本文件，并以 `main` 当前实际配置 / 模块为准。
 
+## 使用方式（ChatGPT 输出规则）
+
+以后用户要求“配置新 iOS 设备 / 新 iPhone / 新 iPad”时，默认直接输出本文件对应的**完整安装流程**，让用户可以从头到尾照着操作；**不要默认拆成一步一步对话确认**。只有用户明确要求互动式排查、卡在某一步，或出现故障时，才切换为逐步对话。
+
+面向 iPhone / iPad 操作时，所有需要复制到 Shadowrocket 的 Raw URL 应尽量按“**一个地址 = 一个独立代码块**”输出，便于手机端逐个一键复制。尤其是 4 个基础 Toolkit 模块，禁止把 4 条地址堆在同一个代码块里。
+
+完整流程必须保留：本地订阅 → 两个正式配置 → 独立 CA → iOS 完全信任 → 本机 `JAX MITM Certificate` → Toolkit → 三层场景 → 5G 验收 → Home Clean 验收。不得为了简短跳过安全边界或验收步骤。
+
+---
+
 ## 一、最终目标架构
 
 新设备完成后应形成下面的固定结构：
@@ -259,12 +269,29 @@ shadowrocket/toolkit/README.md
 ✅ httpdns-block-safe.sgmodule
 ```
 
-当前 Raw 地址：
+手机端安装时，4 个 Raw 地址必须分开复制：
+
+#### Privacy Lite
 
 ```text
 https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/modules/privacy-lite.sgmodule
+```
+
+#### Network Health
+
+```text
 https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/modules/network-health.sgmodule
+```
+
+#### URL Cleaner Safe
+
+```text
 https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/modules/url-cleaner-safe.sgmodule
+```
+
+#### HTTPDNS Block Safe
+
+```text
 https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/modules/httpdns-block-safe.sgmodule
 ```
 
