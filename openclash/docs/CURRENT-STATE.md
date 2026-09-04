@@ -59,6 +59,8 @@ https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/opencl
 - `direct-nameserver` 使用国内 DoH。
 - `proxy-server-nameserver` 使用国内 DoH，避免代理节点域名解析形成启动死循环。
 - `private_domain`、`cn_domain` 等保留在 Fake-IP 过滤逻辑中。
+- OpenClash 启用“绕过中国大陆 IP”后，运行时还会自动注入 `oc-cn-domain` 到 Fake-IP Filter；它同样使用 MetaCubeX `cn.mrs`。
+- 因 `cn.mrs` 可能误收录 DNS / IP 泄漏检测域名，当前对 `browserleaks.com`、`browserleaks.net`、`whoami.akamai.net`、`whatismyip.akamai.com`、`surfshark.com` 设置海外 DoH 精确优先策略。不要为了这一问题关闭“绕过中国大陆 IP”或整体移除 CN Fake-IP Filter。
 
 这一套 DNS Strict 思路曾通过 DNSLeakTest / ipleak 验证，历史结果见 `HISTORY.md`。后续不要为了单个域名问题一次性改动多个 DNS 层。
 
@@ -83,9 +85,10 @@ https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/opencl
 
 - Apple 默认直连，但保留手动代理选择；Apple Intelligence / Relay 交给 `🍎 Apple`。
 - `push.apple.com` 高优先级直连。
+- Apple 官方 IPv4 网段 `17.0.0.0/8` 交给 `🍎 Apple`，用于兜住无法恢复域名的纯 IP / QUIC 流量，避免掉入 `🐟 漏网之鱼`。
 - Steam 国内下载 CDN 与商店规则分离；当前国内下载规则使用 MetaCubeX `steam@cn.mrs`，继续进入 `📥 Steam 下载`。
 - ZeroTier 控制 / 打洞只对 **UDP 9993** 设置高优先级直连，不再无条件放行 TCP 9993。
-- `browserleaks.com` 在中国大陆规则之前强制走 `🔮 节点选择`，防止 `cn_domain` 误分类直连。
+- DNS / IP 泄漏检测域名在中国大陆规则之前强制走 `🔮 节点选择`，并配合 DNS `nameserver-policy` 使用海外 DoH，避免 `cn_domain` / `oc-cn-domain` 误分类导致国内解析器暴露。
 - 广告规则集进入全局拦截。
 
 ### 规则源维护原则
@@ -99,7 +102,13 @@ https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/opencl
 
 当前 YAML 使用 Mihomo Smart 策略组。是否启用 LightGBM、采集数据、容差、测速地址等参数必须读取当前 YAML，不在本文锁死。
 
-主智能选择通常排除“免费 / 0.01”类明显低质量节点。备用智能选择主要用于 Airport2 / Airport3，不要无意把它们混回主地区组。
+当前 Smart 过滤差异是**有意设计**，不是待修复问题：
+
+- `♻️ 智能选择` 与 `♻️ 日本智能` 当前使用 `exclude-filter: '免费|0\.01'`。
+- `♻️ 备用智能选择`、`♻️ 香港智能`、`♻️ 狮城智能`、`♻️ 美国智能` 当前不使用同一排除条件。
+- 后续全面体检不得因为“不一致”自动统一这些过滤条件；只有用户明确要求时才修改。
+
+备用智能选择主要用于 Airport2 / Airport3，不要无意把它们混回主地区组。
 
 ## 7. 运行模式与性能
 
