@@ -1,0 +1,24 @@
+#!name=JAX - 美团安全净化
+#!desc=保守版美团广告净化：高置信度广告/统计域名 + 明确图片与营销接口；无第三方 JS、最小 MITM。2026-09-04
+
+# 设计原则：
+# - 优先 REJECT 高置信度广告/统计域名，不 MITM 不必要的业务 API。
+# - 不解密 apimobile.meituan.com 等核心推荐/订单接口。
+# - 不使用远程脚本，不读取或外发 Cookie、Authorization、Header。
+# - 首版仅 MITM img.meituan.net 与 sqt.meituan.com；效果不足时先抓日志再最小增量扩展。
+
+[Rule]
+DOMAIN,flowplus.meituan.net,REJECT
+DOMAIN-SUFFIX,wmlog.meituan.com,REJECT
+DOMAIN-SUFFIX,ad.e.waimai.sankuai.com,REJECT
+DOMAIN-SUFFIX,mads.meituan.com,REJECT
+
+[URL Rewrite]
+# Explicit ad image/resource paths on Meituan image CDN.
+^https?:\/\/img\.meituan\.net\/(?:bizad|adunion|display|midas)\/ - reject-img
+
+# Explicit marketing resource endpoint.
+^https?:\/\/sqt\.meituan\.com\/s\/gateway\/mweb\/api\/marketingResource\/show(?:\?|[/?#]|$) - reject-dict
+
+[MITM]
+hostname = %APPEND% img.meituan.net, sqt.meituan.com
