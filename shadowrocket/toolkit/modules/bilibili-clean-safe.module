@@ -1,0 +1,32 @@
+#!name=JAX - 哔哩哔哩安全净化
+#!desc=独立 Bilibili 净化：开屏 + 明确 Feed 广告对象 + 直播购物接口；自托管脚本、最小 MITM、无会员/画质修改。2026-09-04
+
+# 设计原则：
+# - 从通用 splash-adblock-safe.module 拆出 Bilibili 专项逻辑，避免通用模块与 App 专项重复。
+# - 只处理明确广告字段/广告接口，不重排首页 Tab，不删除正常直播/PGC，不修改 VIP/画质/账号数据。
+# - JS 自托管在 jax2333333/proxy-configs，不主动联网；异常原样放行。
+# - MITM 仅 app.bilibili.com 与 api.live.bilibili.com，禁止扩大到 *.bilibili.com / grpc.biliapi.net。
+
+[Rule]
+# High-confidence commercial / splash asset hosts.
+DOMAIN,cm.bilibili.com,REJECT
+DOMAIN,cm.ad.bilibili.com,REJECT
+DOMAIN,cm.adcommon.bilibili.com,REJECT
+DOMAIN,upos-sz-staticcos.bilivideo.com,REJECT
+
+[URL Rewrite]
+# Splash display/report payload.
+^https?:\/\/app\.bilibili\.com\/x\/v2\/splash\/show(?:[/?#]|$) - reject-dict
+
+# Live e-commerce shopping payload. Keep this as an isolated reject rather than decrypting wider live APIs.
+^https?:\/\/api\.live\.bilibili\.com\/xlive\/e-commerce-interface\/v\d\/ecommerce-user\/get_shopping_info(?:\?|[/?#]|$) - reject-dict
+
+[Script]
+# Existing conservative splash cleaner.
+bilibili_splash_clean = type=http-response,pattern=^https?://app\.bilibili\.com/x/v2/splash/(?:list|brand/list)(?:[/?#]|$),requires-body=1,max-size=1048576,script-path=https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/scripts/bilibili-splash-clean.js,engine=jsc,timeout=5
+
+# Feed cleaner removes only explicit ad_info/ad_info_v2/ad card_goto objects.
+bilibili_feed_clean = type=http-response,pattern=^https?://app\.bilibili\.com/x/v2/feed/index(?:/story)?(?:\?|[/?#]|$),requires-body=1,max-size=2097152,script-path=https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/scripts/bilibili-feed-clean.js,engine=jsc,timeout=5
+
+[MITM]
+hostname = %APPEND% app.bilibili.com, api.live.bilibili.com
