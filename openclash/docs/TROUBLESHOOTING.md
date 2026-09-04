@@ -124,6 +124,32 @@ OpenClash 官方指南指出：Linux 内核 6.6+ 环境下，Hysteria / Hysteria
 
 OpenClash fw4 环境的 Fake-IP/TUN/Mix 都依赖 `kmod-nft-tproxy`，TUN/Mix 还需要 `kmod-tun`。
 
+### I. 本地 Provider URL 已更换，但节点仍是旧的
+
+2026-09-04 已在 R2S 实机复现并验证。典型现象：
+
+- `local-airport.txt` 已启用且 `config` 匹配当前配置。
+- `/etc/openclash/config/<配置名>.yaml` 仍显示 GitHub 占位 URL；这是源配置，属于正常现象。
+- `/etc/openclash/<配置名>.yaml` 的运行时 Provider URL 已被本地覆写成功。
+- 新 URL 从 R2S 直接 `curl` 返回 HTTP 200，YAML 可解析、节点数量正常。
+- 但 `/etc/openclash/proxy_provider/<Provider名>` 的 SHA256 与新下载文件不同，后台仍显示旧节点。
+
+已确认机制：OpenClash 会把 HTTP Provider 的路径规范化为按 Provider 名固定的 `./proxy_provider/<name>.yaml` 一类路径，因此同名 Provider 更换 URL 后仍可能复用原有缓存。只看 `health-check.interval` 不足以判断是否重新下载订阅；健康检查与 Provider 内容更新是两件事。
+
+推荐诊断：
+
+1. 先确认当前 `config_path` 与运行时配置文件存在。
+2. 查看运行时 `proxy-providers`，URL 必须脱敏后再贴到聊天或日志。
+3. 从运行时 URL 下载到 `/tmp/<Provider>.fresh`，检查 HTTP 状态和 YAML 是否可解析。
+4. 仅比较新文件与 `/etc/openclash/proxy_provider/<Provider>` 的大小、节点数、SHA256。
+5. 新文件和缓存 SHA 不同，且新文件有效时，才进入缓存修复；不要先删除整个目录。
+
+2026-09-04 已验证的恢复方式：先备份旧 Provider 文件，再将有效的新 Provider 文件原位替换，重启 OpenClash。重启后新 SHA 保持不变，OpenClash 后台重新加载新节点。
+
+长期方案优先采用**本地 Provider URL 指纹守卫**：只在 R2S 保存各真实 URL 的 SHA256 指纹；发现某个 Provider 的 URL 指纹变化时，只清除该 Provider 的旧缓存，让 Mihomo 启动时重新拉取。真实 URL 和指纹状态都不进入 GitHub。不要采用“每次重启都删除整个 Provider 缓存”的粗暴方式，因为机场暂时不可达时会降低启动可靠性。
+
+实现自动守卫时要注意官方覆写顺序：`[Overwrite]` 与 `[YAML]` 都在 OpenClash 自身 YAML 处理之后运行，但第二阶段中 `[Overwrite]` 先执行、随后才合并 `[YAML]`。因此独立的缓存守卫 `[Overwrite]` 不应读取运行时 YAML 来期待看到 `local-airport.txt` 的新 URL，而应直接读取 R2S 本地私密 `local-airport.txt`，只计算 URL 指纹并决定是否删除对应缓存。
+
 ## 3. 日志不足时的安全查询
 
 以下命令只应在路由器 SSH 或 LuCI 终端执行；先有 Debug 日志，再按症状选择，不需要全部运行。
