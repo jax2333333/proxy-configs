@@ -1,17 +1,12 @@
 #!name=JAX - 开屏广告拦截
-#!desc=隐私优先轻量版：常见开屏/广告 SDK 域名拦截；Bilibili 使用自托管响应脚本清空开屏广告；无第三方 JS、无外部 Worker、无全局 MITM。2026-09-04
+#!desc=隐私优先轻量版：常见开屏/广告 SDK 域名拦截；仅网络级 REJECT，无脚本、无 MITM。Bilibili 已迁移到独立安全模块。2026-09-04
 
 # 这是对 adultraplus 类模块的安全化替代：
 # - 优先用域名规则，不解密不必要的 HTTPS。
-# - Bilibili 仅 MITM app.bilibili.com，并且只处理明确的开屏接口。
-# - Bilibili 脚本托管在 jax2333333/proxy-configs，自身不主动联网。
+# - Bilibili 专项逻辑已迁移到 bilibili-clean-safe.module，避免与 App 专项模块重复。
 # - 效果可能少于大型社区规则，但隐私边界更清晰、误伤更少。
 
 [Rule]
-# Bilibili commercial ads / splash assets
-DOMAIN,cm.bilibili.com,REJECT
-DOMAIN,upos-sz-staticcos.bilivideo.com,REJECT
-
 # ByteDance / Pangle 常见广告资源
 DOMAIN-KEYWORD,-ad-sign.byteimg.com,REJECT
 DOMAIN,pangolin.snssdk.com,REJECT
@@ -44,14 +39,3 @@ DOMAIN-SUFFIX,ironsrc.com,REJECT
 DOMAIN-SUFFIX,supersonicads.com,REJECT
 DOMAIN-SUFFIX,mbridge.com,REJECT
 DOMAIN-SUFFIX,mintegral.com,REJECT
-
-[URL Rewrite]
-# Bilibili splash display/report endpoint
-^https?:\/\/app\.bilibili\.com\/x\/v2\/splash\/show(?:[/?#]|$) - reject-dict
-
-[Script]
-# Clear both commercial splash list and brand/default splash list.
-bilibili_splash_clean = type=http-response,pattern=^https?://app\.bilibili\.com/x/v2/splash/(?:list|brand/list)(?:[/?#]|$),requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/scripts/bilibili-splash-clean.js
-
-[MITM]
-hostname = %APPEND% app.bilibili.com
