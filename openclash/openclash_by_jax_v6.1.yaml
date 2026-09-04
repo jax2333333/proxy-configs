@@ -1,0 +1,5 @@
+proxy-providers:
+  Airport-A:
+    url: https://example.com/provider-a.yaml
+    type: http
+    interval: 86400
