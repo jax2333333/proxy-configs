@@ -19,6 +19,8 @@ shadowrocket/toolkit/
 │   ├── webrtc-privacy.sgmodule
 │   ├── general-adblock-safe.module
 │   ├── splash-adblock-safe.module
+│   ├── bilibili-clean-safe.module
+│   ├── meituan-clean-safe.module
 │   ├── amap-clean.module
 │   ├── taobao-clean.module
 │   ├── jd-clean.module
@@ -36,6 +38,7 @@ shadowrocket/toolkit/
 │   └── app-adblock-template.sgmodule
 └── scripts/
     ├── app-adblock-template.js
+    ├── bilibili-feed-clean.js
     ├── bilibili-splash-clean.js
     ├── douyin-feed-adblock.js
     ├── network-health.js
@@ -44,7 +47,7 @@ shadowrocket/toolkit/
     └── youtube-adblock-local.js
 ```
 
-当前共 **23 个模块**、**7 个脚本**。实际清单始终以 `main` 的 `toolkit/modules/` 与 `toolkit/scripts/` 目录为准。
+当前共 **25 个模块**、**8 个脚本**。实际清单始终以 `main` 的 `toolkit/modules/` 与 `toolkit/scripts/` 目录为准。
 
 > `51cg1-clean.sgmodule` / `51cg1-clean.js` 已不再作为独立模块维护。51cg1 现统一由 `site-cleaner.sgmodule` + `site-cleaner.js` 管理，手机端不要继续保留旧的 51cg1 独立模块副本。
 
@@ -76,6 +79,8 @@ shadowrocket/toolkit/
 
 | 模块 | 用途 | MITM |
 |---|---|---|
+| `bilibili-clean-safe.module` | Bilibili 开屏 + 明确 Feed 广告对象 + 直播购物接口；不碰 VIP/画质/账号 | `app.bilibili.com`、`api.live.bilibili.com` |
+| `meituan-clean-safe.module` | 美团高置信度广告/统计域名 + 明确图片/营销接口；不解密核心推荐/订单 API | `img.meituan.net`、`sqt.meituan.com` |
 | `amap-clean.module` | 高德地图开屏/营销净化 | `m5.amap.com` |
 | `taobao-clean.module` | 淘宝广告/开屏营销净化 | `guide-acs.m.taobao.com` |
 | `jd-clean.module` | 京东广告/统计域名 | 否 |
@@ -91,6 +96,10 @@ shadowrocket/toolkit/
 | `tiktok-douyin-adblock.module` | TikTok 安全优先；拦截高置信度字节广告域名，并过滤抖音 `amemv.com` JSON Feed / 短剧明确广告对象 | `*.amemv.com` |
 
 这些 App 专用模块同样可用于 Home Clean：Shadowrocket 只负责本机净化，随后把剩余正常流量交给 OpenClash。
+
+`bilibili-clean-safe.module` 已接管原来位于 `splash-adblock-safe.module` 中的 Bilibili 专项逻辑。当前只过滤明确的开屏、Feed 广告对象与直播购物接口，不照搬社区脚本里的 VIP、画质、首页 Tab 重排或 Protobuf 广泛过滤；脚本解析失败时原样放行。若 Bilibili 首页、竖屏 Feed 或直播功能异常，先单独关闭本模块做 A/B。
+
+`meituan-clean-safe.module` 首版故意不 MITM `apimobile.meituan.com` 等核心业务 API，也不引入第三方 JS。若广告仍存在，先通过日志确认真实广告 URL，再做最小增量扩展；不要直接扩大为 `*.meituan.com` / `*.meituan.net`。
 
 `tiktok-douyin-adblock.module` 属于干预程度较高的专项模块：它会对 `*.amemv.com` 做 HTTPS response 脚本处理。若抖音出现观看历史、推荐流、短剧、搜索、评论或账号页异常，优先关闭本模块做 A/B，不要先扩大 MITM 或封锁整个 ByteDance 共享域名。
 
@@ -118,7 +127,7 @@ YouTube 模块只保留这一份。不要同时启用旧仓库 URL、重复导�
 主要问题仍是开屏广告 → 单独测试 splash-adblock-safe.module
 ```
 
-`splash-adblock-safe.module` 不再封整个 `baidustatic.com`，避免正常静态资源被 Safe 模块误伤。已经大量启用 App 专用净化模块时，通常不建议再常开它；否则会增加规则重叠和排障变量。
+`splash-adblock-safe.module` 当前只做通用广告 SDK / 开屏域名的网络级 REJECT，**不再包含 Bilibili Script/MITM**。Bilibili 请使用独立 `bilibili-clean-safe.module`。模块不封整个 `baidustatic.com`，避免正常静态资源被 Safe 模块误伤。已经大量启用 App 专用净化模块时，通常不建议再常开它；否则会增加规则重叠和排障变量。
 
 异常排查顺序：
 
@@ -127,11 +136,13 @@ YouTube 模块只保留这一份。不要同时启用旧仓库 URL、重复导�
 2. 抖音 Feed / 历史 / 短剧 / 评论异常 → 先关闭 tiktok-douyin-adblock.module 做 A/B
 3. 移动代理 QUIC 异常 → 关闭 proxy-stability.sgmodule 做 A/B
 4. Home Clean 国外访问异常 → 先查 OpenClash / 场景 / DNS，不给 Home Clean 加代理组
-5. 再关闭 splash-adblock-safe.module
-6. 再关闭 general-adblock-safe.module
-7. 再关闭对应 App / 网站专用模块
-8. HTTPDNS / URL Cleaner 做单独 A/B
-9. 最后才检查基础 privacy-lite
+5. Bilibili 首页 / Feed / 直播异常 → 关闭 bilibili-clean-safe.module
+6. 美团图片 / 页面资源异常 → 关闭 meituan-clean-safe.module
+7. 再关闭 splash-adblock-safe.module
+8. 再关闭 general-adblock-safe.module
+9. 再关闭对应 App / 网站专用模块
+10. HTTPDNS / URL Cleaner 做单独 A/B
+11. 最后才检查基础 privacy-lite
 ```
 
 ## ⑥ 开发模板
@@ -149,6 +160,8 @@ YouTube 模块只保留这一份。不要同时启用旧仓库 URL、重复导�
 ✅ url-cleaner-safe.sgmodule
 ✅ httpdns-block-safe.sgmodule（首次开启后观察常用 App）
 ✅ 自己实际使用的 App 专用模块
+✅ bilibili-clean-safe.module（使用 Bilibili 时）
+✅ meituan-clean-safe.module（使用美团时）
 ✅ youtube-adblock.sgmodule（需要 YouTube 去广告时）
 ✅ site-cleaner.sgmodule（需要网站净化时）
 🟠 tiktok-douyin-adblock.module（需要抖音/TikTok 广告净化时；出现 App 功能异常优先关闭 A/B）
@@ -168,6 +181,8 @@ YouTube 模块只保留这一份。不要同时启用旧仓库 URL、重复导�
 ✅ url-cleaner-safe.sgmodule
 ✅ httpdns-block-safe.sgmodule（首次开启后观察常用 App）
 ✅ 自己实际使用的 App 专用模块
+✅ bilibili-clean-safe.module（使用 Bilibili 时）
+✅ meituan-clean-safe.module（使用美团时）
 ✅ youtube-adblock.sgmodule（需要时）
 ✅ site-cleaner.sgmodule（需要网站净化时）
 🟠 tiktok-douyin-adblock.module（需要时；异常优先单独关闭 A/B）
@@ -179,7 +194,7 @@ YouTube 模块只保留这一份。不要同时启用旧仓库 URL、重复导�
 ❌ app-adblock-template.sgmodule
 ```
 
-## 23 个模块 Raw 地址
+## 25 个模块 Raw 地址
 
 ```text
 # 基础工具
@@ -197,6 +212,8 @@ https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/too
 https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/modules/splash-adblock-safe.module
 
 # App 专用
+https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/modules/bilibili-clean-safe.module
+https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/modules/meituan-clean-safe.module
 https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/modules/amap-clean.module
 https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/modules/taobao-clean.module
 https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/modules/jd-clean.module
