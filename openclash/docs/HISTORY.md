@@ -46,7 +46,7 @@
 
 - 最新 Debug 确认“绕过中国大陆 IP”启用后，OpenClash 会在运行时向 Fake-IP Filter 自动加入 `rule-set:oc-cn-domain`，并指向 MetaCubeX `cn.mrs`。
 - 实测 `nslookup whoami.akamai.net 127.0.0.1` 返回国内递归解析器地址而非 Fake-IP，确认 DNS / IP 泄漏检测域名仍会被 `cn.mrs` / `oc-cn-domain` 误分类。
-- 不关闭“绕过中国大陆 IP”，也不整体移除 CN Fake-IP Filter；改为给 `browserleaks.com`、`browserleaks.net`、`whoami.akamai.net`、`whatismyip.akamai.com`、`surfshark.com` 设置海外 DoH 精确优先策略，并在 `cn_domain` 前强制走 `🔮 节点选择`。
+- 不关闭“绕过中国大陆 IP”，也不整体移除 CN Fake-IP Filter；改为给 `browserleaks.com`、`browserleaks.net`、`whoami.akamai.net`、`whatismyip.akamai.com`、`surfshark.com` 设置海外 DoH 精确优先策略，并在 `cn_domain` 前优先交给 `🔮 节点选择`。
 - 最新 Debug 还捕获到目标为 Apple `17.x.x.x` 的 UDP 流量在无法恢复域名时落入 `🐟 漏网之鱼`，因此补充 `IP-CIDR,17.0.0.0/8,🍎 Apple,no-resolve`。
 - Smart 分组过滤差异按用户明确意图保持不变：仅 `♻️ 智能选择` 与 `♻️ 日本智能` 保留 `免费|0.01` 排除，不自动统一其它 Smart 组。
 
@@ -95,7 +95,7 @@ browserleaks.com:443 match RuleSet(cn_domain) using 🚀 直连
 
 曾经系统存在公网 IPv6，而 OpenClash IPv6 代理 / DNS 关闭，这会留下绕过代理的风险。之后关闭了公网 IPv6 出口，只保留必要的链路本地 / ZeroTier IPv6。
 
-在后续 ipleak 中出现过日本代理出口 IPv6，但浏览器默认仍走代理 IPv4，系统没有公网 IPv6 默认 WAN 路由。该现象被判断为代理出口侧 IPv6 能力，不是本地 ISP IPv6 泄漏。
+在后续 ipleak 中出现过日本代理出口 IPv6，但浏览器默认仍走代理 IPv4，系统没有公网 IPv6 默认 WAN 路由。该现象被判断为代理出口侧 IPv6 能力，不是本地 ISP 泄漏。
 
 长期结论：**判断 IPv6 泄漏必须同时看系统路由、浏览器默认地址、OpenClash IPv6 设置，不能只看测试页是否显示一个 IPv6。**
 
@@ -146,11 +146,12 @@ https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/opencl
 
 ## 9. Hysteria2 未完成问题
 
-最近一次对话中，用户反馈 Hysteria2 节点测速没有速度。最新 Debug 已能看到 Hysteria2 相关节点域名正常解析，且该日志片段中没有 `quic-go` / `GSO` / `timeout` / `handshake` 错误，因此仍不足以确认根因，也不应仅凭测速为 0 就修改 GitHub 配置或开启“禁用 quic-go GSO”。
+最近一次对话中，用户反馈 Hysteria2 节点测速没有速度。只检查了当前 GitHub YAML，未发现 Provider 分组代码直接禁用 Hysteria2 的明显设置，但**尚未拿到新的 Debug 日志，所以没有确认根因，也没有修改 GitHub。**
 
 下一次继续时：
 
-1. 使用发生故障当时的最新 Debug / Core Logs。
-2. 检查 Hysteria2 实际节点参数和 QUIC / UDP 路径。
-3. 若日志出现 `quic-go` / `GSO` / `timeout` / handshake 类问题，再按官方指南评估“禁用 quic-go GSO”。
-4. 不要仅凭“测速为 0”就认定是机场或当前策略组代码错误。
+1. 先要最新 Debug 日志。
+2. 检查 Hysteria2 实际节点参数和 Core Logs。
+3. 检查 QUIC / UDP / GSO。
+4. 若日志出现 `quic-go` / `GSO` / `timeout` / handshake 类问题，再按官方指南评估“禁用 quic-go GSO”。
+5. 不要仅凭“测速为 0”就认定是机场或当前策略组代码错误。

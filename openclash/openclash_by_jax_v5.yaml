@@ -4,7 +4,7 @@
 #
 # V5.6 更新：
 # 1. DNS / IP 泄漏检测域名强制使用海外 DoH，规避 cn.mrs / OpenClash oc-cn-domain 误分类
-# 2. browserleaks / Akamai 回显 / Surfshark 检测域名在 cn_domain 前强制走代理
+# 2. browserleaks / Akamai 回显 / Surfshark 检测域名在 cn_domain 前优先交给 🔮 节点选择
 # 3. Apple 17.0.0.0/8 补充交给 🍎 Apple，避免纯 IP / QUIC 流量掉入漏网之鱼
 # 4. Smart 分组过滤保持原设计，不做统一化
 #
