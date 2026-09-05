@@ -6,7 +6,7 @@
 
 1. `../README.md` — 项目入口、边界、当前架构摘要。
 2. `CHATGPT-MAINTENANCE-PROMPT.md` — AI 行为、读取顺序、安全与 GitHub 规则。
-3. `../openclash_by_jax_v6.yaml` — **当前正式配置，main 最新版永远优先。**
+3. `../openclash_by_jax_双机场.yaml` — **当前正式配置，main 最新版永远优先。**
 4. 根据任务选择下面的专项文档。
 5. OpenClash 官方用户指南入口：`https://raw.githubusercontent.com/vernesong/OpenClash/dev/.github/skills/openclash-user-guide/SKILL.md`，按其路由表读取对应章节。
 
@@ -32,7 +32,7 @@
 
 ### 当前正式配置
 
-- `../openclash_by_jax_v6.yaml`
+- `../openclash_by_jax_双机场.yaml`
 - GitHub `main` 最新内容是唯一权威。
 - `CURRENT-STATE.md` 是便于阅读的说明，不允许覆盖 YAML 的事实。
 
