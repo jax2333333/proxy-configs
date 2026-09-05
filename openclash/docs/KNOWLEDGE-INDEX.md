@@ -6,9 +6,53 @@
 
 1. `../README.md` — 项目入口、边界、当前架构摘要。
 2. `CHATGPT-MAINTENANCE-PROMPT.md` — AI 行为、读取顺序、安全与 GitHub 规则。
-3. `../openclash_by_jax_双机场.yaml` — **当前正式配置，main 最新版永远优先。**
+3. 根据运行场景选择当前正式配置：
+   - `../openclash_by_jax_双机场.yaml` — 双机场正式配置。
+   - `../openclash_by_jax_单机场.yaml` — 单机场正式配置。
 4. 根据任务选择下面的专项文档。
 5. OpenClash 官方用户指南入口：`https://raw.githubusercontent.com/vernesong/OpenClash/dev/.github/skills/openclash-user-guide/SKILL.md`，按其路由表读取对应章节。
+
+## 配置入口说明
+
+### 双机场模式
+
+文件：
+
+```text
+openclash/openclash_by_jax_双机场.yaml
+```
+
+适用场景：
+
+- 同时使用两个机场订阅。
+- 需要 A/B Provider 分离管理。
+- 需要双来源节点筛选、备用策略和后续扩展。
+
+维护原则：
+
+- Airport-A / Airport-B 独立 Provider。
+- 修改前必须读取 GitHub main 最新版本。
+- 不写入真实订阅信息。
+
+### 单机场模式
+
+文件：
+
+```text
+openclash/openclash_by_jax_单机场.yaml
+```
+
+适用场景：
+
+- 只有一个机场订阅。
+- 简化 Provider 管理。
+- 保持与双机场版本相同的基础架构。
+
+维护原则：
+
+- 单机场版本独立维护。
+- 不直接覆盖双机场配置。
+- 架构优化优先保持两个版本逻辑一致。
 
 ## 任务 → 应读取文件
 
@@ -33,6 +77,7 @@
 ### 当前正式配置
 
 - `../openclash_by_jax_双机场.yaml`
+- `../openclash_by_jax_单机场.yaml`
 - GitHub `main` 最新内容是唯一权威。
 - `CURRENT-STATE.md` 是便于阅读的说明，不允许覆盖 YAML 的事实。
 
