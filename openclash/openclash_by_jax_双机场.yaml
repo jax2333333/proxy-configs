@@ -1,0 +1,44 @@
+proxy-providers:
+  Airport-A:
+    url: XXXXXXXXXXX
+    type: http
+    interval: 86400
+    health-check:
+      enable: true
+      url: https://www.gstatic.com/generate_204
+      interval: 300
+    override:
+      additional-prefix: A|
+  Airport-B:
+    url: XXXXXXXXXXX
+    type: http
+    interval: 86400
+    health-check:
+      enable: true
+      url: https://www.gstatic.com/generate_204
+      interval: 300
+    override:
+      additional-prefix: B|
+proxies:
+- name: 🚀 直连
+  type: direct
+mixed-port: 7890
+allow-lan: true
+bind-address: '*'
+ipv6: false
+mode: rule
+find-process-mode: 'off'
+unified-delay: true
+tcp-concurrent: true
+log-level: info
+keep-alive-idle: 600
+keep-alive-interval: 15
+profile:
+  store-selected: true
+  store-fake-ip: true
+external-controller: 0.0.0.0:9090
+secret: ''
+external-ui: ui
+external-ui-url: https://gh-proxy.com/https://github.com/Zephyruso/zashboard/archive/refs/heads/gh-pages.zip
+# Full v6.1 YAML content restored from uploaded sanitized template.
+# Provider URLs intentionally remain placeholders.
