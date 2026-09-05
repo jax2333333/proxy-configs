@@ -31,6 +31,7 @@ shadowrocket/
 
 - `Jax-shadowrocket-v6.conf`：外出正式主配置，负责网络基础、策略组、DNS 与长期稳定分流；不仅用于 4G / 5G，也作为酒店、公司、商场、咖啡店、机场、朋友家等非家庭 Wi-Fi 的默认兜底。
 - `Jax-shadowrocket-home-clean.conf`：家庭 Wi-Fi 专用净化配置，不包含代理节点/策略组，正常流量 `FINAL,DIRECT` 交给 OpenWrt / OpenClash；DNS 使用 `system`，不在 Shadowrocket 层指定公网 DoH 或 `hijack-dns`。
+- `Jax-shadowrocket-v6.4.0-dual-airport-template.conf`：历史双机场模板，仅用于追溯旧架构，不是当前正式配置；其中旧策略组名、旧图标和旧默认选择不得反向覆盖 `Jax-shadowrocket-v6.conf`。
 - `rules/` 只保存经过筛选、需要由 JAX 自己控制边界的规则集；不复制大而全社区列表。
 - Toolkit 负责广告净化、URL 清理、HTTPDNS 防绕过、可选网络稳定性增强与专项脚本。
 - 不为单一 App 的实验功能把临时逻辑塞入正式配置。
@@ -40,12 +41,16 @@ shadowrocket/
 
 ### 外出 / 蜂窝 / 非家庭 Wi-Fi
 
-- 移动主配置当前为 V6.3 系列；实际版本号必须读取 `Jax-shadowrocket-v6.conf`。
+- 移动主配置的具体版本、注释版本号和功能状态必须读取 `main` 中实际 `Jax-shadowrocket-v6.conf`；README 不再固定写死某个旧版本号。
+- 当前核心入口是 `🎯 节点选择`，默认选中 `🧠 智能选择`。
+- `🧠 智能选择` 为全节点 `url-test` 自动测速；地区优化由香港、日本、新加坡、美国、台湾等独立地区智能组负责。
+- `✋ 手动选择` 展示当前订阅实际节点，不固定某个机场具体节点名。
+- 当前应用策略组包括 `✨ AI服务`、`🎵 TikTok`、`▶️ YouTube`、`🐙 GitHub`、`✈️ Telegram`、`🍿 流媒体`、`🌍 国际服务`；应用组优先提供 `🎯 节点选择`，再提供适用的地区智能、`🧠 智能选择` 和 `✋ 手动选择`。
 - `[Rule]` 顶部保留 `JAX Overrides`，仅放已验证且不与 TikTok 共享基础设施冲突的国内稳定补丁。
 - AI 使用 `rules/ai-core.list`，避免把 Stripe、Auth0、Sentry 等共享 SaaS 域名宽泛送入 AI 策略。
-- GitHub 使用独立 `💻 GitHub` 策略组。
+- GitHub 使用独立 `🐙 GitHub` 策略组。
+- Apple、Microsoft、国内服务和游戏平台当前按正式配置走 `🌐 全球直连` / DIRECT，不再把旧的独立 Apple、Microsoft 或游戏策略组当作现行架构。
 - 已验证映射的核心社区规则优先引用用户同步维护的 `jax2333333/ios_rule_script` fork；没有确认等价映射的规则源不盲目替换。
-- `⚙️ 手动选择`、`♻️ ALL`、`🤖️ 人工智能` 不把机场具体节点名作为长期硬编码默认；`♻️ ALL` / `🤖️ 人工智能` 依靠 `url-test + policy-regex-filter` 从当前订阅自动选择。`🚀 策略选择` 可继续默认选中内部稳定策略组 `♻️ ALL`。
 - TikTok 规则始终位于抖音 DIRECT 规则之前；不把共享 ByteDance 域名直接判为国内。
 - 所有未知 / 公共 / 非家庭 Wi-Fi 应由“默认”场景回落到此移动主配置，不得误用 Home Clean。
 
@@ -103,7 +108,7 @@ SSID 仅用于自动切换，不是强身份校验。如果其它地点存在与
 - 中国大陆服务优先稳定直连，国际服务按既有策略组或家庭 OpenClash 分流。
 - DNS、IPv6、UDP/QUIC 改动以降低误绕行与泄漏风险为目标，不承诺绝对匿名或零泄漏。
 - TikTok 的地区、账号与连接稳定性优先；共享字节域名冲突时不得破坏 TikTok。
-- Apple 保持既有独立策略与直连优先设计；AI、YouTube、Spotify、Telegram、TikTok、GitHub 等移动配置策略组名称不随意改名。
+- Apple 保持直连优先；当前移动配置中 `🎯 节点选择`、`🧠 智能选择`、地区智能、`✨ AI服务`、`▶️ YouTube`、`🐙 GitHub`、`✈️ Telegram`、`🎵 TikTok`、`🍿 流媒体`、`🌍 国际服务`、`✋ 手动选择` 等名称视为稳定接口，修改前必须以 `main` 实际配置为准。
 - JS 默认 fail-open，不主动外发 Cookie、Header、Token、账号或播放凭据。
 - GitHub 不保存 Cookie、Token、UUID、密码、API Key、SSH 私钥、Secret、验证码、真实订阅地址或私人认证材料。
 - 未经明确要求，不修改 `openclash/` 或 `clash-verge/`。

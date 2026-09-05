@@ -6,6 +6,7 @@
 
 - 外出 / 公共网络主配置：`shadowrocket/Jax-shadowrocket-v6.conf`
 - 家庭 Wi-Fi 净化配置：`shadowrocket/Jax-shadowrocket-home-clean.conf`
+- 历史双机场模板：`shadowrocket/Jax-shadowrocket-v6.4.0-dual-airport-template.conf`（非正式配置，不可作为 CURRENT 状态来源）
 - 自托管规则：`shadowrocket/rules/`
 - Toolkit：`shadowrocket/toolkit/`
 - 未经明确要求，不修改 OpenClash 或 Clash Verge。
@@ -18,7 +19,7 @@
 
 - DNS 与 DNS 防绕行基础；
 - 国内 / 国外规则分流；
-- AI、TikTok、YouTube、GitHub、Apple 等策略组；
+- `🎯 节点选择`、`🧠 智能选择`、地区智能，以及 AI、TikTok、YouTube、GitHub、Telegram、流媒体、国际服务等当前策略组；
 - 实际代理节点选择；
 - Toolkit 广告/隐私/脚本增强。
 
@@ -96,19 +97,22 @@ WebRTC Privacy 当前在移动主配置和家庭配置中默认启用：使用 `
 ### 移动配置路由
 
 - `[Rule]` 顶部 `JAX Overrides` 只放已经验证的国内独立服务补丁；不得把可能与 TikTok 共享基础设施的 ByteDance 域名提前 DIRECT。
-- Apple 维持独立策略和既有直连优先设计。
+- Apple 当前按正式规则走 `🌐 全球直连` / DIRECT，保持直连优先；不要从旧资料恢复已删除的独立 Apple 策略组。
+- Microsoft、国内服务和游戏平台当前同样按正式配置走 `🌐 全球直连` / DIRECT。
 - TikTok 维持独立策略与地区稳定优先；TikTok 规则必须先于抖音 DIRECT 规则。
-- GitHub 使用独立 `💻 GitHub` 策略组。
+- GitHub 使用独立 `🐙 GitHub` 策略组。
 - AI 使用 `rules/ai-core.list`，仅放高置信度核心服务域名，避免 Stripe、Auth0、Sentry、Segment 等共享 SaaS 被宽泛归入 AI。
 - 国内站点出现 FINAL / 代理异常时，先以日志验证，再考虑最小显式直连补丁。
-- 策略组名称视为稳定接口。
+- 策略组名称视为稳定接口；当前名称以 `main` 实际配置为准，历史模板中的旧名称不作为现行接口。
 
 #### 默认节点选择长期原则
 
 - 机场提供的具体节点名称是外部可变数据，不作为正式配置的稳定接口；不要把某个 `香港Zxx`、`日本Zxx`、`IEPL` 等具体节点名写死为长期默认。
-- `⚙️ 手动选择` 应展示当前本机订阅实际节点，不通过 `policy-select-name` 固定某个机场节点。
-- `♻️ ALL` 与 `🤖️ 人工智能` 使用 `url-test + policy-regex-filter` 从当前符合地区/过滤条件的节点中自动选择，不依赖具体节点名存活。
-- `🚀 策略选择` 可以继续通过 `policy-select-name=♻️ ALL` 默认选中 `♻️ ALL`，因为 `♻️ ALL` 是 JAX 自己维护的稳定策略组名称，不是机场节点名称。
+- `✋ 手动选择` 应展示当前本机订阅实际节点，不通过 `policy-select-name` 固定某个机场节点。
+- `🧠 智能选择` 使用全节点 `url-test` 自动测速，不设置地区正则；地区归类和区域优化由各地区智能组单独负责。
+- `🎯 节点选择` 通过 `policy-select-name=🧠 智能选择` 默认选中 `🧠 智能选择`，因为它是 JAX 自己维护的稳定策略组名称，不是机场节点名称。
+- 应用策略组以 `🎯 节点选择` 作为主入口，并按服务需要提供地区智能、`🧠 智能选择` 与 `✋ 手动选择`。
+- 历史模板中的旧策略组名、旧图标和旧默认选择不得作为当前配置依据。
 - 如果未来确实需要固定某个实际节点，只能作为用户明确要求的临时偏好；修改前应确认节点名是否仍存在，并记录回退方式。
 
 ### 规则来源

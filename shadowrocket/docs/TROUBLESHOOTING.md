@@ -114,7 +114,7 @@ fallback-dns-server = system
 
 YouTube 异常按模块逐层停用，不直接改正式配置。IPv6 当前默认关闭，但每次仍以当前所用配置实际 `[General]` 为准。
 
-`proxy-stability.sgmodule` 设置 `block-quic = all-proxy`，只阻断走 Shadowrocket 代理连接的 QUIC，DIRECT 不受影响。它属于移动模式可选稳定性实验，不是默认修复手段；Home Clean 下实际代理由 OpenClash 负责，因此默认不启用。
+`proxy-stability.sgmodule` 设置 `block-quic = all-proxy`，只阻断走 Shadowrocket 代理连接的 QUIC，DIRECT 不受影响。它属于移动模式可选稳定性实验，不是默认修复手段。若移动模式实测需要，可以长期保持开启；Home Clean 正常流量为 DIRECT，`all-proxy` 通常不会作用于这些连接，家庭真实代理 QUIC/UDP 仍由 OpenClash 处理，因此无需为了回家/出门反复切换模块。
 
 推荐移动模式 QUIC A/B：
 
@@ -156,12 +156,12 @@ YouTube 异常按模块逐层停用，不直接改正式配置。IPv6 当前默�
 
 ## 规则源与策略组
 
-移动主配置 V6.3 中部分核心 RULE-SET 引用用户同步维护的 `jax2333333/ios_rule_script` fork。出现某服务突然全部落入 FINAL 或规则集更新失败时：
+当前移动主配置中部分核心 RULE-SET 引用用户同步维护的 `jax2333333/ios_rule_script` fork。出现某服务突然全部落入 FINAL 或规则集更新失败时：
 
 1. 检查对应 Raw URL 是否存在；
 2. 确认 `ios_rule_script` fork 是否仍与 Blackmatrix7 上游同步；
-3. 检查目标策略组名称是否仍存在；
-4. GitHub 流量优先检查独立 `💻 GitHub` 组；
+3. 检查目标策略组名称是否仍存在，并确认最终兜底仍为 `FINAL,🎯 节点选择`；
+4. GitHub 流量优先检查独立 `🐙 GitHub` 组；
 5. 不在没有验证等价映射时批量替换剩余规则源。
 
 Home Clean 不引用这些国外代理 RULE-SET；如果家庭模式某国外服务路由异常，应先去 OpenClash 检查对应规则/策略，而不是把移动主配置 RULE-SET 复制进 Home Clean。

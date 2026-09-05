@@ -1,10 +1,10 @@
 #!name=JAX WebRTC Privacy
-#!desc=备用模块：为 STUN 返回替代地址以降低 WebRTC 暴露真实网络地址的风险。正式主配置 V6.3.1 已默认启用，无需重复开启。2026-09-04
+#!desc=备用模块：为 STUN 返回替代地址以降低 WebRTC 暴露真实网络地址的风险。当前两个正式配置已内置等价设置，无需重复开启。2026-09-05
 
-# 当前正式主配置已经包含同样的 stun-response-ip / stun-response-ipv6 设置。
-# 本模块仅用于独立配置、迁移或以后从主配置拆分时备用。
-# 不建议与正式主配置重复启用。
-# 若 FaceTime、Google Meet、Discord 语音或网页 WebRTC 出现异常，优先撤销主配置中的 STUN 隐私字段。
+# 当前 Mobile 与 Home Clean 正式配置都已经包含同样的 stun-response-ip / stun-response-ipv6 设置。
+# 本模块仅用于独立配置、迁移或以后从正式配置拆分时备用。
+# 不建议与正式配置重复启用。
+# 若 FaceTime、Google Meet、Discord 语音或网页 WebRTC 出现异常，优先关闭重复模块并对当前配置中的 STUN 隐私字段做 A/B。
 
 [General]
 stun-response-ip = 1.0.0.1
