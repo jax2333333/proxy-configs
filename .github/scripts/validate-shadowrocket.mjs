@@ -91,8 +91,8 @@ expectAssignment(
   'https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/Jax-shadowrocket-v6.conf',
   'Mobile',
 );
-if (!hasNormalizedLine(mobile, 'FINAL,🚀 策略选择')) {
-  errors.push('Mobile: 最终兜底必须保持 FINAL,🚀 策略选择');
+if (!hasNormalizedLine(mobile, 'FINAL,🎯 节点选择')) {
+  errors.push('Mobile: 最终兜底必须保持 FINAL,🎯 节点选择');
 }
 const tiktokIndex = mobile.indexOf('DOMAIN-SUFFIX,tiktok.com,🎵 TikTok');
 const douyinIndex = mobile.indexOf('DOMAIN-SUFFIX,amemv.com,🌐 全球直连');
