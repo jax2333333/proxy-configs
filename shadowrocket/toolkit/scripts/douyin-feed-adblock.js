@@ -1,7 +1,8 @@
 /*
- * JAX Douyin Feed AdBlock v3
+ * JAX Douyin Feed AdBlock v5
  * - No external requests.
  * - Recursively filters only content candidates with strong ad markers.
+ * - ad_info/adInfo alone is NOT treated as an ad marker.
  * - Parse, size, depth, or traversal-limit failure => original response.
  */
 
@@ -14,6 +15,11 @@
   const MAX_NODES = 20000;
 
   if (original.length > MAX_BODY_BYTES) return $done({});
+
+  const firstNonSpace = original.match(/\S/);
+  if (!firstNonSpace || (firstNonSpace[0] !== "{" && firstNonSpace[0] !== "[")) {
+    return $done({});
+  }
 
   const CONTENT_KEYS = [
     "aweme_id",
@@ -49,7 +55,12 @@
     return Boolean(value);
   };
 
-  const isTrueFlag = (value) => value === true || value === 1;
+  const isTrueFlag = (value) => {
+    if (value === true || value === 1) return true;
+    if (typeof value !== "string") return false;
+    const normalized = value.trim().toLowerCase();
+    return normalized === "1" || normalized === "true";
+  };
 
   const isContentCandidate = (item) =>
     !!item &&
@@ -68,12 +79,12 @@
       hasPayload(item.adId) ||
       hasPayload(item.live_ad_id) ||
       hasPayload(item.liveAdId) ||
+      hasPayload(item.aweme_raw_ad) ||
+      hasPayload(item.awemeRawAd) ||
       hasPayload(item.raw_ad_data) ||
       hasPayload(item.rawAdData) ||
       hasPayload(item.ad_data) ||
       hasPayload(item.adData) ||
-      hasPayload(item.ad_info) ||
-      hasPayload(item.adInfo) ||
       hasPayload(item.ad_order_id) ||
       hasPayload(item.adOrderId)
     ) {
@@ -101,9 +112,17 @@
   const isExplicitAd = (item) => {
     if (!isContentCandidate(item)) return false;
 
-    // creative_id / creativeId 不在强标记集合中，不能单独触发删除；
-    // 若同时存在其它强标记，由其它强标记决定删除。
+    // creative_id / creativeId and ad_info / adInfo are intentionally NOT
+    // standalone deletion markers. Some ordinary items may carry generic
+    // ad capability/config fields without being actual ads.
     return hasNonCreativeAdMarker(item);
+  };
+
+  const getSafeRequestTarget = () => {
+    const url = $request && typeof $request.url === "string" ? $request.url : "";
+    const match = url.match(/^https?:\/\/([^/?#]+)(\/[^?#]*)?/i);
+    if (!match) return "unknown";
+    return `${match[1]}${match[2] || "/"}`;
   };
 
   let visitedNodes = 0;
@@ -153,10 +172,12 @@
 
     const removed = filterArraysDeep(obj, 0);
 
-    if (removed > 0) console.log(`JAX Douyin AdBlock: removed ${removed} ad item(s)`);
+    if (removed > 0) {
+      console.log(`JAX Douyin AdBlock v5: removed ${removed} ad item(s) @ ${getSafeRequestTarget()}`);
+    }
     return removed > 0 ? $done({ body: JSON.stringify(obj) }) : $done({});
   } catch (e) {
-    console.log(`JAX Douyin AdBlock: pass through (${e})`);
+    console.log(`JAX Douyin AdBlock v5: pass through (${e})`);
     return $done({});
   }
 })();
