@@ -80,6 +80,58 @@ youtube-adblock.sgmodule（目标域名 + 去广告逻辑）
 
 这说明 Home Clean 的 `FINAL,DIRECT` 本身不会阻止 Shadowrocket Toolkit 的 HTTPS 解密 / response Script；关键前提是 Shadowrocket 隧道、模块和共享 CA 在当前场景下实际生效。
 
+## 2026-09-06：主动验证 HTTPS 解密的方法
+
+抖音广告排障中已实际验证一个低风险判断方法：
+
+1. 保持当前 Shadowrocket 场景与目标模块开启；
+2. 用 Safari / Chrome iOS 主动访问模块 `[MITM] hostname` 覆盖的测试域名；
+3. 回到 Shadowrocket 数据日志查看该请求。
+
+本次访问：
+
+```text
+https://api.amemv.com/
+```
+
+随后日志中可以看到完整 HTTPS URL：
+
+```text
+https://api.amemv.com/favicon.ico
+```
+
+并能看到浏览器完整 User-Agent，而不是只有：
+
+```text
+api.amemv.com:443
+TCP Stream
+```
+
+因此可确认该次浏览器请求已经进入 HTTP 层可见状态，说明以下基础链路可用：
+
+```text
+共享 CA
++ iOS 完全信任
++ 当前模块 hostname 匹配
++ 当前 Shadowrocket 场景
+```
+
+### 诊断边界
+
+这个主动测试只能证明 **MITM 基础链路对该浏览器请求有效**，不能单独证明某个目标 App 的所有 HTTPS 请求都一定能被解密。
+
+App 仍可能因为以下原因只显示连接级日志：
+
+- 证书固定 / App 自身 TLS 校验；
+- QUIC / UDP；
+- 使用了其它没有加入 MITM 的主机名；
+- 请求没有落到当前 response Script 的 pattern；
+- 目标响应不是脚本能够处理的格式。
+
+因此以后不能再使用“APP 一栏必须显示字面值 `MITM`”作为唯一判据，也不能因为 Safari 主动测试成功就直接认定 App 内 response Script 已经执行。优先结合 **完整 HTTPS URL、User-Agent、Script 日志和 App 实际请求**综合判断。
+
+详细抖音实测见：`HISTORY-DOUYIN-ADBLOCK-20260906.md`。
+
 ## 固定诊断优先级
 
 若以后出现：
@@ -95,8 +147,9 @@ youtube-adblock.sgmodule（目标域名 + 去广告逻辑）
 1. 当前场景是否确实为 Home Clean；
 2. `JAX MITM Certificate` 本地模块是否开启；
 3. iOS“证书信任设置”中该 CA 是否仍为完全信任；
-4. `youtube-adblock.sgmodule` 是否开启；
+4. 对应需要 MITM 的目标模块是否开启；
 5. 完全退出目标 App，断开并重连 Shadowrocket 后复测；
-6. 上述均正常后，才进一步检查 hostname、Script 日志、QUIC / OpenClash 链路。
+6. 如仍不确定，使用上面的主动验证方法确认 MITM 基础链路；
+7. 基础链路正常后，才进一步检查 hostname、Script 日志、QUIC / OpenClash 链路或 App 自身 TLS 行为。
 
 不要因为 Home Clean 下出现广告就先给 Home Clean 添加代理组、代理节点或移动版 DNS。
