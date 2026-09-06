@@ -1,11 +1,11 @@
 #!name=JAX - TikTok / 抖音广告净化
-#!desc=TikTok 安全优先：保留 TikTok 核心分流；拦截高置信度字节广告域名，并递归过滤抖音 amemv JSON 中具有明确标记的 Feed / 短剧插播广告。v3 · 2026-09-02
+#!desc=TikTok 安全优先：拦截高置信度字节广告域名，并递归过滤抖音 amemv / aweme.snssdk.com JSON 中具有明确标记的 Feed / 短剧插播广告。v4 · 2026-09-06
 
 # 设计原则：
 # - TikTok 安全 / 地区稳定优先，不阻断 tiktokv.com / tiktokcdn.com / byteoversea 等核心域名。
 # - 不封整个 snssdk.com / zijieapi.com / pstatp.com，避免共享基础设施误伤 TikTok 或抖音正常业务。
 # - 域名层仅拦截公开规则库明确标记为 Ads/Tracking 的高置信度广告专用域名。
-# - 原生信息流与短剧插播广告使用本仓库自托管脚本；仅在 *.amemv.com 响应可解析为 JSON 且未超出安全大小时处理。
+# - 原生信息流与短剧插播广告使用本仓库自托管脚本；仅在明确的抖音 Feed API 响应可解析为 JSON 且未超出安全大小时处理。
 # - 脚本不主动联网、不上传 Cookie/Header/账号信息；解析异常时原样放行。
 
 [Rule]
@@ -42,26 +42,27 @@ DOMAIN,pangolin-lq.snssdk.com,REJECT
 DOMAIN,pangolin.snssdk.com,REJECT
 
 # ============================================================
-# 抖音原生 Feed 广告
+# 抖音原生 Feed / 短剧广告
 # ============================================================
-# 2(1).db 实测：插播广告视频与普通视频一样使用 douyinvod.com，
-# 且本轮没有命中上述广告专用域名，因此仅靠域名 REJECT 无法移除。
-# 对抖音独占的 amemv.com HTTPS JSON API 做最小化递归过滤：
-# - 覆盖普通 Feed 与短剧 / 剧集模式中的嵌套数组。
-# - 仅删除具有明确广告标记的条目，普通商品、直播、探店等内容原样保留。
-# - 不封 douyinvod.com 或 dyseries.douyinvod.com：两者承载正常剧集视频流。
+# 实测日志结论：
+# - 广告视频与普通视频一样可使用 douyinvod.com / dyseries.douyinvod.com，不能直接 REJECT 视频 CDN。
+# - 333333.db 捕获 api.amemv.com 后紧接短剧视频连接。
+# - 3(1).db 捕获 aweme.snssdk.com 后约 2 秒即出现 v96-dyseries.douyinvod.com。
+# - 因此 v4 在保留 *.amemv.com 的同时，只新增精确 aweme.snssdk.com；不扩大到 *.snssdk.com。
+# - 仅删除具有明确广告标记的 JSON 条目，普通商品、直播、探店等内容原样保留。
 
 [Script]
-# 匹配 amemv.com HTTPS API；脚本仅处理大小受限的 JSON 响应，并递归过滤内容候选数组项。
-douyin_feed_adblock = type=http-response,pattern=^https://[^/]+\.amemv\.com/,requires-body=1,max-size=2097152,script-path=https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/scripts/douyin-feed-adblock.js?v=20260902-3
+# 仅处理明确抖音 Feed API；脚本本身仍有 JSON、体积、深度和节点数量保护，失败即原样放行。
+douyin_feed_adblock = type=http-response,pattern=^https://(?:[^/]+\.amemv\.com|aweme\.snssdk\.com)/,requires-body=1,max-size=2097152,script-path=https://raw.githubusercontent.com/jax2333333/proxy-configs/main/shadowrocket/toolkit/scripts/douyin-feed-adblock.js?v=20260906-4
 
 # ============================================================
-# 保守排除（故意不拦截）
+# 保守排除（故意不拦截 / 不整域 MITM）
 # ============================================================
 # bds.snssdk.com / extlog.snssdk.com / i.snssdk.com / mcs.snssdk.com
+# ecomuser.snssdk.com / 其它 *.snssdk.com
 # log.zijieapi.com / ctobsnssdk.com / sf3-ttcdn-tos.pstatp.com
-# 这些域名虽常被标记为广告/追踪，但属于共享或遥测链路；为保证 TikTok 安全与 App 稳定暂不阻断。
+# 这些域名属于共享或遥测链路；为保证 TikTok 安全与 App 稳定不做整域处理。
 
 [MITM]
-# 只解密抖音独占 amemv.com，用于推荐 Feed 响应过滤；不加入 TikTok 域名。
-hostname = %APPEND% *.amemv.com
+# amemv 保留原覆盖；snssdk 只增加实测出现的 aweme.snssdk.com，禁止 *.snssdk.com。
+hostname = %APPEND% *.amemv.com, aweme.snssdk.com
