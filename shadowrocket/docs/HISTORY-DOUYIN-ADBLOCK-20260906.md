@@ -148,3 +148,38 @@ JAX MITM Certificate
 - 禁止仅凭时间相关性把共享 ByteDance 域名判定为广告域名。
 - 正常视频 CDN 同时承载正片和广告时，不做 CDN 级封锁。
 - Script 默认 fail-open，不主动外发 Cookie、Header、Token、账号或播放凭据。
+
+## 2026-09-06：GitHub 横向对比后的 v5 优化
+
+在完成本机日志验证后，又对比了 GitHub 上 Choler、QingRex / LoonKissSurge、DYYY 等公开抖音方案。结论不是照搬旧规则，而是提取仍然有价值、且符合 JAX 最小化原则的部分。
+
+### 采用的优化
+
+`shadowrocket/toolkit/scripts/douyin-feed-adblock.js` 升级为 v5：
+
+- `ad_info` / `adInfo` **不再能单独触发删除**。DYYY 当前实现明确指出普通作品也可能携带通用 `ad_info` 能力配置，因此继续把它当强广告标记存在误删风险。
+- 新增 `aweme_raw_ad` / `awemeRawAd` 强广告载荷识别；继续保留 `raw_ad_data` / `rawAdData`。
+- `is_ads` / `is_ad` 及 camelCase 变体同时接受 `true`、`1`、`"true"`、`"1"`，提高兼容性。
+- 非 JSON 响应先做轻量首字符检查，不再无意义进入 `JSON.parse`。
+- 删除广告时的诊断日志只记录 `host + path + removed 数量`，不记录 query、Cookie、Token 或其它认证信息。
+- 继续保留 2 MiB 响应上限、最大深度、最大遍历节点数和 fail-open。
+
+`shadowrocket/toolkit/modules/tiktok-douyin-adblock.module` 同步升级为 v5：
+
+- 新增精确的 `/api/ad/` URL Rewrite REJECT，只覆盖当前已经纳入 MITM 的 `*.amemv.com` 与 `aweme.snssdk.com`。
+- `/api/ad/` 直接拒绝的思路来自多个公开方案的共同做法，但 JAX 不照搬额外 IP、NCDN、`zlink.ugsdk.cn` 或整域规则。
+- response Script / MITM 范围仍保持 `*.amemv.com + aweme.snssdk.com`；暂不扩大到 `*.snssdk.com` / `*.zijieapi.com`。
+- `*.amemv.com` wildcard 暂时保留，因为本机实测出现过 `api.amemv.com`。只有收集到足够完整 HTTPS URL 后，才考虑进一步收窄为具体 Host 白名单。
+
+### 明确不采用
+
+- 不采用老 Choler 方案把 `api*.amemv.com/aweme/vN/` 强制 Rewrite 到 `aweme.snssdk.com/aweme/v1/`；旧模块本身标注最高支持抖音 16.2.0，现代版本存在 API 版本、签名、A/B 与风控回归风险。
+- 不照搬香港抖音方案中的 6443 固定 IP、NCDN、`bytegecko` / `byteeffecttos` 组合阻断；没有本机日志证据前不加入。
+- 不封 `douyinvod.com` / `dyseries.douyinvod.com`，也不封本轮出现的 `111.31.36.96/trace/v3`，因为都已确认参与正常播放链路。
+
+### v5 提交
+
+- Script v5：`b5387f2e086df20288fcda4207e8ff02ecdc499e`
+- Module v5：`d44dc3d33102853c199f1c352c28ca30b663cb2d`
+
+v5 仍属于需要实际 App 场景验收的实验版本；不能因为规则更完整就宣称已经 100% 去除抖音所有 Feed / 短剧广告。
