@@ -93,7 +93,7 @@ shadowrocket/toolkit/
 | `webtoon-adblock.module` | WEBTOON 广告 SDK / 广告关键词 | 否 |
 | `wandou-privacy.module` | 豌豆清单广告/追踪保护 | 否 |
 | `youtube-adblock.sgmodule` | YouTube / YouTube Music 去广告实验模块 | YouTube 明确域名 |
-| `tiktok-douyin-adblock.module` | TikTok 安全优先；拦截高置信度字节广告域名，并过滤抖音 `amemv.com` JSON Feed / 短剧明确广告对象 | `*.amemv.com` |
+| `tiktok-douyin-adblock.module` | TikTok 安全优先；拦截高置信度字节广告域名，并过滤抖音 Feed / 短剧明确广告对象 | `*.amemv.com`、`aweme.snssdk.com` |
 
 这些 App 专用模块同样可用于 Home Clean：Shadowrocket 只负责本机净化，随后把剩余正常流量交给 OpenClash。
 
@@ -101,7 +101,7 @@ shadowrocket/toolkit/
 
 `meituan-clean-safe.module` 首版故意不 MITM `apimobile.meituan.com` 等核心业务 API，也不引入第三方 JS。若广告仍存在，先通过日志确认真实广告 URL，再做最小增量扩展；不要直接扩大为 `*.meituan.com` / `*.meituan.net`。
 
-`tiktok-douyin-adblock.module` 属于干预程度较高的专项模块：它会对 `*.amemv.com` 做 HTTPS response 脚本处理。若抖音出现观看历史、推荐流、短剧、搜索、评论或账号页异常，优先关闭本模块做 A/B，不要先扩大 MITM 或封锁整个 ByteDance 共享域名。
+`tiktok-douyin-adblock.module` 属于干预程度较高的专项模块。当前 v4 对 `*.amemv.com` 与精确的 `aweme.snssdk.com` 做 HTTPS response 脚本处理；`aweme.snssdk.com` 来自 2026-09-06 实测，**不允许扩展成 `*.snssdk.com`**。若抖音出现观看历史、推荐流、短剧、搜索、评论或账号页异常，优先关闭本模块做 A/B，不要先扩大 MITM 或封锁整个 ByteDance 共享域名。详细实测见 `docs/HISTORY-DOUYIN-ADBLOCK-20260906.md`。
 
 YouTube 模块只保留这一份。不要同时启用旧仓库 URL、重复导入副本或其它作用相同的 YouTube MITM 模块，以免同一响应被重复改写。
 
