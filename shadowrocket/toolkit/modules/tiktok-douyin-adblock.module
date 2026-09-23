@@ -49,7 +49,7 @@ DOMAIN,pangolin.snssdk.com,REJECT
 # 正片：reading-video.qznovelvod.com
 # 广告：v5-*-reading-ad.qznovelvod.com
 # 因此禁止 DOMAIN-SUFFIX,qznovelvod.com，仅匹配 reading-ad。
-DOMAIN-KEYWORD,reading-ad,REJECT
+DOMAIN-SUFFIX,reading-ad.qznovelvod.com,REJECT
 
 # 红果 / 字节广告素材与广告接口
 DOMAIN,ads3-normal-lq.zijieapi.com,REJECT
