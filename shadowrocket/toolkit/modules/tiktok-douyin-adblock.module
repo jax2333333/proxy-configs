@@ -1,11 +1,12 @@
-#!name=JAX - TikTok / 抖音广告净化
-#!desc=TikTok 安全优先：拦截高置信度字节广告域名与明确 /api/ad/ 请求，并递归过滤抖音 amemv / aweme.snssdk.com JSON 中具有强广告标记的 Feed / 短剧插播广告。v5 · 2026-09-06
+#!name=JAX - TikTok / 抖音 / 红果广告净化
+#!desc=TikTok 安全优先：拦截高置信度字节广告域名、红果短剧广告 CDN 与明确 /api/ad/ 请求，并递归过滤抖音 amemv / aweme.snssdk.com JSON 中具有强广告标记的 Feed / 短剧插播广告。v6 · 2026-09-23
 
 # 设计原则：
 # - TikTok 安全 / 地区稳定优先，不阻断 tiktokv.com / tiktokcdn.com / byteoversea 等核心域名。
-# - 不封整个 snssdk.com / zijieapi.com / pstatp.com，避免共享基础设施误伤 TikTok 或抖音正常业务。
-# - 域名层仅拦截公开规则库明确标记为 Ads/Tracking 的高置信度广告专用域名。
+# - 不封整个 snssdk.com / zijieapi.com / pstatp.com / qznovelvod.com，避免共享基础设施误伤 TikTok、抖音或红果正常业务。
+# - 域名层仅拦截本机日志验证或公开规则库明确标记为 Ads/Tracking 的高置信度广告专用域名。
 # - 明确 /api/ad/ 路径直接拒绝；原生信息流与短剧插播广告继续由自托管 response Script 处理。
+# - 红果正片使用 reading-video.qznovelvod.com；广告素材使用 reading-ad 子域，仅拦 reading-ad，不影响正片。
 # - ad_info / adInfo 不能单独判定为广告；普通作品可能携带通用广告能力/配置字段。
 # - 脚本不主动联网、不上传 Cookie/Header/账号信息；解析异常时原样放行。
 
@@ -43,6 +44,20 @@ DOMAIN,pangolin-lq.snssdk.com,REJECT
 DOMAIN,pangolin.snssdk.com,REJECT
 
 # ============================================================
+# 红果短剧：2026-09-23 本机 Shadowrocket 日志验证
+# ============================================================
+# 正片：reading-video.qznovelvod.com
+# 广告：v5-*-reading-ad.qznovelvod.com
+# 因此禁止 DOMAIN-SUFFIX,qznovelvod.com，仅匹配 reading-ad。
+DOMAIN-KEYWORD,reading-ad,REJECT
+
+# 红果 / 字节广告素材与广告接口
+DOMAIN,ads3-normal-lq.zijieapi.com,REJECT
+DOMAIN,ads5-normal-lq.zijieapi.com,REJECT
+DOMAIN,p3-ad-sign.byteimg.com,REJECT
+DOMAIN,p9-ad-sign.byteimg.com,REJECT
+
+# ============================================================
 # 明确广告 API
 # ============================================================
 # GitHub 多个长期方案均直接拒绝 /api/ad/；这里仅限当前已纳入 MITM 的抖音主机，
@@ -61,6 +76,10 @@ DOMAIN,pangolin.snssdk.com,REJECT
 # - v5 继续保留 *.amemv.com + 精确 aweme.snssdk.com；不扩大到 *.snssdk.com / *.zijieapi.com。
 # - 脚本移除 ad_info/adInfo 的单独强标记资格，新增 aweme_raw_ad/awemeRawAd，降低普通作品误删风险。
 # - is_ads/is_ad 同时接受布尔、数字与字符串真值；仅删除具有强广告证据的内容对象。
+#
+# 2026-09-23 红果补充：
+# - 日志确认 reading-video 与 reading-ad 可直接区分正常正片和广告素材。
+# - 红果当前先采用域名层精准 REJECT，不扩大 MITM 范围。
 
 [Script]
 # 仅处理当前明确抖音 API；JSON、体积、深度和节点数量均有限制，失败即原样放行。
@@ -73,10 +92,12 @@ douyin_feed_adblock = type=http-response,pattern=^https://(?:[^/]+\.amemv\.com|a
 # bds.snssdk.com / extlog.snssdk.com / i.snssdk.com / mcs.snssdk.com
 # ecomuser.snssdk.com / 其它 *.snssdk.com
 # log.zijieapi.com / ctobsnssdk.com / sf3-ttcdn-tos.pstatp.com
+# qznovelvod.com 整域（红果正常正片 reading-video 也在此域）
 # zlink.ugsdk.cn / 未经本机日志验证的 6443 IP / NCDN 规则
-# 这些主机或规则属于共享、遥测或其它方案的特定环境；为保证 TikTok 安全与 App 稳定不照搬。
+# 这些主机或规则属于共享、遥测或其它方案的特定环境；为保证 TikTok / 抖音 / 红果稳定不照搬。
 
 [MITM]
 # amemv 暂保留 wildcard 以覆盖本机实测 api.amemv.com；未来收集足够完整 URL 后再收窄为具体主机白名单。
 # snssdk 只保留实测出现的 aweme.snssdk.com，禁止 *.snssdk.com。
+# 红果本轮只做域名层 REJECT，不新增 MITM hostname。
 hostname = %APPEND% *.amemv.com, aweme.snssdk.com
