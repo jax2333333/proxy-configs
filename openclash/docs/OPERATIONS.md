@@ -4,13 +4,21 @@
 
 ## 1. R2S 使用 GitHub 正式配置
 
-OpenClash 配置订阅应指向：
+OpenClash 配置订阅应按实际机场数量选择对应 Raw：
+
+双机场：
 
 ```text
-https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/openclash_by_jax_v6.yaml
+https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/openclash_by_jax_双机场.yaml
 ```
 
-LuCI 中进入：`服务 → OpenClash → 配置订阅`，确认订阅地址是上面的 Raw 地址，然后保存并更新配置。
+单机场：
+
+```text
+https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/openclash_by_jax_单机场.yaml
+```
+
+LuCI 中进入：`服务 → OpenClash → 配置订阅`，确认订阅地址与当前所选模式一致，然后保存并更新配置。
 
 旧 Gist 曾导致“GitHub 已更新但 R2S 仍拉到旧版本”。以后不把 Gist 当正式源。
 
@@ -20,7 +28,9 @@ LuCI 中进入：`服务 → OpenClash → 配置订阅`，确认订阅地址是
 
 入口：`服务 → OpenClash → 运行状态 → 顶部「覆写模块」`。
 
-覆写文件必须有段头。当前双 Provider 的本地模板：
+覆写文件必须有段头，并且 Provider 键必须与所选正式 YAML 一致。
+
+双机场模板：
 
 ```ini
 [YAML]
@@ -32,7 +42,16 @@ proxy-providers:
     url: "真实订阅地址 2"
 ```
 
-这两个真实 URL 只存在路由器本地。不要把这个文件原样上传仓库、Issue、公开聊天或截图。V5 升级到 V6 时必须同时把本地 Provider 键更新为 `Airport-A` / `Airport-B`，否则正式 YAML 中的占位 URL 不会被覆盖。
+单机场模板：
+
+```ini
+[YAML]
+proxy-providers:
+  Airport-A:
+    url: "真实订阅地址"
+```
+
+真实 URL 只存在路由器本地。不要把这个文件原样上传仓库、Issue、公开聊天或截图。若切换单/双机场模式，必须同步检查本地 Provider 键与当前正式 YAML 是否一致，否则占位 URL 可能无法被正确覆盖。
 
 ## 3. 为什么本地只写 URL
 
@@ -114,7 +133,7 @@ OpenClash restart
 
 任何 OpenClash 配置修改：
 
-1. 重新读取 `main` 当前 `openclash/openclash_by_jax_v6.yaml`，不要用聊天旧副本。
+1. 根据当前运行模式重新读取 `main` 中的 `openclash/openclash_by_jax_双机场.yaml` 或 `openclash/openclash_by_jax_单机场.yaml`，不要用聊天旧副本。
 2. 明确这次变更影响的 Provider / 策略组 / DNS / Rules。
 3. 只做必要的最小修改。
 4. 检查 YAML 语法、缩进、重复键、Provider/组/规则引用。
@@ -131,7 +150,7 @@ OpenClash restart
 路由器重装或 OpenClash 配置丢失时：
 
 1. 安装 OpenClash/Mihomo 所需依赖；具体包和版本以 OpenClash 官方指南与当前固件为准，不照抄历史版本。
-2. 在“配置订阅”添加本仓库 Raw URL。
+2. 在“配置订阅”添加与当前单/双机场模式对应的本仓库 Raw URL。
 3. 更新配置，让占位 Provider YAML 下载到本地。
 4. 在“运行状态 → 覆写模块”新建 `local-airport.txt`，第一行写 `[YAML]`，填入本地真实机场 URL。
 5. 启用覆写模块并重启 OpenClash。
@@ -141,21 +160,32 @@ OpenClash restart
 
 ## 6. 更新后验证重点
 
-更新 Provider / 策略组后至少确认：
+双机场配置至少确认：
 
-- `Airport-A` / `Airport-B` 是否分别只进入对应的 A/B 地区组。
-- 两个 Provider 的节点前缀是否分别为 `A|` / `B|`，没有同名冲突。
-- 八个地区是否各有 A/B Smart 和 A/B 手动节点组。
-- `♻️智能选择` 是否完整包含 16 个地区 Smart 组。
-- `🤖 AI` 与 `♻️AI智能选择` 是否没有任何香港入口。
-- 不存在备用智能组和 fallback 故障转移组。
-- DNS Strict、Apple、Steam、ZeroTier、browserleaks 等现有规则未被无关改动。
+- `Airport-A` / `Airport-B` 均存在，节点前缀分别为 `A|` / `B|`。
+- `A|智能选择` / `B|智能选择` 分别只使用对应 Provider。
+- 香港、日本、台湾、美国、新加坡各有 A/B 地区 Smart，共 10 个地区 Smart。
+- `🖐️ 手动选择` 与 `🛠️ 节点测速` 聚合两个 Provider。
+- 不存在旧的 `♻️智能选择`、`♻️AI智能选择`、`🌐 全部节点` 或地区手动组引用。
+
+单机场配置至少确认：
+
+- 只有 `Airport-A`，不存在 `Airport-B` / `B|` 体系。
+- 存在 `智能选择` 与香港、日本、台湾、美国、新加坡 5 个地区 Smart。
+- `🖐️ 手动选择` 与 `🛠️ 节点测速` 只使用 `Airport-A`。
+
+两套配置都要继续检查：
+
+- `🤖 AI`、YouTube、Telegram、GitHub、Netflix、TikTok、Steam 等应用组引用均存在。
+- DNS、Apple、Steam、ZeroTier、browserleaks 等现有规则未被无关改动。
+- Provider URL 仍为占位值，仓库中没有真实订阅或其它凭据。
+- 如果要求 AI 严格排除香港，不能只检查显式地区 Smart；还要检查未过滤的总 Smart 是否仍能选到香港节点。
 
 ## 7. 配置订阅更新异常
 
 如果 GitHub 已经更新但 R2S 看不到最新版本：
 
-- 先看 YAML 第一行版本注释是否变化。
+- 先核对 GitHub `main` 中所选 YAML 的当前内容/提交，以及 R2S 配置订阅实际下载的文件是否一致。
 - 检查 OpenClash“配置订阅”的地址是否仍是旧 Gist。
 - 检查运行日志中的下载 URL、curl 错误和 `Config File Tested Faild` 等信息。
 - 必要时生成 Debug 日志，不要反复覆盖配置碰运气。

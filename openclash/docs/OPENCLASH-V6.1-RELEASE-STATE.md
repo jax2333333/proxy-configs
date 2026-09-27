@@ -1,11 +1,14 @@
 # OpenClash v6.1 Release State
 
+> [!IMPORTANT]
+> 本文件是 **v6.1 历史发布快照**，不代表当前正式配置。当前正式入口请读取 `CURRENT-STATE.md`、`KNOWLEDGE-INDEX.md`，并以 `main` 中 `openclash_by_jax_双机场.yaml` / `openclash_by_jax_单机场.yaml` 为准。
+
 版本：v6.1
 状态：Production Ready
 
-## 正式配置
+## 当时正式配置
 
-正式运行文件：
+当时正式运行文件：
 
 - openclash/openclash_by_jax_v6.1.yaml
 

@@ -42,10 +42,18 @@ Debug 日志会包含系统信息、依赖、内核、插件/覆写设置、配�
 
 历史根因：OpenClash 配置订阅仍指向旧 Gist，而正式配置已经迁移到仓库 Raw。
 
-正式 Raw：
+正式 Raw（按使用模式选择）：
+
+双机场：
 
 ```text
-https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/openclash_by_jax_v6.yaml
+https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/openclash_by_jax_双机场.yaml
+```
+
+单机场：
+
+```text
+https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/openclash_by_jax_单机场.yaml
 ```
 
 检查“配置订阅”实际地址和运行日志中的下载地址。OpenClash 更新流程会下载、YAML 校验、新旧对比后再替换配置；不能只看 GitHub 页面判断路由器已更新。

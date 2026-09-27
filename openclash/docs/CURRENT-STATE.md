@@ -154,57 +154,53 @@ DNS检测相关域名保持海外解析优先：
 -   🎮 Steam
 -   🐟 漏网之鱼
 
+当前两套 YAML 的 `🤖 AI` 都显式列出日本、新加坡、美国、台湾地区 Smart，但同时保留一个未按地区过滤的总 Smart 入口；因此当前状态不应描述为“严格排除全部香港路径”。
+
 ------------------------------------------------------------------------
 
 # 6. Smart设计
 
 双机场：
 
--   A/B地区Smart独立
--   统一智能入口
+-   `A|智能选择` / `B|智能选择` 两个总 Smart 独立
+-   香港、日本、台湾、美国、新加坡分别建立 A/B 地区 Smart，共 10 个地区 Smart
+-   `🖐️ 手动选择` 与 `🛠️ 节点测速` 直接聚合两个 Provider
 
 单机场：
 
--   Airport-A Smart
--   地区智能入口
+-   `智能选择` 作为总 Smart
+-   香港、日本、台湾、美国、新加坡各一个地区 Smart
+-   `🖐️ 手动选择` 与 `🛠️ 节点测速` 使用 `Airport-A`
 
-Smart原则：
-
-排除：
+地区 Smart 当前排除：
 
 -   免费节点
 -   0.01倍率
 -   x0.1倍率
 
-Smart参数：
-
--   uselightgbm
--   collectdata
--   interval
--   tolerance
-
-必须读取当前YAML，不在文档锁死。
+当前 YAML 的 Smart 组显式配置 `url`、`interval`、`tolerance`；地区 Smart 另外配置 `filter`、`exclude-filter`、`exclude-type`。是否增加其它 Smart 参数必须以当前 Mihomo/Smart 文档与实际 YAML 为准，不在本文写死。
 
 ------------------------------------------------------------------------
 
 # 7. Provider缓存保护
 
-维护工具：
+当前启动钩子调用的维护入口：
 
-`provider-cache-guard-v3.1.3.1.sh`
+`openclash/toolkit/scripts/provider-cache-guard.sh`
 
-功能：
+版本化的 `provider-cache-guard-v*.sh` 文件保留用于历史/迭代参考，不作为当前启动钩子的默认入口。
 
--   SHA256检测
--   Provider变化检测
--   节点数量检测
--   小文件保护
--   自动备份
--   自动清理缓存
+当前守卫功能：
+
+-   对本地 Provider URL 计算 SHA256 指纹
+-   检测同名 Provider URL 是否变化
+-   URL 变化时精确备份并清理该 Provider 的缓存文件
+-   首次运行只建立指纹，不清缓存
+-   读取、哈希、备份或删除异常时优先保留缓存并允许 OpenClash 继续启动
 
 用于解决：
 
-OpenClash Provider缓存未及时更新问题。
+同名 HTTP Provider 更换 URL 后仍复用旧缓存的问题。
 
 ------------------------------------------------------------------------
 

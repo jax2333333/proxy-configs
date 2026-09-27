@@ -61,7 +61,7 @@ openclash/openclash_by_jax_单机场.yaml
 | 了解当前架构、Provider、DNS、策略组 | `CURRENT-STATE.md` + 当前 YAML | OpenClash 指南相关章节 |
 | 修改任何 YAML | 当前 YAML + `CHATGPT-MAINTENANCE-PROMPT.md` | Mihomo Wiki / OpenClash 指南 |
 | 新增/删除机场 Provider | `OPERATIONS.md` + 当前 YAML | Mihomo proxy-providers 文档 |
-| 修改 A/B 地区 Smart、手动节点组或 AI 选择 | 当前 YAML + `CURRENT-STATE.md` | Mihomo proxy-groups / Smart 资料 |
+| 修改 A/B 总 Smart、地区 Smart、手动选择或 AI 选择 | 当前 YAML + `CURRENT-STATE.md` | Mihomo proxy-groups / Smart 资料 |
 | R2S 更新不到 GitHub 最新配置 | `OPERATIONS.md` + `TROUBLESHOOTING.md` | OpenClash `12-subscribe-config.md` |
 | 本地 `local-airport.txt` 覆写 | `OPERATIONS.md` | OpenClash `16-overwrite-module-format.md` |
 | Provider URL 已变化但节点不更新 | `OPERATIONS.md` + `TROUBLESHOOTING.md` + `../toolkit/scripts/` | OpenClash `01-architecture.md`、`16-overwrite-module-format.md` |

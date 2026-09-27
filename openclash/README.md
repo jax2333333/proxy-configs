@@ -17,24 +17,36 @@
 
 ## 当前正式配置
 
-**唯一正式配置文件：** [`openclash_by_jax_v6.yaml`](./openclash_by_jax_v6.yaml)
+当前维护两套正式配置，按实际机场数量选择：
 
-> 配置版本、端口、Provider、策略组、DNS 字段等会变化。**不要把本 README 当成运行配置副本；任何修改前都必须重新读取 YAML 最新内容。** 当前版本以 YAML 第一行注释为准。
+- 双机场：[`openclash_by_jax_双机场.yaml`](./openclash_by_jax_双机场.yaml)
+- 单机场：[`openclash_by_jax_单机场.yaml`](./openclash_by_jax_单机场.yaml)
 
-R2S 配置订阅应直接读取本仓库 Raw：
+> 配置版本、端口、Provider、策略组、DNS 字段等会变化。**不要把本 README 当成运行配置副本；任何修改前都必须重新读取所选 YAML 的 `main` 最新内容。** 当前状态以 GitHub `main` 中实际 YAML 为准。
+
+R2S 配置订阅应按使用模式读取本仓库 Raw：
+
+双机场：
 
 ```text
-https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/openclash_by_jax_v6.yaml
+https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/openclash_by_jax_双机场.yaml
 ```
 
-旧 Gist 不再作为正式源；如果 R2S 更新后仍是旧版本，先检查订阅地址是否仍指向旧 Gist。
+单机场：
+
+```text
+https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/openclash_by_jax_单机场.yaml
+```
+
+旧 Gist 不再作为正式源；如果 R2S 更新后仍是旧版本，先检查配置订阅地址是否与当前所选模式一致。
 
 ## 当前架构
 
 ```text
 GitHub main
-  ├─ openclash/openclash_by_jax_v6.yaml
-  │    └─ 只含 Provider 占位 URL
+  ├─ openclash/openclash_by_jax_双机场.yaml
+  ├─ openclash/openclash_by_jax_单机场.yaml
+  │    └─ 两套正式 YAML 的 Provider URL 均为占位值
   └─ openclash/toolkit/scripts/
        └─ Provider URL 缓存守卫及启动钩子模板
             ▼
@@ -48,12 +60,18 @@ OpenClash 启动时检查 URL 指纹 → 必要时清理对应 Provider 缓存 �
 
 ### Provider / 策略分工
 
-| Provider | 定位 | 节点前缀 | 地区 Smart | 地区手动组 | `🌐 全部节点` |
+双机场配置当前结构：
+
+| Provider | 定位 | 节点前缀 | 总 Smart | 地区 Smart | 手动/测速聚合 |
 |---|---|---|---:|---:|---:|
 | `Airport-A` | 主力机场 | `A|` | ✅ | ✅ | ✅ |
 | `Airport-B` | 辅助机场 | `B|` | ✅ | ✅ | ✅ |
 
-V6 对香港、日本、新加坡、美国、台湾、韩国、英国、德国分别建立 A/B 独立 Smart 与手动节点组。`♻️智能选择` 汇总 16 个地区 Smart 组；`♻️AI智能选择` 和 `🤖 AI` 排除全部香港路径。旧备用智能组和 fallback 故障转移组已删除。
+双机场 YAML 当前只对香港、日本、台湾、美国、新加坡建立 A/B 独立地区 Smart，共 10 个地区 Smart 组；另有 `A|智能选择`、`B|智能选择` 两个总 Smart。`🖐️ 手动选择` 与 `🛠️ 节点测速` 直接聚合两个 Provider，不存在“地区手动组”、`🌐 全部节点`、`♻️智能选择` 或 `♻️AI智能选择`。
+
+单机场配置只保留 `Airport-A`，不添加 A/B 节点前缀，使用 `智能选择`、5 个地区 Smart、`🖐️ 手动选择` 和 `🛠️ 节点测速`。
+
+`🤖 AI` 当前显式列出的地区 Smart 不含香港，但两套 YAML 都仍包含一个未按地区过滤的总 Smart（双机场为 `A|智能选择`，单机场为 `智能选择`）。因此当前配置不能描述为“严格排除全部香港路径”；如果要收紧这一点，应单独修改 YAML 并验证。
 
 ### Provider URL 缓存守卫
 
