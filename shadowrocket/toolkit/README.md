@@ -194,6 +194,48 @@ YouTube 模块只保留这一份。不要同时启用旧仓库 URL、重复导�
 ❌ app-adblock-template.sgmodule
 ```
 
+
+## 当前设备日常启用模块（2026-09-30）
+
+> 下面仅记录 2026-09-30 用户实机截图中**确认已开启**的模块，作为日常维护 / 故障恢复基线。模块源码、版本与功能仍以 GitHub `main` 当前文件为准；未出现在本清单中的模块不要仅凭本节推断其历史状态。
+
+### 基础常开
+
+```text
+✅ privacy-lite.sgmodule
+✅ network-health.sgmodule
+✅ url-cleaner-safe.sgmodule
+✅ httpdns-block-safe.sgmodule
+```
+
+### 本机共享 MITM CA
+
+```text
+✅ JAX MITM Certificate
+```
+
+`JAX MITM Certificate` 仅记录“当前已开启”这一状态。真实 `ca-p12`、CA 私钥与 `ca-passphrase` 继续只保存在 iPhone 本机，禁止写入 GitHub、聊天、Notion 或其它公开位置。
+
+### App / 网站专项常开
+
+```text
+✅ bilibili-clean-safe.module
+✅ amap-clean.module
+✅ jd-clean.module
+✅ meituan-clean-safe.module
+✅ taobao-clean.module
+✅ site-cleaner.sgmodule
+✅ weibo-clean.module
+✅ wechat-article-clean.module
+✅ xianyu-clean.module
+✅ xiaohongshu-clean.module
+✅ tiktok-douyin-adblock.module
+✅ webtoon-adblock.module
+✅ youtube-adblock.sgmodule
+```
+
+本次确认共 **18 个已开启模块**：4 个基础模块 + 1 个本机共享 MITM CA + 13 个 App / 网站专项模块。以后发生“模块列表突然清空”时，先以本节作为恢复基线，再逐项从当前 `main` 的 Raw 地址重新导入；恢复后重新确认 iOS CA 完全信任与需要 MITM 的模块实际生效。
+
 ## 25 个模块 Raw 地址
 
 ```text
