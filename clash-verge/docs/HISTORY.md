@@ -204,7 +204,34 @@ interface not found
 - 不要只因名称包含 `badjs` 就拦截。
 - 如需隐私型阻断，应另行评估微信 WebView / 页面错误上报副作用。
 
-## 17. 后续维护
+## 17. V3.0 双机场 A/B 方案
+
+2026-09-30 增加双机场公共模板：
+
+```text
+clash-verge/clash-verge-by-jax-dual.yaml
+```
+
+本地 Merge 使用两个 Provider：
+
+```text
+AirportA → additional-prefix: "A | "
+AirportB → additional-prefix: "B | "
+```
+
+设计目的：
+
+- 真实订阅 URL 仍只保存在本机，不进入 Public GitHub。
+- 通过 A/B 前缀避免两个机场出现同名节点时发生混淆。
+- 分别提供 A/B 智能选择、地区智能和手动节点组。
+- 保留汇总智能选择和跨机场 fallback，单机场异常时仍有另一个机场可接管。
+- DNS、Fake-IP、TUN、Rule Provider 和既有规则语义继续沿用稳定方案，不因双机场改造无关重构。
+
+**实机验证：2026-09-30 在新电脑导入双机场 Remote YAML，并使用本地 AirportA / AirportB Merge 后，可以正常加载节点并正常使用。**
+
+因此 V3.0 双机场结构可作为后续换机、重装和双机场维护的已验证方案。
+
+## 18. 后续维护
 
 历史文档只用于避免重复踩坑。
 
