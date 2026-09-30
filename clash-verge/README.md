@@ -37,23 +37,34 @@ Raw 地址：
 
 ## 当前架构
 
+单机场：
+
 ```text
 GitHub main
 └─ clash-verge/clash-verge-by-jax.yaml
-   ├─ 公共 Mihomo 配置
-   ├─ DNS / Fake-IP
-   ├─ TUN
-   ├─ 策略组
-   ├─ Rule Providers
-   └─ Rules
         +
-Clash Verge 本地「订阅扩展配置 / Merge」
+Clash Verge 本地 Merge
 └─ proxy-providers.Airport1
    └─ 真实机场订阅 URL（仅本地）
         ↓
-Clash Verge Rev
+Clash Verge Rev / Mihomo
+```
+
+双机场：
+
+```text
+GitHub main
+└─ clash-verge/clash-verge-by-jax-dual.yaml
+        +
+Clash Verge 本地 Merge
+├─ proxy-providers.AirportA
+│  └─ override.additional-prefix: "A | "
+└─ proxy-providers.AirportB
+   └─ override.additional-prefix: "B | "
         ↓
-Mihomo 最终运行配置
+A / B 节点分离 + 跨机场智能选择 / 故障转移
+        ↓
+Clash Verge Rev / Mihomo
 ```
 
 注意：Clash Verge 自身设置或 Merge 可能继续覆写 YAML，因此**GitHub 配置 ≠ 必然等于最终运行值**。排障时应同时检查当前 YAML、Clash Verge 本地设置和运行日志。
@@ -75,6 +86,7 @@ Mihomo 最终运行配置
 - 已移除曾经不存在/404 的 `apple_ip.mrs`、`steam_ip.mrs` 依赖。
 - Mihomo API 模板只监听本机回环地址，避免无认证 API 暴露到局域网。
 - 已通过实际日志验证 AI、Google、GitHub、YouTube、国内直连、广告拦截和漏网兜底能按预期命中。
+- **V3.0 双机场方案已在新电脑实机验证可正常使用**：远程加载公共 YAML，本地 Merge 注入 AirportA / AirportB，节点按 `A | ` / `B | ` 前缀区分，A/B 策略组可正常使用。
 
 ## 当前策略语义
 
