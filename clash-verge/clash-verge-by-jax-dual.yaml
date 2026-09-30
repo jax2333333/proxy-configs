@@ -102,26 +102,26 @@ proxy-groups:
   - 🌐 全部节点
   - A | 全部节点
   - B | 全部节点
-  - A | 香港智能
-  - B | 香港智能
-  - A | 日本智能
-  - B | 日本智能
-  - A | 狮城智能
-  - B | 狮城智能
-  - A | 美国智能
-  - B | 美国智能
-  - A | 香港节点
-  - B | 香港节点
-  - A | 日本节点
-  - B | 日本节点
-  - A | 狮城节点
-  - B | 狮城节点
-  - A | 美国节点
-  - B | 美国节点
-  - 🔯 香港故转
-  - 🔯 日本故转
-  - 🔯 狮城故转
-  - 🔯 美国故转
+  - A | 🇭🇰 香港智能
+  - B | 🇭🇰 香港智能
+  - A | 🇯🇵 日本智能
+  - B | 🇯🇵 日本智能
+  - A | 🇸🇬 狮城智能
+  - B | 🇸🇬 狮城智能
+  - A | 🇺🇸 美国智能
+  - B | 🇺🇸 美国智能
+  - A | 🇭🇰 香港节点
+  - B | 🇭🇰 香港节点
+  - A | 🇯🇵 日本节点
+  - B | 🇯🇵 日本节点
+  - A | 🇸🇬 狮城节点
+  - B | 🇸🇬 狮城节点
+  - A | 🇺🇸 美国节点
+  - B | 🇺🇸 美国节点
+  - 🔯 🇭🇰 香港故转
+  - 🔯 🇯🇵 日本故转
+  - 🔯 🇸🇬 狮城故转
+  - 🔯 🇺🇸 美国故转
   - 🚀 直连
 - name: 🤖 AI
   type: select
@@ -133,18 +133,18 @@ proxy-groups:
   - 🌐 全部节点
   - A | 全部节点
   - B | 全部节点
-  - A | 日本智能
-  - B | 日本智能
-  - A | 美国智能
-  - B | 美国智能
-  - A | 香港节点
-  - B | 香港节点
-  - A | 日本节点
-  - B | 日本节点
-  - A | 狮城节点
-  - B | 狮城节点
-  - A | 美国节点
-  - B | 美国节点
+  - A | 🇯🇵 日本智能
+  - B | 🇯🇵 日本智能
+  - A | 🇺🇸 美国智能
+  - B | 🇺🇸 美国智能
+  - A | 🇭🇰 香港节点
+  - B | 🇭🇰 香港节点
+  - A | 🇯🇵 日本节点
+  - B | 🇯🇵 日本节点
+  - A | 🇸🇬 狮城节点
+  - B | 🇸🇬 狮城节点
+  - A | 🇺🇸 美国节点
+  - B | 🇺🇸 美国节点
   - 🚀 直连
 - name: 📺 YouTuBe
   type: select
@@ -156,22 +156,22 @@ proxy-groups:
   - 🌐 全部节点
   - A | 全部节点
   - B | 全部节点
-  - A | 香港智能
-  - B | 香港智能
-  - A | 日本智能
-  - B | 日本智能
-  - A | 狮城智能
-  - B | 狮城智能
-  - A | 美国智能
-  - B | 美国智能
-  - A | 香港节点
-  - B | 香港节点
-  - A | 日本节点
-  - B | 日本节点
-  - A | 狮城节点
-  - B | 狮城节点
-  - A | 美国节点
-  - B | 美国节点
+  - A | 🇭🇰 香港智能
+  - B | 🇭🇰 香港智能
+  - A | 🇯🇵 日本智能
+  - B | 🇯🇵 日本智能
+  - A | 🇸🇬 狮城智能
+  - B | 🇸🇬 狮城智能
+  - A | 🇺🇸 美国智能
+  - B | 🇺🇸 美国智能
+  - A | 🇭🇰 香港节点
+  - B | 🇭🇰 香港节点
+  - A | 🇯🇵 日本节点
+  - B | 🇯🇵 日本节点
+  - A | 🇸🇬 狮城节点
+  - B | 🇸🇬 狮城节点
+  - A | 🇺🇸 美国节点
+  - B | 🇺🇸 美国节点
   - 🚀 直连
 - name: ✈️ Telegram
   type: select
@@ -183,22 +183,22 @@ proxy-groups:
   - 🌐 全部节点
   - A | 全部节点
   - B | 全部节点
-  - A | 香港智能
-  - B | 香港智能
-  - A | 日本智能
-  - B | 日本智能
-  - A | 狮城智能
-  - B | 狮城智能
-  - A | 美国智能
-  - B | 美国智能
-  - A | 香港节点
-  - B | 香港节点
-  - A | 日本节点
-  - B | 日本节点
-  - A | 狮城节点
-  - B | 狮城节点
-  - A | 美国节点
-  - B | 美国节点
+  - A | 🇭🇰 香港智能
+  - B | 🇭🇰 香港智能
+  - A | 🇯🇵 日本智能
+  - B | 🇯🇵 日本智能
+  - A | 🇸🇬 狮城智能
+  - B | 🇸🇬 狮城智能
+  - A | 🇺🇸 美国智能
+  - B | 🇺🇸 美国智能
+  - A | 🇭🇰 香港节点
+  - B | 🇭🇰 香港节点
+  - A | 🇯🇵 日本节点
+  - B | 🇯🇵 日本节点
+  - A | 🇸🇬 狮城节点
+  - B | 🇸🇬 狮城节点
+  - A | 🇺🇸 美国节点
+  - B | 🇺🇸 美国节点
   - 🚀 直连
 - name: 🐙 GitHub
   type: select
@@ -210,22 +210,22 @@ proxy-groups:
   - 🌐 全部节点
   - A | 全部节点
   - B | 全部节点
-  - A | 香港智能
-  - B | 香港智能
-  - A | 日本智能
-  - B | 日本智能
-  - A | 狮城智能
-  - B | 狮城智能
-  - A | 美国智能
-  - B | 美国智能
-  - A | 香港节点
-  - B | 香港节点
-  - A | 日本节点
-  - B | 日本节点
-  - A | 狮城节点
-  - B | 狮城节点
-  - A | 美国节点
-  - B | 美国节点
+  - A | 🇭🇰 香港智能
+  - B | 🇭🇰 香港智能
+  - A | 🇯🇵 日本智能
+  - B | 🇯🇵 日本智能
+  - A | 🇸🇬 狮城智能
+  - B | 🇸🇬 狮城智能
+  - A | 🇺🇸 美国智能
+  - B | 🇺🇸 美国智能
+  - A | 🇭🇰 香港节点
+  - B | 🇭🇰 香港节点
+  - A | 🇯🇵 日本节点
+  - B | 🇯🇵 日本节点
+  - A | 🇸🇬 狮城节点
+  - B | 🇸🇬 狮城节点
+  - A | 🇺🇸 美国节点
+  - B | 🇺🇸 美国节点
   - 🚀 直连
 - name: 🎬 NETFLIX
   type: select
@@ -237,22 +237,22 @@ proxy-groups:
   - 🌐 全部节点
   - A | 全部节点
   - B | 全部节点
-  - A | 香港智能
-  - B | 香港智能
-  - A | 日本智能
-  - B | 日本智能
-  - A | 狮城智能
-  - B | 狮城智能
-  - A | 美国智能
-  - B | 美国智能
-  - A | 香港节点
-  - B | 香港节点
-  - A | 日本节点
-  - B | 日本节点
-  - A | 狮城节点
-  - B | 狮城节点
-  - A | 美国节点
-  - B | 美国节点
+  - A | 🇭🇰 香港智能
+  - B | 🇭🇰 香港智能
+  - A | 🇯🇵 日本智能
+  - B | 🇯🇵 日本智能
+  - A | 🇸🇬 狮城智能
+  - B | 🇸🇬 狮城智能
+  - A | 🇺🇸 美国智能
+  - B | 🇺🇸 美国智能
+  - A | 🇭🇰 香港节点
+  - B | 🇭🇰 香港节点
+  - A | 🇯🇵 日本节点
+  - B | 🇯🇵 日本节点
+  - A | 🇸🇬 狮城节点
+  - B | 🇸🇬 狮城节点
+  - A | 🇺🇸 美国节点
+  - B | 🇺🇸 美国节点
   - 🚀 直连
 - name: 🎵 TikTok
   type: select
@@ -264,22 +264,22 @@ proxy-groups:
   - 🌐 全部节点
   - A | 全部节点
   - B | 全部节点
-  - A | 香港智能
-  - B | 香港智能
-  - A | 日本智能
-  - B | 日本智能
-  - A | 狮城智能
-  - B | 狮城智能
-  - A | 美国智能
-  - B | 美国智能
-  - A | 香港节点
-  - B | 香港节点
-  - A | 日本节点
-  - B | 日本节点
-  - A | 狮城节点
-  - B | 狮城节点
-  - A | 美国节点
-  - B | 美国节点
+  - A | 🇭🇰 香港智能
+  - B | 🇭🇰 香港智能
+  - A | 🇯🇵 日本智能
+  - B | 🇯🇵 日本智能
+  - A | 🇸🇬 狮城智能
+  - B | 🇸🇬 狮城智能
+  - A | 🇺🇸 美国智能
+  - B | 🇺🇸 美国智能
+  - A | 🇭🇰 香港节点
+  - B | 🇭🇰 香港节点
+  - A | 🇯🇵 日本节点
+  - B | 🇯🇵 日本节点
+  - A | 🇸🇬 狮城节点
+  - B | 🇸🇬 狮城节点
+  - A | 🇺🇸 美国节点
+  - B | 🇺🇸 美国节点
   - 🚀 直连
 - name: 🍎 Apple
   type: select
@@ -292,14 +292,14 @@ proxy-groups:
   - 🌐 全部节点
   - A | 全部节点
   - B | 全部节点
-  - A | 香港智能
-  - B | 香港智能
-  - A | 日本智能
-  - B | 日本智能
-  - A | 狮城智能
-  - B | 狮城智能
-  - A | 美国智能
-  - B | 美国智能
+  - A | 🇭🇰 香港智能
+  - B | 🇭🇰 香港智能
+  - A | 🇯🇵 日本智能
+  - B | 🇯🇵 日本智能
+  - A | 🇸🇬 狮城智能
+  - B | 🇸🇬 狮城智能
+  - A | 🇺🇸 美国智能
+  - B | 🇺🇸 美国智能
 - name: 💻 Microsoft
   type: select
   proxies:
@@ -311,14 +311,14 @@ proxy-groups:
   - 🌐 全部节点
   - A | 全部节点
   - B | 全部节点
-  - A | 香港智能
-  - B | 香港智能
-  - A | 日本智能
-  - B | 日本智能
-  - A | 狮城智能
-  - B | 狮城智能
-  - A | 美国智能
-  - B | 美国智能
+  - A | 🇭🇰 香港智能
+  - B | 🇭🇰 香港智能
+  - A | 🇯🇵 日本智能
+  - B | 🇯🇵 日本智能
+  - A | 🇸🇬 狮城智能
+  - B | 🇸🇬 狮城智能
+  - A | 🇺🇸 美国智能
+  - B | 🇺🇸 美国智能
 - name: ☁️ OneDriver
   type: select
   proxies:
@@ -330,14 +330,14 @@ proxy-groups:
   - 🌐 全部节点
   - A | 全部节点
   - B | 全部节点
-  - A | 香港智能
-  - B | 香港智能
-  - A | 日本智能
-  - B | 日本智能
-  - A | 狮城智能
-  - B | 狮城智能
-  - A | 美国智能
-  - B | 美国智能
+  - A | 🇭🇰 香港智能
+  - B | 🇭🇰 香港智能
+  - A | 🇯🇵 日本智能
+  - B | 🇯🇵 日本智能
+  - A | 🇸🇬 狮城智能
+  - B | 🇸🇬 狮城智能
+  - A | 🇺🇸 美国智能
+  - B | 🇺🇸 美国智能
 - name: 🎮 Steam 商店
   type: select
   proxies:
@@ -345,14 +345,14 @@ proxy-groups:
   - ♻️ 智能选择
   - A | 智能选择
   - B | 智能选择
-  - A | 香港节点
-  - B | 香港节点
-  - A | 日本节点
-  - B | 日本节点
-  - A | 狮城节点
-  - B | 狮城节点
-  - A | 美国节点
-  - B | 美国节点
+  - A | 🇭🇰 香港节点
+  - B | 🇭🇰 香港节点
+  - A | 🇯🇵 日本节点
+  - B | 🇯🇵 日本节点
+  - A | 🇸🇬 狮城节点
+  - B | 🇸🇬 狮城节点
+  - A | 🇺🇸 美国节点
+  - B | 🇺🇸 美国节点
   - 🚀 直连
 - name: 📥 Steam 下载
   type: select
@@ -377,14 +377,14 @@ proxy-groups:
   - 🌐 全部节点
   - A | 全部节点
   - B | 全部节点
-  - A | 香港节点
-  - B | 香港节点
-  - A | 日本节点
-  - B | 日本节点
-  - A | 狮城节点
-  - B | 狮城节点
-  - A | 美国节点
-  - B | 美国节点
+  - A | 🇭🇰 香港节点
+  - B | 🇭🇰 香港节点
+  - A | 🇯🇵 日本节点
+  - B | 🇯🇵 日本节点
+  - A | 🇸🇬 狮城节点
+  - B | 🇸🇬 狮城节点
+  - A | 🇺🇸 美国节点
+  - B | 🇺🇸 美国节点
   - 🚀 直连
 - name: ♻️ 智能选择
   type: url-test
@@ -423,7 +423,7 @@ proxy-groups:
   type: select
   include-all-providers: true
   filter: (?i)^B\s*\|
-- name: A | 香港智能
+- name: A | 🇭🇰 香港智能
   type: url-test
   include-all-providers: true
   filter: (?i)^A\s*\|.*(香港|🇭🇰|HK|Hong\s*Kong|HongKong)
@@ -432,7 +432,7 @@ proxy-groups:
   interval: 300
   tolerance: 50
   lazy: true
-- name: B | 香港智能
+- name: B | 🇭🇰 香港智能
   type: url-test
   include-all-providers: true
   filter: (?i)^B\s*\|.*(香港|🇭🇰|HK|Hong\s*Kong|HongKong)
@@ -441,7 +441,7 @@ proxy-groups:
   interval: 300
   tolerance: 50
   lazy: true
-- name: A | 日本智能
+- name: A | 🇯🇵 日本智能
   type: url-test
   include-all-providers: true
   filter: (?i)^A\s*\|.*(日本|🇯🇵|JP|Japan)
@@ -450,7 +450,7 @@ proxy-groups:
   interval: 300
   tolerance: 50
   lazy: true
-- name: B | 日本智能
+- name: B | 🇯🇵 日本智能
   type: url-test
   include-all-providers: true
   filter: (?i)^B\s*\|.*(日本|🇯🇵|JP|Japan)
@@ -459,7 +459,7 @@ proxy-groups:
   interval: 300
   tolerance: 50
   lazy: true
-- name: A | 狮城智能
+- name: A | 🇸🇬 狮城智能
   type: url-test
   include-all-providers: true
   filter: (?i)^A\s*\|.*(新加坡|🇸🇬|狮城|SG|Singapore)
@@ -468,7 +468,7 @@ proxy-groups:
   interval: 300
   tolerance: 50
   lazy: true
-- name: B | 狮城智能
+- name: B | 🇸🇬 狮城智能
   type: url-test
   include-all-providers: true
   filter: (?i)^B\s*\|.*(新加坡|🇸🇬|狮城|SG|Singapore)
@@ -477,7 +477,7 @@ proxy-groups:
   interval: 300
   tolerance: 50
   lazy: true
-- name: A | 美国智能
+- name: A | 🇺🇸 美国智能
   type: url-test
   include-all-providers: true
   filter: (?i)^A\s*\|.*(美国|🇺🇸|🇺🇲|US|USA|United\s*States|America)
@@ -486,7 +486,7 @@ proxy-groups:
   interval: 300
   tolerance: 50
   lazy: true
-- name: B | 美国智能
+- name: B | 🇺🇸 美国智能
   type: url-test
   include-all-providers: true
   filter: (?i)^B\s*\|.*(美国|🇺🇸|🇺🇲|US|USA|United\s*States|America)
@@ -495,47 +495,47 @@ proxy-groups:
   interval: 300
   tolerance: 50
   lazy: true
-- name: A | 香港节点
+- name: A | 🇭🇰 香港节点
   type: select
   include-all-providers: true
   filter: (?i)^A\s*\|.*(香港|🇭🇰|HK|Hong\s*Kong|HongKong)
   exclude-filter: (?i)(直连|免费|剩余|流量|套餐|官网|到期|expire|traffic|x0\.01|x0\.1|0\.01x|0\.1x|0\.01倍|0\.1倍|x2(?:\.0)?|2x|2倍|2\.0倍|(^|[^0-9])0\.(?:01|1)($|[^0-9]))
-- name: B | 香港节点
+- name: B | 🇭🇰 香港节点
   type: select
   include-all-providers: true
   filter: (?i)^B\s*\|.*(香港|🇭🇰|HK|Hong\s*Kong|HongKong)
   exclude-filter: (?i)(直连|免费|剩余|流量|套餐|官网|到期|expire|traffic|x0\.01|x0\.1|0\.01x|0\.1x|0\.01倍|0\.1倍|x2(?:\.0)?|2x|2倍|2\.0倍|(^|[^0-9])0\.(?:01|1)($|[^0-9]))
-- name: A | 日本节点
+- name: A | 🇯🇵 日本节点
   type: select
   include-all-providers: true
   filter: (?i)^A\s*\|.*(日本|🇯🇵|JP|Japan)
   exclude-filter: (?i)(直连|免费|剩余|流量|套餐|官网|到期|expire|traffic|x0\.01|x0\.1|0\.01x|0\.1x|0\.01倍|0\.1倍|x2(?:\.0)?|2x|2倍|2\.0倍|(^|[^0-9])0\.(?:01|1)($|[^0-9]))
-- name: B | 日本节点
+- name: B | 🇯🇵 日本节点
   type: select
   include-all-providers: true
   filter: (?i)^B\s*\|.*(日本|🇯🇵|JP|Japan)
   exclude-filter: (?i)(直连|免费|剩余|流量|套餐|官网|到期|expire|traffic|x0\.01|x0\.1|0\.01x|0\.1x|0\.01倍|0\.1倍|x2(?:\.0)?|2x|2倍|2\.0倍|(^|[^0-9])0\.(?:01|1)($|[^0-9]))
-- name: A | 狮城节点
+- name: A | 🇸🇬 狮城节点
   type: select
   include-all-providers: true
   filter: (?i)^A\s*\|.*(新加坡|🇸🇬|狮城|SG|Singapore)
   exclude-filter: (?i)(直连|免费|剩余|流量|套餐|官网|到期|expire|traffic|x0\.01|x0\.1|0\.01x|0\.1x|0\.01倍|0\.1倍|x2(?:\.0)?|2x|2倍|2\.0倍|(^|[^0-9])0\.(?:01|1)($|[^0-9]))
-- name: B | 狮城节点
+- name: B | 🇸🇬 狮城节点
   type: select
   include-all-providers: true
   filter: (?i)^B\s*\|.*(新加坡|🇸🇬|狮城|SG|Singapore)
   exclude-filter: (?i)(直连|免费|剩余|流量|套餐|官网|到期|expire|traffic|x0\.01|x0\.1|0\.01x|0\.1x|0\.01倍|0\.1倍|x2(?:\.0)?|2x|2倍|2\.0倍|(^|[^0-9])0\.(?:01|1)($|[^0-9]))
-- name: A | 美国节点
+- name: A | 🇺🇸 美国节点
   type: select
   include-all-providers: true
   filter: (?i)^A\s*\|.*(美国|🇺🇸|🇺🇲|US|USA|United\s*States|America)
   exclude-filter: (?i)(直连|免费|剩余|流量|套餐|官网|到期|expire|traffic|x0\.01|x0\.1|0\.01x|0\.1x|0\.01倍|0\.1倍|x2(?:\.0)?|2x|2倍|2\.0倍|(^|[^0-9])0\.(?:01|1)($|[^0-9]))
-- name: B | 美国节点
+- name: B | 🇺🇸 美国节点
   type: select
   include-all-providers: true
   filter: (?i)^B\s*\|.*(美国|🇺🇸|🇺🇲|US|USA|United\s*States|America)
   exclude-filter: (?i)(直连|免费|剩余|流量|套餐|官网|到期|expire|traffic|x0\.01|x0\.1|0\.01x|0\.1x|0\.01倍|0\.1倍|x2(?:\.0)?|2x|2倍|2\.0倍|(^|[^0-9])0\.(?:01|1)($|[^0-9]))
-- name: 🔯 香港故转
+- name: 🔯 🇭🇰 香港故转
   type: fallback
   include-all-providers: true
   filter: (?i)(香港|🇭🇰|HK|Hong\s*Kong|HongKong)
@@ -543,7 +543,7 @@ proxy-groups:
   url: https://www.gstatic.com/generate_204
   interval: 300
   lazy: true
-- name: 🔯 日本故转
+- name: 🔯 🇯🇵 日本故转
   type: fallback
   include-all-providers: true
   filter: (?i)(日本|🇯🇵|JP|Japan)
@@ -551,7 +551,7 @@ proxy-groups:
   url: https://www.gstatic.com/generate_204
   interval: 300
   lazy: true
-- name: 🔯 狮城故转
+- name: 🔯 🇸🇬 狮城故转
   type: fallback
   include-all-providers: true
   filter: (?i)(新加坡|🇸🇬|狮城|SG|Singapore)
@@ -559,7 +559,7 @@ proxy-groups:
   url: https://www.gstatic.com/generate_204
   interval: 300
   lazy: true
-- name: 🔯 美国故转
+- name: 🔯 🇺🇸 美国故转
   type: fallback
   include-all-providers: true
   filter: (?i)(美国|🇺🇸|🇺🇲|US|USA|United\s*States|America)
@@ -691,6 +691,7 @@ rule-providers:
 rules:
 - RULE-SET,private_ip,🚀 直连,no-resolve
 - RULE-SET,private_domain,🚀 直连
+- DOMAIN-SUFFIX,lecaiyun.com,🚀 直连
 - RULE-SET,ads_domain,🛑 全局拦截
 - RULE-SET,ai,🤖 AI
 - RULE-SET,steam_cn_domain,📥 Steam 下载
