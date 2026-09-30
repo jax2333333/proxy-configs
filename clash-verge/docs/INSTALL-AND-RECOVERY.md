@@ -6,10 +6,22 @@
 
 ## 1. 获取正式配置
 
-正式 Raw 地址：
+单机场 Raw 地址：
 
 ```text
 https://raw.githubusercontent.com/jax2333333/proxy-configs/main/clash-verge/clash-verge-by-jax.yaml
+```
+
+双机场 A/B Raw 地址：
+
+```text
+https://raw.githubusercontent.com/jax2333333/proxy-configs/main/clash-verge/clash-verge-by-jax-dual.yaml
+```
+
+双机场本地 Merge 示例：
+
+```text
+clash-verge/clash-verge-dual-airport-merge.example.yaml
 ```
 
 不要使用旧 Gist 或固定到历史 revision/commit 的旧链接作为日常正式入口。
@@ -52,6 +64,47 @@ proxy-providers:
 - 真实 URL 不上传 GitHub。
 - 不粘贴到公开 Issue、截图、README 或 commit message。
 - 如果 Provider 名称以后改变，先读最新 `clash-verge-by-jax.yaml`，不要机械沿用 `Airport1`。
+
+### 双机场 A/B Merge
+
+使用 `clash-verge-by-jax-dual.yaml` 时，本机 Merge 使用：
+
+```yaml
+proxy-providers:
+  AirportA:
+    type: http
+    url: "<机场 A 真实订阅地址，仅本机填写>"
+    interval: 86400
+    health-check:
+      enable: true
+      url: https://www.gstatic.com/generate_204
+      interval: 300
+      lazy: true
+    override:
+      additional-prefix: "A | "
+
+  AirportB:
+    type: http
+    url: "<机场 B 真实订阅地址，仅本机填写>"
+    interval: 86400
+    health-check:
+      enable: true
+      url: https://www.gstatic.com/generate_204
+      interval: 300
+      lazy: true
+    override:
+      additional-prefix: "B | "
+```
+
+作用：
+
+- AirportA 节点统一增加 `A | ` 前缀。
+- AirportB 节点统一增加 `B | ` 前缀。
+- 即使两个机场存在同名节点，也不会混淆。
+- 公共 YAML 可以分别构建 A/B 智能、地区和手动选择组，同时保留跨机场汇总与故障转移。
+- 真实机场 URL 仍然只保存在本机。
+
+**2026-09-30 已在新电脑实机验证：双机场 Remote YAML + 本地 Merge 可正常加载并使用。**
 
 ## 4. 最终合并关系
 
@@ -101,15 +154,27 @@ Tun adapter listening ...
 
 ## 7. 换电脑 / 重装恢复
 
-恢复时只需：
+### 单机场
 
 1. 安装 Clash Verge Rev。
-2. 导入 GitHub Raw 配置。
-3. 在本机重新创建本地 Merge。
+2. 导入单机场 GitHub Raw 配置。
+3. 在本机重新创建 `Airport1` Merge。
 4. 填入当前有效的机场订阅 URL。
 5. 更新远程配置。
 6. 启用 TUN / 系统代理并查看日志。
 7. 按 `TROUBLESHOOTING.md` 做基础验证。
+
+### 双机场
+
+1. 安装 Clash Verge Rev。
+2. 导入双机场 Raw：`clash-verge-by-jax-dual.yaml`。
+3. 给该 Remote 配置添加本地 Merge。
+4. 本地建立 `AirportA` 和 `AirportB`。
+5. 分别填入两个机场当前有效的真实订阅 URL。
+6. 保留 `A | ` / `B | ` 的 `override.additional-prefix`。
+7. 更新远程配置并启用。
+8. 在代理页面确认 A/B 节点和 A/B 地区组均有节点。
+9. 启用 TUN / 系统代理并做实际访问验证。
 
 GitHub 不保存真实机场 URL，因此**仅克隆仓库不能恢复机场认证信息**，这是安全设计，不是缺失。
 
@@ -117,13 +182,14 @@ GitHub 不保存真实机场 URL，因此**仅克隆仓库不能恢复机场认�
 
 ### 修改规则 / DNS / 策略组
 
-只修改 GitHub `main` 中：
+根据实际使用的版本，只修改 GitHub `main` 中对应公共 YAML：
 
 ```text
 clash-verge/clash-verge-by-jax.yaml
+clash-verge/clash-verge-by-jax-dual.yaml
 ```
 
-然后让 Clash Verge 更新远程配置。
+然后让 Clash Verge 更新对应远程配置。
 
 ### 机场订阅更换
 
