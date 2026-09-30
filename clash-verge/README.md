@@ -13,7 +13,7 @@
 - 新设备只需导入 GitHub Raw 配置，再恢复本地 Merge 即可接管。
 - 后续 ChatGPT 不依赖旧聊天内容，先从 GitHub `main` 读取当前实际状态。
 
-## 当前唯一正式配置
+## 当前正式配置
 
 正式配置文件：
 
@@ -23,9 +23,17 @@ Raw 地址：
 
 - `https://raw.githubusercontent.com/jax2333333/proxy-configs/main/clash-verge/clash-verge-by-jax.yaml`
 
+
+双机场 A/B 版本：
+
+- 配置文件：`clash-verge/clash-verge-by-jax-dual.yaml`
+- Raw 地址：`https://raw.githubusercontent.com/jax2333333/proxy-configs/main/clash-verge/clash-verge-by-jax-dual.yaml`
+- 本地 Merge 示例：`clash-verge/clash-verge-dual-airport-merge.example.yaml`
+- 双机场真实订阅 URL 仍只保存在本机 Merge；通过 `A | ` / `B | ` 前缀区分两个 Provider 的节点。
+
 **重要：实际端口、版本号、DNS 地址、TUN 参数、策略组顺序、Rule Provider 等会变化的信息，以 `main` 分支中该 YAML 的最新内容为准，不以本文或聊天记录中的快照为准。**
 
-当前 YAML 顶部标识为 **JAX V2.2 GitHub Template**。如果以后版本变化，应优先读取 YAML，而不是继续使用这里的版本字符串。
+当前单机场 YAML 顶部标识为 **JAX V2.2 GitHub Template**；双机场 YAML 顶部标识为 **JAX V3.0 Dual Airport Template**。如果以后版本变化，应优先读取对应 YAML，而不是继续使用这里的版本字符串。
 
 ## 当前架构
 
@@ -89,7 +97,9 @@ Mihomo 最终运行配置
 ```text
 clash-verge/
 ├─ README.md
-├─ clash-verge-by-jax.yaml          # 当前唯一正式配置
+├─ clash-verge-by-jax.yaml          # 单机场正式配置
+├─ clash-verge-by-jax-dual.yaml     # 双机场 A/B 正式配置
+├─ clash-verge-dual-airport-merge.example.yaml # 双机场本地 Merge 示例（无真实订阅）
 └─ docs/
    ├─ CHATGPT-MAINTENANCE-PROMPT.md # ChatGPT 角色、读取顺序、修改/安全规则
    ├─ KNOWLEDGE-INDEX.md             # 任务 → 应读取文件的知识地图
