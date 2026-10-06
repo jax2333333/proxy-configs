@@ -390,7 +390,7 @@ proxy-groups:
   include-all-providers: true
   filter: (?i)^A\s*\|
   exclude-filter: (?i)(直连|免费|剩余|流量|套餐|官网|到期|expire|traffic|x0\.01|x0\.1|0\.01x|0\.1x|0\.01倍|0\.1倍|x2(?:\.0)?|2x|2倍|2\.0倍|(^|[^0-9])0\.(?:01|1)($|[^0-9]))
-  url: https://www.gstatic.com/generate_204
+  url: https://chatgpt.com/cdn-cgi/trace
   interval: 300
   tolerance: 20
   lazy: true
@@ -399,7 +399,7 @@ proxy-groups:
   include-all-providers: true
   filter: (?i)^B\s*\|
   exclude-filter: (?i)(直连|免费|剩余|流量|套餐|官网|到期|expire|traffic|x0\.01|x0\.1|0\.01x|0\.1x|0\.01倍|0\.1倍|x2(?:\.0)?|2x|2倍|2\.0倍|(^|[^0-9])0\.(?:01|1)($|[^0-9]))
-  url: https://www.gstatic.com/generate_204
+  url: https://www.youtube.com/generate_204
   interval: 300
   tolerance: 20
   lazy: true
