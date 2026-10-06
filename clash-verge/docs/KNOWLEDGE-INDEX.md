@@ -10,14 +10,16 @@
 2. `../../AGENTS.md`
 3. `CHATGPT-MAINTENANCE-PROMPT.md`
 4. 当前任务需要的专项文档
-5. 真正准备修改时读取最新 `../clash-verge-by-jax.yaml`
+5. 真正准备修改时读取所维护版本的最新 YAML：当前用户使用 `../clash-verge-by-jax-dual.yaml`；单机场任务使用 `../clash-verge-by-jax.yaml`。双机场还需核对 `../clash-verge-dual-airport-merge.example.yaml`。
 
 ## 任务路由表
 
 | 任务 | 必读文件 | 说明 |
 | --- | --- | --- |
 | 新对话快速接管 | `../README.md` → `CHATGPT-MAINTENANCE-PROMPT.md` | 建立范围、Source of Truth、安全规则 |
-| 查看当前正式配置 | `../clash-verge-by-jax.yaml` | YAML 本身是唯一正式配置，不以文档快照替代 |
+| 查看当前正式配置 | 当前使用的 YAML：双机场 `../clash-verge-by-jax-dual.yaml` / 单机场 `../clash-verge-by-jax.yaml` | `main` 是唯一正式版本；两个模板独立维护，不以文档快照替代 |
+| 双机场 Merge / A/B 前缀 | `../clash-verge-dual-airport-merge.example.yaml` + `INSTALL-AND-RECOVERY.md` + 双机场 YAML | 真实订阅仅本地，按前缀区分节点 |
+| `lecaiyun.com` 直连 / 地区国旗 | 双机场 YAML + `HISTORY.md` 第 18 节 + `INSTALL-AND-RECOVERY.md` | 查规则顺序、直连出站、组名引用及更新后验收 |
 | 修改 DNS / Fake-IP | `CHATGPT-MAINTENANCE-PROMPT.md` + 最新 YAML | 同时检查 `nameserver`、`proxy-server-nameserver`、`direct-nameserver`、策略组连接关系 |
 | 修改 TUN | `TROUBLESHOOTING.md` + 最新 YAML | 先确认系统、Clash Verge 本地覆写与运行日志 |
 | 修改策略组 / 节点筛选 | 最新 YAML + `HISTORY.md` | 保留 `filter + exclude-filter`、Provider 注入和既有组语义 |
@@ -37,7 +39,7 @@
 
 从高到低：
 
-1. GitHub `main` 中 `clash-verge-by-jax.yaml` 当前内容。
+1. GitHub `main` 中实际使用版本的当前内容：双机场 `clash-verge-by-jax-dual.yaml`，或单机场 `clash-verge-by-jax.yaml`。
 2. Clash Verge 最终运行配置 / 日志（用于确认应用本地覆写后的实际行为）。
 3. 本目录维护文档（用于解释意图、流程、历史）。
 4. 旧 Gist / Notion / 聊天记录 / 附件。

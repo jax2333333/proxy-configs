@@ -15,7 +15,7 @@
 
 ## 当前正式配置
 
-正式配置文件：
+单机场正式配置（保留）：
 
 - `clash-verge/clash-verge-by-jax.yaml`
 
@@ -24,7 +24,7 @@ Raw 地址：
 - `https://raw.githubusercontent.com/jax2333333/proxy-configs/main/clash-verge/clash-verge-by-jax.yaml`
 
 
-双机场 A/B 版本：
+双机场 A/B 版本（用户当前使用）：
 
 - 配置文件：`clash-verge/clash-verge-by-jax-dual.yaml`
 - Raw 地址：`https://raw.githubusercontent.com/jax2333333/proxy-configs/main/clash-verge/clash-verge-by-jax-dual.yaml`
@@ -89,6 +89,16 @@ Clash Verge Rev / Mihomo
 - **V3.0 双机场方案已在新电脑实机验证可正常使用**：远程加载公共 YAML，本地 Merge 注入 AirportA / AirportB，节点按 `A | ` / `B | ` 前缀区分，A/B 策略组可正常使用。
 
 ## 当前策略语义
+
+### 双机场最近维护记录（2026-10-07 整理）
+
+- 2026-09-30 用户已确认双机场公共 YAML + 本地 AirportA / AirportB Merge 在新电脑正常使用；真实订阅仍只保存在本机。
+- 双机场规则 `DOMAIN-SUFFIX,lecaiyun.com,🚀 直连` 位于两条私有网络规则之后、广告规则之前；`🚀 直连` 在 YAML 中是 `type: direct` 出站。
+- 地区组采用 `A | 🇭🇰 香港智能` / `B | 🇯🇵 日本节点` 等命名；香港、日本、狮城、美国的智能组、手动组和跨机场故转组均已添加国旗，引用已同步。
+- 上述直连与图标变更见 [a0e10d3](https://github.com/jax2333333/proxy-configs/commit/a0e10d3bc0cacf064d49f264c0d48eb28ee6b423)。本次整理已复核静态结构；尚无这两项变更后的客户端实测记录，不能沿用此前“双机场可用”反馈当作专项验收。
+- 更新后检查地区组及常用应用组的选择记录，并按安装文档验证 `lecaiyun.com` 的实际连接路径。
+
+### 长期语义
 
 具体组名、默认顺序与候选项必须读取最新 YAML。长期语义如下：
 

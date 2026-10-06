@@ -16,7 +16,7 @@
 ## 唯一正式版本
 
 - GitHub `main` 分支是唯一正式版本。
-- 当前正式配置是 `clash-verge/clash-verge-by-jax.yaml`。
+- 单机场正式配置为 `clash-verge/clash-verge-by-jax.yaml`；双机场正式配置为 `clash-verge/clash-verge-by-jax-dual.yaml`。用户当前使用双机场版本；单机场文件保留，不自动同步修改。
 - 聊天记录、旧附件、旧 Gist、曾经生成的 YAML、Notion 教程都只能作为历史参考，**不能覆盖当前 GitHub 文件**。
 - 每个修改任务开始前必须重新读取 `main` 最新状态和目标文件。
 
@@ -28,7 +28,7 @@
 4. 读取本文件。
 5. 读取 `docs/KNOWLEDGE-INDEX.md`。
 6. 按知识索引只加载与当前任务相关的文档。
-7. **真正准备修改时，再次读取 `clash-verge/clash-verge-by-jax.yaml` 最新内容。**
+7. **真正准备修改时，再次读取所维护版本的最新 YAML；当前双机场任务读取 `clash-verge/clash-verge-by-jax-dual.yaml`，并核对 `clash-verge/clash-verge-dual-airport-merge.example.yaml`。单机场任务读取 `clash-verge/clash-verge-by-jax.yaml`。**
 
 不要因为前几分钟刚读过旧快照，就跳过第 7 步。
 
@@ -65,7 +65,8 @@
 以下是长期设计意图；精确参数和顺序仍必须读取最新 YAML：
 
 - GitHub 只保存公共模板。
-- `proxy-providers.Airport1` 的真实订阅 URL 只存在 Clash Verge 本地 Merge。
+- 单机场 `proxy-providers.Airport1`、双机场 `AirportA` / `AirportB` 的真实订阅 URL 只存在 Clash Verge 本地 Merge。双机场使用 `override.additional-prefix` 添加 `A | ` / `B | `，公共 YAML 按前缀分组；仓库仅保存无凭据示例。
+- 双机场地区组名称中的国旗与所有引用须保持一致；`lecaiyun.com` 专用直连规则保留在私有网络规则之后、广告规则之前。精确名称和位置以最新双机场 YAML 为准。
 - 使用 Fake-IP；IPv6 默认关闭。
 - 仓库模板 TUN 目标为 `mixed`；macOS 不使用 Linux-only 的 `auto-redirect`。
 - 国内 DNS 与境外 DNS 分层；境外 DoH 通过代理组连接。
@@ -112,6 +113,8 @@
 文档可以描述**设计原则**，但不能把旧快照当成当前事实。
 
 ## 配置验证
+
+记录验证结果时区分：仓库静态检查、用户实机反馈和日志证据。2026-09-30 的“双机场正常使用”反馈不自动证明之后的域名规则、组名变更或所有 fallback 场景已经实测。
 
 YAML 改动后至少检查：
 
