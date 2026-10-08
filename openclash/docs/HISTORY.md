@@ -166,3 +166,13 @@ https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/opencl
 3. 检查 QUIC / UDP / GSO。
 4. 若日志出现 `quic-go` / `GSO` / `timeout` / handshake 类问题，再按官方指南评估“禁用 quic-go GSO”。
 5. 不要仅凭“测速为 0”就认定是机场或当前策略组代码错误。
+
+## 10. 2026-10-08：机场 A 节点数偏少，单独 Update 后恢复
+
+- **环境：** R2S / ImmortalWrt 25.12.1；排障时实机使用 `/etc/openclash/config/openclash_by_jax_v6.1.yaml`，不是直接使用仓库当前双机场 YAML 文件名。
+- **现象：** 机场网站截图可见约 21 个节点，而 Dashboard `A|智能选择` 只有约 7 个候选，节点名称/协议与网站展示不一致。
+- **核对：** 实机 `A|智能选择` 引用 `Airport-A`，没有 `filter` / `exclude-filter`；本地 Provider 缓存当时约 2.6 KB。简单文本计数返回 0 和本机 9090 API 拒绝连接均不能作为实际 Provider 节点数量的证据。
+- **修复动作：** 用户在 OpenClash Dashboard 的 **Providers → Airport-A → Update** 手动更新该 Provider，随后明确确认问题已排除。
+- **结论：** 下次优先单独更新 Provider 并观察节点数量，失败后才进一步比对运行时订阅、日志和缓存；避免先删缓存或修改 GitHub YAML。
+- **未验证：** 更新前后 Provider 的准确节点总数、下载结果和缓存 SHA 均未取得，因此无法确认究竟是自动更新滞后、旧缓存还是服务商订阅响应变化。
+- **配置变更：** 本事件仅补充排障知识，没有修改路由器配置、GitHub 双机场 YAML 或真实订阅 URL。详细排查步骤见 `docs/TROUBLESHOOTING.md` 第 J 节。

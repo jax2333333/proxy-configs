@@ -173,6 +173,33 @@ OpenClash fw4 环境的 Fake-IP/TUN/Mix 都依赖 `kmod-nft-tproxy`，TUN/Mix �
 
 实现自动守卫时要注意官方覆写顺序：`[Overwrite]` 与 `[YAML]` 都在 OpenClash 自身 YAML 处理之后运行，但第二阶段中 `[Overwrite]` 先执行、随后才合并 `[YAML]`。因此独立的缓存守卫 `[Overwrite]` 不应读取运行时 YAML 来期待看到 `local-airport.txt` 的新 URL，而应直接读取 R2S 本地私密 `local-airport.txt`，只计算 URL 指纹并决定是否删除对应缓存。
 
+### J. 机场网站节点多、A|智能选择节点少：先手动刷新 Provider（2026-10-08，已解决）
+
+**现象与环境（用户在 2026-10-08 确认已解决）**
+
+- R2S / ImmortalWrt 25.12.1，实际启用配置为 `/etc/openclash/config/openclash_by_jax_v6.1.yaml`；此实机文件名不同于当时 GitHub `main` 的双机场正式文件，不能直接将仓库 YAML 当作完整运行时配置。
+- 机场网站截图约有 21 个可见节点，OpenClash Dashboard 的 `A|智能选择` 当时只显示约 7 个候选，且名称、协议种类与网站展示存在差异。
+- 实机检查显示 `A|智能选择` 使用 `Airport-A`，未设置 `filter` / `exclude-filter`；当时 GitHub 双机场 YAML 的同名总 Smart 组也未设置名称筛选。不能把这种数量差异直接归因于地区智能组过滤。
+- 本地 `/etc/openclash/proxy_provider/Airport-A` 当时约 2.6 KB，修改时间为 10 月 7 日 23:47；简单按 `- name:` 行计数得到 0，但未确认缓存格式，**此结果不能证明实际节点数为 0**。
+- 缓存守卫脚本、启动钩子和本地覆写文件均存在；`logread -e openclash-provider-cache-guard` 当时无输出，不足以判断脚本是否正常执行。
+- 向 `127.0.0.1:9090` 查询 Provider API 返回连接失败（HTTP 000）；实际 API 监听地址未核实，**不能据此断言 Mihomo 未运行或 Airport-A 为空**。
+
+**已验证的有效处理**
+
+1. 在 OpenClash Dashboard 进入 **Providers / 代理集**。
+2. 找到 **`Airport-A`**，点击该 Provider 的 **Update / 更新** 按钮；不要误点延迟测速。
+3. 用户随后确认节点差异问题已排除。此次无需改动 GitHub YAML、DNS、Smart 分组，也未清空全部 Provider 缓存。
+
+**今后相同现象的排查优先级**
+
+1. 分清机场网站节点总数、`Airport-A` Provider 已加载节点数，以及 `A|智能选择` / 地区 Smart 的候选数，三者不是同一个统计口径。
+2. 优先在 Dashboard **单独手动更新目标 Provider**，然后复查数量与名称；避免先全量更新配置、重启 OpenClash 或删除整个 `proxy_provider/` 目录。
+3. 如果更新失败或数量仍少，再查当前实机 `config_path`、本地 `local-airport.txt` 覆写、Provider 下载/解析日志，以及订阅实际返回内容与缓存差异；分享结果时只提供脱敏信息。
+4. GitHub 双机场 YAML 当时的 Provider 内容更新间隔为 `86400` 秒（24 小时）；`health-check.interval: 300` 秒只表示健康检查频率，**不是订阅内容更新间隔**。
+5. `provider-cache-guard.sh` 主要对比**订阅 URL 指纹**，同一 URL 的节点内容更新不会触发“URL 变化清缓存”分支；这种情况优先依赖 Provider 正常更新机制或手动 Update。
+
+**原因边界：** 手动更新后恢复说明刷新 Provider 能解决本次现象，但没有保留更新前后的真实订阅响应、Provider 节点统计和缓存校验结果，故“旧缓存”“服务端订阅不一致”“下载更新滞后”等具体根因仍属推测。不要把这次事件当成已证实的 URL 指纹守卫故障。
+
 ## 3. 日志不足时的安全查询
 
 以下命令只应在路由器 SSH 或 LuCI 终端执行；先有 Debug 日志，再按症状选择，不需要全部运行。
