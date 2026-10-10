@@ -200,6 +200,37 @@ OpenClash fw4 环境的 Fake-IP/TUN/Mix 都依赖 `kmod-nft-tproxy`，TUN/Mix �
 
 **原因边界：** 手动更新后恢复说明刷新 Provider 能解决本次现象，但没有保留更新前后的真实订阅响应、Provider 节点统计和缓存校验结果，故“旧缓存”“服务端订阅不一致”“下载更新滞后”等具体根因仍属推测。不要把这次事件当成已证实的 URL 指纹守卫故障。
 
+
+### K. 双机场本地覆写手动录入错误，Airport-B 没有节点（2026-10-11）
+
+**已经证实的现象及根因**
+
+- 实机选择的配置是 `/etc/openclash/config/jax-双机场-GitHub.yaml`。虽然 GitHub 正式双机场 YAML 定义了 `Airport-A` / `Airport-B` 的 Provider 骨架，但运行配置里的 B 订阅地址没有成功被本地覆写。
+- Debug 日志中出现 `[Provider] Airport-B pull error: Get "xxxxxx": unsupported protocol scheme ""`；这是 **B 仍尝试请求无效占位 URL** 的直接证据，不是地区 Smart 筛选导致节点为空。
+- 此前覆写模块曾出现 `could not find expected ':' while scanning a simple key at line 6 column 1`。后续检查发现，模块已注册、启用、匹配当前配置，含 `[YAML]` 段头，但本地 YAML 解析所得 `proxy-providers` 中，`Airport-A` / `Airport-B` 并非预期的 Hash 结构；运行时 URL 也无效。**YAML 语法能够通过，不等于键名、层级、URL 均正确。**
+- 用户确认：**手动输入时覆写代码填写错误，已在 R2S 本地修正**。错误文件的完整原文未保留，不能推断究竟漏掉了哪个冒号或空格；修正后的 Provider 节点恢复情况尚无新日志或截图独立验证。
+
+**标准解决与复查流程**
+
+1. 进入 **服务 → OpenClash → 运行状态 → 顶部「覆写模块」**，选择 `local-airport.txt` 的**正文编辑器**。确认开关已启用，匹配配置为 `all` 或实际源配置的**完整路径**；只写文件名不符合官方匹配要求。
+2. 校对下列**占位模板**（示例域名不是机场订阅，切勿原样使用）：
+
+   ```ini
+   [YAML]
+   proxy-providers:
+     Airport-A:
+       url: "https://a.example.com/sub"
+     Airport-B:
+       url: "https://b.example.com/sub"
+   ```
+
+   `proxy-providers:` 前不能有空格；Provider 名称前 2 个空格、`url:` 前 4 个空格，保留英文冒号与引号；A/B 键名要与正式 YAML **完全一致**。真实订阅 URL 只能保存在 R2S 本地，禁止写进 GitHub、截图或公开日志。
+3. 分别核验 `[YAML]` 段头、YAML 语法、`proxy-providers → Airport-B → url` 层级及 HTTP(S) URL 格式。诊断输出仅显示有效/无效，**不打印真实 URL**；当前 R2S 的精简 Ruby 环境曾报告 `cannot load such file -- uri`，不要以 `ruby -ruri` 作为必备依赖。
+4. 保存正文并确保模块已启用后，**重启 OpenClash**（不是仅点 Dashboard 刷新或执行 `reload`），因为官方 `16-overwrite-module-format.md` §16.1.1、§16.2.3 说明，`[YAML]` 在启动流程中深度合并。然后到 Dashboard **Providers → Airport-B → Update**，观察节点及错误日志。
+5. 若运行时 B 仍为占位 URL，继续核查配置路径匹配及其他覆写模块的执行顺序；若运行时 URL 有效而订阅拉取失败，再检查响应、解析、缓存，不要先清空整个 `proxy_provider` 目录。
+
+**维护边界：** 本次修复只涉及路由器本地覆写，**不修改 GitHub 正式 YAML**；仓库仅保存故障特征、排查步骤和公开示例地址，不保存真实订阅或凭据。
+
 ## 3. 日志不足时的安全查询
 
 以下命令只应在路由器 SSH 或 LuCI 终端执行；先有 Debug 日志，再按症状选择，不需要全部运行。
