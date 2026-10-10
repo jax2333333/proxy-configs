@@ -25,7 +25,9 @@
 - `shadowrocket/Jax-shadowrocket-v6.conf`
 - `shadowrocket/Jax-shadowrocket-home-clean.conf`
 - `clash-verge/clash-verge-by-jax.yaml`
-- `openclash/openclash_by_jax_v5.yaml`
+- `openclash/openclash_by_jax_双机场_IPv6.yaml`（双机场主维护）
+- `openclash/openclash_by_jax_双机场.yaml`（双机场默认同步）
+- `openclash/openclash_by_jax_单机场.yaml`（仅单机场任务）
 - `cloudflare-node/worker.js`（v1 基线）
 - `cloudflare-node/wrangler.jsonc`（v1）
 - `cloudflare-node/edgetunnel-v2/sync-upstream.mjs`（v2 构建与 pin）
@@ -121,11 +123,15 @@ OpenWrt / ImmortalWrt 系统运行值目前以 R2S 实机为权威，不在 Publ
 
 ### 5. OpenClash / R2S / ImmortalWrt 代理配置
 
+**双机场任务读取两份 YAML：IPv6 主维护 + 普通版默认同步；保留各自 IPv6 差异，单机场版独立。**
+
 读取：
 
 - `openclash/README.md`
 - `openclash/docs/KNOWLEDGE-INDEX.md`
-- `openclash/openclash_by_jax_v5.yaml`
+- `openclash/openclash_by_jax_双机场_IPv6.yaml`（双机场主维护）
+- `openclash/openclash_by_jax_双机场.yaml`（双机场默认同步）
+- `openclash/openclash_by_jax_单机场.yaml`（仅单机场任务）
 - 任务相关 `openclash/docs/*.md`
 - 涉及 OpenClash 功能设置时按该 README 指向的官方 OpenClash 用户指南加载对应章节
 
