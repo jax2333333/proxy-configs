@@ -11,42 +11,46 @@
 - 国内流量低延迟直连，国外流量按规则走代理。
 - DNS 优先防泄漏，避免境外域名回落到 ISP / 国内解析器。
 - Fake-IP 为主，保持现有规则、DNS、Smart 分组和应用分流逻辑。
-- IPv6 默认保持关闭公网出口，除非后续有明确需求并重新验证泄漏风险。
+- 双机场以 IPv6 YAML 为主维护版本，普通双机场同步更新；不擅自切换 R2S 运行配置，完整泄漏验证以实机为准。
 - 配置尽量由 GitHub 管理；机场真实订阅地址只保留在 R2S 本地覆写模块。
 - 修改以“最小变更、可验证、可回滚”为原则，不为优化而无关重构。
 
-## 当前正式配置
+## 当前维护配置（2026-10-11 起）
 
-当前维护两套正式配置，按实际机场数量选择：
+- **IPv6 双机场主维护**：[openclash_by_jax_双机场_IPv6.yaml](./openclash_by_jax_双机场_IPv6.yaml)
+- **普通双机场同步维护 / 回退**：[openclash_by_jax_双机场.yaml](./openclash_by_jax_双机场.yaml)
+- **单机场独立维护**：[openclash_by_jax_单机场.yaml](./openclash_by_jax_单机场.yaml)
 
-- 双机场：[`openclash_by_jax_双机场.yaml`](./openclash_by_jax_双机场.yaml)
-- 单机场：[`openclash_by_jax_单机场.yaml`](./openclash_by_jax_单机场.yaml)
+**新维护规则（2026-10-11，用户明确指定）**：双机场以后以 `openclash/openclash_by_jax_双机场_IPv6.yaml` 作为主维护版；未明确要求只修改一个版本时，必须**同时修改** `openclash/openclash_by_jax_双机场.yaml` 普通双机场版。两版共同的 Provider、规则、策略组、Smart、DNS 分流等逻辑应同步，保留顶层 IPv6、DNS AAAA、IPv6 Fake-IP 池等专属差异，不允许整份覆盖。`openclash/openclash_by_jax_单机场.yaml` 单机场版不自动联动。每次修改都要重新读取两份 main 最新文件、分别校验、比对非预期差异，并报告提交。不代表自动切换 R2S 正在运行的配置，也不代表 DNS/IP/WebRTC 泄漏已完成全面验收。
 
-**IPv6 实验版（非正式、不自动切换）**：[`openclash_by_jax_双机场_IPv6.yaml`](./openclash_by_jax_双机场_IPv6.yaml)。以当前双机场 IPv4 正式版为基线，仅启用 Mihomo IPv6、DNS AAAA 和 IPv6 Fake-IP 地址池；需要配合 R2S 的 WAN6 / OpenClash IPv6 代理 / DNS 防泄漏逐项验收。**原双机场 IPv4 YAML 仍是默认正式版**，部署与回滚见 [`docs/OPERATIONS.md`](./docs/OPERATIONS.md)。
+这属于 GitHub 配置的维护优先级，不是自动切换 R2S 运行 YAML 的授权。此前仅已验证部分 IPv6 直连/代理连接，完整泄漏验收仍需另行核查。
 
-> 配置版本、端口、Provider、策略组、DNS 字段等会变化。**不要把本 README 当成运行配置副本；任何修改前都必须重新读取所选 YAML 的 `main` 最新内容。** 当前状态以 GitHub `main` 中实际 YAML 为准。
+### 双机场配置订阅 Raw 地址
 
-R2S 配置订阅应按使用模式读取本仓库 Raw：
+IPv6 主维护版（部署前核实实机）:
 
-双机场：
+```text
+https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/openclash_by_jax_双机场_IPv6.yaml
+```
+
+普通双机场版（IPv4 基线）:
 
 ```text
 https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/openclash_by_jax_双机场.yaml
 ```
 
-单机场：
+单机场版:
 
 ```text
 https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/openclash_by_jax_单机场.yaml
 ```
 
-旧 Gist 不再作为正式源；如果 R2S 更新后仍是旧版本，先检查配置订阅地址是否与当前所选模式一致。
-
 ## 当前架构
 
 ```text
 GitHub main
-  ├─ openclash/openclash_by_jax_双机场.yaml
+  ├─ openclash/openclash_by_jax_双机场_IPv6.yaml  ← 双机场主维护
+  ├─ openclash/openclash_by_jax_双机场.yaml  ← 普通版同步
   ├─ openclash/openclash_by_jax_单机场.yaml
   │    └─ 两套正式 YAML 的 Provider URL 均为占位值
   └─ openclash/toolkit/scripts/
