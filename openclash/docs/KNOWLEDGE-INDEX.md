@@ -2,12 +2,15 @@
 
 本文件只负责“去哪里读”，避免把当前配置、历史、教程和 ChatGPT 规则混在一起。
 
+> **新维护规则（2026-10-11，用户明确指定）**：双机场以后以 `openclash/openclash_by_jax_双机场_IPv6.yaml` 作为主维护版；未明确要求只修改一个版本时，必须**同时修改** `openclash/openclash_by_jax_双机场.yaml` 普通双机场版。两版共同的 Provider、规则、策略组、Smart、DNS 分流等逻辑应同步，保留顶层 IPv6、DNS AAAA、IPv6 Fake-IP 池等专属差异，不允许整份覆盖。`openclash/openclash_by_jax_单机场.yaml` 单机场版不自动联动。每次修改都要重新读取两份 main 最新文件、分别校验、比对非预期差异，并报告提交。不代表自动切换 R2S 正在运行的配置，也不代表 DNS/IP/WebRTC 泄漏已完成全面验收。
+
 ## 新 ChatGPT 接管顺序
 
 1. `../README.md` — 项目入口、边界、当前架构摘要。
 2. `CHATGPT-MAINTENANCE-PROMPT.md` — AI 行为、读取顺序、安全与 GitHub 规则。
 3. 根据运行场景选择当前正式配置：
-   - `../openclash_by_jax_双机场.yaml` — 双机场正式配置。
+   - `../openclash_by_jax_双机场_IPv6.yaml` — 双机场主维护。
+   - `../openclash_by_jax_双机场.yaml` — 双机场默认同步。
    - `../openclash_by_jax_单机场.yaml` — 单机场正式配置。
 4. 根据任务选择下面的专项文档。
 5. OpenClash 官方用户指南入口：`https://raw.githubusercontent.com/vernesong/OpenClash/dev/.github/skills/openclash-user-guide/SKILL.md`，按其路由表读取对应章节。
@@ -74,7 +77,9 @@ openclash/openclash_by_jax_单机场.yaml
 
 ## 信息分层
 
-### 当前正式配置
+### 当前配置（IPv6 双机场主维护、普通双机场同步）
+
+- `../openclash_by_jax_双机场_IPv6.yaml` — 主维护
 
 - `../openclash_by_jax_双机场.yaml`
 - `../openclash_by_jax_单机场.yaml`
