@@ -16,12 +16,14 @@ https://raw.githubusercontent.com/vernesong/OpenClash/dev/.github/skills/opencla
 
 ## 2. 固定读取顺序
 
+**新维护规则（2026-10-11，用户明确指定）**：双机场以后以 `openclash/openclash_by_jax_双机场_IPv6.yaml` 作为主维护版；未明确要求只修改一个版本时，必须**同时修改** `openclash/openclash_by_jax_双机场.yaml` 普通双机场版。两版共同的 Provider、规则、策略组、Smart、DNS 分流等逻辑应同步，保留顶层 IPv6、DNS AAAA、IPv6 Fake-IP 池等专属差异，不允许整份覆盖。`openclash/openclash_by_jax_单机场.yaml` 单机场版不自动联动。每次修改都要重新读取两份 main 最新文件、分别校验、比对非预期差异，并报告提交。不代表自动切换 R2S 正在运行的配置，也不代表 DNS/IP/WebRTC 泄漏已完成全面验收。
+
 新的任务按以下顺序读取：
 
 1. `openclash/README.md`
 2. `openclash/docs/KNOWLEDGE-INDEX.md`
 3. 本文件
-4. 根据运行场景读取 `openclash/openclash_by_jax_双机场.yaml` 或 `openclash/openclash_by_jax_单机场.yaml` 的 **main 最新版**
+4. 双机场任务同时读取 `openclash/openclash_by_jax_双机场_IPv6.yaml` 和 `openclash/openclash_by_jax_双机场.yaml` 的 **main 最新版**；单机场任务单独读 `openclash/openclash_by_jax_单机场.yaml`
 5. 与任务对应的专项文档
 6. OpenClash 官方用户指南入口及相关子章节
 7. 如涉及异常，读取用户刚生成的最新 Debug 日志
@@ -55,7 +57,7 @@ Provider 在 GitHub 中始终使用占位 URL。真实机场 URL 只在 R2S 本�
 ## 5. 配置维护原则
 
 - 目标优先级：DNS 泄漏风险 → 错误直连/代理绕过 → 规则正确性 → 稳定性 → 性能。
-- 不擅自打开 IPv6。
+- 不擅自更改 R2S 实际运行的 IPv6 开关或切换 YAML；Github 两份双机场 YAML 默认同步维护不属于实机自动启用。
 - 不擅自改掉 Fake-IP、DNS Strict、Apple 直连、Smart/地区分组等已稳定语义。
 - 不为了“优化”重写整个配置。
 - 修改策略组前检查所有组引用、Provider 引用和规则目标。
@@ -100,7 +102,7 @@ YAML 修改后至少检查：
 
 ## 9. 当前设计不要写死到提示词
 
-Provider 数量、节点前缀、Smart 参数、DNS 地址、端口和策略组都可能继续变化。新的 AI 应根据实际运行场景读取 `openclash/openclash_by_jax_双机场.yaml` 或 `openclash/openclash_by_jax_单机场.yaml` 的 `main` 最新内容；`CURRENT-STATE.md` 只用于快速理解，不替代 YAML。
+Provider 数量、节点前缀、Smart 参数、DNS 地址、端口和策略组都可能继续变化。新的 AI 对双机场应同时读取 `openclash/openclash_by_jax_双机场_IPv6.yaml` 和 `openclash/openclash_by_jax_双机场.yaml` 的 `main` 最新内容，对单机场单独读取 `openclash/openclash_by_jax_单机场.yaml`；`CURRENT-STATE.md` 只用于快速理解，不替代 YAML。
 
 ## 10. 用户固定偏好
 
