@@ -22,6 +22,8 @@
 - 双机场：[`openclash_by_jax_双机场.yaml`](./openclash_by_jax_双机场.yaml)
 - 单机场：[`openclash_by_jax_单机场.yaml`](./openclash_by_jax_单机场.yaml)
 
+**IPv6 实验版（非正式、不自动切换）**：[`openclash_by_jax_双机场_IPv6测试.yaml`](./openclash_by_jax_双机场_IPv6测试.yaml)。以当前双机场 IPv4 正式版为基线，仅启用 Mihomo IPv6、DNS AAAA 和 IPv6 Fake-IP 地址池；需要配合 R2S 的 WAN6 / OpenClash IPv6 代理 / DNS 防泄漏逐项验收。**原双机场 IPv4 YAML 仍是默认正式版**，部署与回滚见 [`docs/OPERATIONS.md`](./docs/OPERATIONS.md)。
+
 > 配置版本、端口、Provider、策略组、DNS 字段等会变化。**不要把本 README 当成运行配置副本；任何修改前都必须重新读取所选 YAML 的 `main` 最新内容。** 当前状态以 GitHub `main` 中实际 YAML 为准。
 
 R2S 配置订阅应按使用模式读取本仓库 Raw：
