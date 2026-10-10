@@ -2,11 +2,19 @@
 
 本文记录“怎么做”，不作为当前配置副本。Provider、端口、组名等实际值以 `main` 最新 YAML 为准。
 
+**新维护规则（2026-10-11，用户明确指定）**：双机场以后以 `openclash/openclash_by_jax_双机场_IPv6.yaml` 作为主维护版；未明确要求只修改一个版本时，必须**同时修改** `openclash/openclash_by_jax_双机场.yaml` 普通双机场版。两版共同的 Provider、规则、策略组、Smart、DNS 分流等逻辑应同步，保留顶层 IPv6、DNS AAAA、IPv6 Fake-IP 池等专属差异，不允许整份覆盖。`openclash/openclash_by_jax_单机场.yaml` 单机场版不自动联动。每次修改都要重新读取两份 main 最新文件、分别校验、比对非预期差异，并报告提交。不代表自动切换 R2S 正在运行的配置，也不代表 DNS/IP/WebRTC 泄漏已完成全面验收。
+
 ## 1. R2S 使用 GitHub 正式配置
 
 OpenClash 配置订阅应按实际机场数量选择对应 Raw：
 
-双机场：
+双机场 IPv6 主维护版：
+
+```text
+https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/openclash_by_jax_双机场_IPv6.yaml
+```
+
+普通双机场同步版（IPv4 回退基线）：
 
 ```text
 https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/openclash_by_jax_双机场.yaml
@@ -133,10 +141,10 @@ OpenClash restart
 
 任何 OpenClash 配置修改：
 
-1. 根据当前运行模式重新读取 `main` 中的 `openclash/openclash_by_jax_双机场.yaml` 或 `openclash/openclash_by_jax_单机场.yaml`，不要用聊天旧副本。
+1. 双机场任务先同时读取 `openclash/openclash_by_jax_双机场_IPv6.yaml` 和 `openclash/openclash_by_jax_双机场.yaml` 的 `main` 最新版；单机场任务单独读取 `openclash/openclash_by_jax_单机场.yaml`，不要用聊天旧副本。
 2. 明确这次变更影响的 Provider / 策略组 / DNS / Rules。
-3. 只做必要的最小修改。
-4. 检查 YAML 语法、缩进、重复键、Provider/组/规则引用。
+3. 只做必要的最小修改；双机场以 IPv6 版为主，同步普通版共同逻辑，不把 IPv6 专有字段复制到普通版。
+4. 两份双机场 YAML 分别检查语法、缩进、重复键、Provider/组/规则引用，并对比除 IPv6 专有字段外是否出现意外差异。
 5. 检查所有机场 URL 仍是占位地址，无敏感信息。
 6. 写入 GitHub。
 7. **重新读取写后的文件**，确认真实结果。
@@ -194,11 +202,11 @@ OpenClash restart
 
 OpenClash 官方要求覆写模块至少包含 `[General]`、`[Overwrite]`、`[YAML]` 之一，否则整个文件会被跳过。普通静态 YAML 覆写优先使用 `[YAML]`；只有需要动态条件/循环时才考虑 `[Overwrite]`。
 
-## 9. 双机场 IPv6 实验版（2026-10-11；尚未实机验收）
+## 9. 双机场 IPv6 主维护版：部署、回退与完整验收
 
 **角色与安全边界**
 
-- 基于 GitHub `main` 的 `openclash_by_jax_双机场.yaml` 新建**独立实验文件** `openclash/openclash_by_jax_双机场_IPv6.yaml`，不替换默认 IPv4 正式版。
+- IPv6 YAML 起初作为普通双机场版的实验分支文件建立；2026-10-11 用户将它定为今后 GitHub 的**双机场主维护版本**，普通双机场版仍同步更新作为 IPv4 基线，不自动切换 R2S 实机配置。
 - Raw 地址：`https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/openclash_by_jax_双机场_IPv6.yaml`。
 - 实验版仅与基线存在 3 项 YAML 差异：顶层 `ipv6: true`、`dns.ipv6: true`，以及 `dns.fake-ip-range6: fdfe:dcba:9876::1/64`。A/B Provider、Smart、DNS 分流、应用规则保留；Provider URL 在 GitHub 仍是占位值。
 - **导入 YAML 不等于打开 R2S 全套 IPv6**。OpenClash 插件的 `ipv6_enable`（IPv6 代理）、`ipv6_dns`（AAAA 解析）、`fakeip_range6`（IPv6 Fake-IP）与运行时 YAML / IPv6 防火墙链需要一起核对。详见上游 `09-settings-dns-ac-ipv6.md` §9.5；不能把这份文件称为“已验证不会 IPv6 泄漏”。
@@ -212,7 +220,7 @@ OpenClash 官方要求覆写模块至少包含 `[General]`、`[Overwrite]`、`[Y
 5. 在 `服务 → OpenClash → 插件设置 → IPv6` 核对 IPv6 代理选项，并核对允许 IPv6 DNS 解析及 Fake-IP v6 池；启用与否以阶段性测试结果决定。插件会在启动时改写部分 YAML 字段并重建 IPv6 防火墙链。**不要只看源 YAML 的 `ipv6: true` 就断言实际已接管 IPv6**。
 6. 使用现有 LAN DNS 经路由器 IPv4 地址转发到 Mihomo；不向 LAN 分配独立 IPv6 DNS。原日志显示 dnsmasq 启用了 DNS 重绑定保护，ULA 格式的 IPv6 Fake-IP（`fdfe:...`）可能被 dnsmasq 丢弃，须检查 AAAA 实测。按官方 `09-settings-dns-ac-ipv6.md` §9.5 的策略核验“过滤 IPv6 AAAA 记录”和上游设置；**不要为修复单个现象盲目全局关闭 DNS 防护**。
 7. 检查 Provider A/B 节点已加载、运行时 Provider URL（只输出“有效/无效”，不输出明文）、IPv6 默认路由、Mihomo DNS AAAA、OpenClash IPv6 nft 规则链、IPv6 连接是否按策略分流，以及 WebRTC / DNS / ISP IPv6 泄漏。先检查 **国内 IPv6 直连和海外 IPv6 代理**；与相同节点 IPv4 基准比较延迟、丢包与吞吐，晚高峰另测。不要根据 `ipv6: true` 推断 SS/VMess/Hy2 节点已走 IPv6——还取决于机场入口是否支持 AAAA、路由及协议。
-8. 以上测试未完成时，不把 IPv6 版改为 README 默认正式版，不让 LAN 全面开启 IPv6。
+8. GitHub IPv6 版已经成为主维护版本，但完整泄漏/兼容性测试完成前不能宣称全量验收，也不应未经授权切换 R2S 运行配置或开启 LAN IPv6。
 
 **回退**
 
@@ -221,4 +229,4 @@ OpenClash 官方要求覆写模块至少包含 `[General]`、`[Overwrite]`、`[Y
 3. 将测试时打开的 OpenClash IPv6 代理/IPv6 DNS/Fake-IP v6 设置恢复至之前的基线，重启 OpenClash。若测试时还更改了 WAN6 / LAN RA / DHCPv6，按事先备份逐项恢复。
 4. 从最新 Debug 日志确认当前运行 YAML、A/B Provider、DNS 与防火墙；完成 IPv4/IPv6 和 DNS 泄漏复查。任何回退都**不能用删除全体 Provider 缓存**替代。
 
-本章节是**操作指南和待验证方案**；R2S 尚未按本章节完成 IPv6 验收。
+本章节是**部署与剩余完整验收指南**；2026-10-11 已有百度原生 WAN IPv6 直连及国外 `v6.ident.me` 命中日本代理的局部验证，但未完成全量 DNS/IP/WebRTC 泄漏与规则验收。
