@@ -68,7 +68,7 @@
 - 任何加速或调优遵守“先测基线 → 单项修改 → 复测 → 保留或回滚”。
 - Packet Steering、IRQ / RPS、Flow Offloading、SQM、MTU 与 OpenClash 必须按整条数据路径联合判断。
 - 不使用来源不明的一键优化脚本，不为跑分擅自关闭防火墙、代理或安全链路。
-- IPv6 默认保持关闭，除非用户明确要求并重新完成 DNS / IP 泄漏与兼容性验证。
+- 系统 IPv6 是否启用，以 R2S 当前实机为准；未经授权不得切换运行状态，改变配置需完成 DNS/IP 泄漏及兼容性检查。
 - 动态运行配置和含凭据的 `/etc/config/*` 不直接上传 Public GitHub；需要记录时先脱敏并确认长期维护价值。
 
 ## 4. OpenClash
@@ -78,7 +78,7 @@
 当前长期原则：
 
 - 主路由环境为 ImmortalWrt + OpenClash。
-- IPv6 默认关闭。
+- **新维护规则（2026-10-11，用户明确指定）**：双机场以后以 `openclash/openclash_by_jax_双机场_IPv6.yaml` 作为主维护版；未明确要求只修改一个版本时，必须**同时修改** `openclash/openclash_by_jax_双机场.yaml` 普通双机场版。两版共同的 Provider、规则、策略组、Smart、DNS 分流等逻辑应同步，保留顶层 IPv6、DNS AAAA、IPv6 Fake-IP 池等专属差异，不允许整份覆盖。`openclash/openclash_by_jax_单机场.yaml` 单机场版不自动联动。每次修改都要重新读取两份 main 最新文件、分别校验、比对非预期差异，并报告提交。不代表自动切换 R2S 正在运行的配置，也不代表 DNS/IP/WebRTC 泄漏已完成全面验收。
 - 使用 Fake-IP 模式。
 - Fake-IP 范围保持现有设计。
 - TUN 优先使用当前已经验证的方案。
