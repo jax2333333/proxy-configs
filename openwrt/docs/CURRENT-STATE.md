@@ -39,6 +39,13 @@ R2S 基于 Rockchip RK3328：
 - OpenClash 常用 Fake-IP / TUN 体系；具体值以 `openclash/` 当前 YAML 为准。
 - 优化必须先测基线，单项改动，复测后决定保留或回滚。
 
+## 2026-10-11 IPv6 实机观测（区别于长期默认策略）
+
+- 2026-10-11 的 R2S 实机输出显示：PPPoE WAN 和 LAN 已有公网 IPv6 地址/前缀；带源地址限制的 IPv6 默认路由在显式指定 WAN、LAN 源地址时可匹配到 PPPoE 出口。
+- Mac mini 默认访问百度、QQ、B站时连接目标均为 IPv6；其中百度通过 R2S `pppoe-wan` 抓包已确认双向 TCP 443 原生 IPv6 直连。国外 `v6.ident.me` 当次日志命中 OpenClash 日本代理节点。
+- 以上为**特定时间、特定站点的实测快照**，不代表全部 IPv6 流量规则、DNS/WebRTC/IP 泄漏已完成全面验收；不同于“默认希望关闭 IPv6”的长期偏好，亦**不等于 GitHub 正式 OpenClash YAML 已启用 IPv6**。
+- 详细证据和复测边界：[HISTORY.md](./HISTORY.md)；可复用排查步骤：[TROUBLESHOOTING.md](./TROUBLESHOOTING.md)。实际状态必须每次从 R2S 重新读取。
+
 ## 当前已完成
 
 已建立 OpenWrt / ImmortalWrt 专用知识体系，覆盖：
