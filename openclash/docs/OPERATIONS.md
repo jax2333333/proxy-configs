@@ -193,3 +193,32 @@ OpenClash restart
 ## 8. 覆写模块规则
 
 OpenClash 官方要求覆写模块至少包含 `[General]`、`[Overwrite]`、`[YAML]` 之一，否则整个文件会被跳过。普通静态 YAML 覆写优先使用 `[YAML]`；只有需要动态条件/循环时才考虑 `[Overwrite]`。
+
+## 9. 双机场 IPv6 实验版（2026-10-11；尚未实机验收）
+
+**角色与安全边界**
+
+- 基于 GitHub `main` 的 `openclash_by_jax_双机场.yaml` 新建**独立实验文件** `openclash/openclash_by_jax_双机场_IPv6测试.yaml`，不替换默认 IPv4 正式版。
+- Raw 地址：`https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/openclash_by_jax_双机场_IPv6测试.yaml`。
+- 实验版仅与基线存在 3 项 YAML 差异：顶层 `ipv6: true`、`dns.ipv6: true`，以及 `dns.fake-ip-range6: fdfe:dcba:9876::1/64`。A/B Provider、Smart、DNS 分流、应用规则保留；Provider URL 在 GitHub 仍是占位值。
+- **导入 YAML 不等于打开 R2S 全套 IPv6**。OpenClash 插件的 `ipv6_enable`（IPv6 代理）、`ipv6_dns`（AAAA 解析）、`fakeip_range6`（IPv6 Fake-IP）与运行时 YAML / IPv6 防火墙链需要一起核对。详见上游 `09-settings-dns-ac-ipv6.md` §9.5；不能把这份文件称为“已验证不会 IPv6 泄漏”。
+
+**安全测试顺序（不要一次全部打开）**
+
+1. 测试前在 `服务 → OpenClash → 配置管理` 记录当前正式配置文件，备份 LuCI 中当前可用配置与覆写状态，确认原双机场 IPv4 配置正常且随时可切回。
+2. 在 `网络 → 接口` 核查 PPPoE 的 IPv6/WAN6 协商状态、IPv6 默认路由、运营商是否下发 IPv6-PD；没有实际可用的 IPv6 出站路径时，不要据此推断代理性能。建议**先只在 R2S 自身测试 WAN IPv6**，不向 LAN 设备广播 IPv6 RA/DHCPv6 或 IPv6 DNS，以免客户端绕过 IPv4 代理。
+3. 通过 `服务 → OpenClash → 配置订阅` 新增独立的 IPv6 实验 Raw 订阅并更新，或通过 `服务 → OpenClash → 配置管理` 导入实验 YAML。注意：**配置管理“上传配置文件”可能自动选择新配置；“切换 / Switch”会重启核心**，操作前确认备份和回退通道。
+4. **尤其注意本地机场覆写匹配**：现有 `local-airport.txt` 可能只匹配原配置的完整路径（如 `/etc/openclash/config/jax-双机场-GitHub.yaml`）。测试版实际源配置若是 `/etc/openclash/config/openclash_by_jax_双机场_IPv6测试.yaml`，应在覆写模块齿轮参数中改为**实验配置的完整实际路径**，或建立另一份仅匹配实验配置的本地覆写模块。不要为了方便无条件改为 `all`，否则切到单机场 YAML 时可能错误插入 `Airport-B`。真实 A/B URL 仅存在 R2S 本地；切勿公开显示或提交。
+5. 在 `服务 → OpenClash → 插件设置 → IPv6` 核对 IPv6 代理选项，并核对允许 IPv6 DNS 解析及 Fake-IP v6 池；启用与否以阶段性测试结果决定。插件会在启动时改写部分 YAML 字段并重建 IPv6 防火墙链。**不要只看源 YAML 的 `ipv6: true` 就断言实际已接管 IPv6**。
+6. 使用现有 LAN DNS 经路由器 IPv4 地址转发到 Mihomo；不向 LAN 分配独立 IPv6 DNS。原日志显示 dnsmasq 启用了 DNS 重绑定保护，ULA 格式的 IPv6 Fake-IP（`fdfe:...`）可能被 dnsmasq 丢弃，须检查 AAAA 实测。按官方 `09-settings-dns-ac-ipv6.md` §9.5 的策略核验“过滤 IPv6 AAAA 记录”和上游设置；**不要为修复单个现象盲目全局关闭 DNS 防护**。
+7. 检查 Provider A/B 节点已加载、运行时 Provider URL（只输出“有效/无效”，不输出明文）、IPv6 默认路由、Mihomo DNS AAAA、OpenClash IPv6 nft 规则链、IPv6 连接是否按策略分流，以及 WebRTC / DNS / ISP IPv6 泄漏。先检查 **国内 IPv6 直连和海外 IPv6 代理**；与相同节点 IPv4 基准比较延迟、丢包与吞吐，晚高峰另测。不要根据 `ipv6: true` 推断 SS/VMess/Hy2 节点已走 IPv6——还取决于机场入口是否支持 AAAA、路由及协议。
+8. 以上测试未完成时，不把 IPv6 版改为 README 默认正式版，不让 LAN 全面开启 IPv6。
+
+**回退**
+
+1. 到 `服务 → OpenClash → 配置管理` **切回原双机场 IPv4 正式配置**。
+2. 把 `local-airport.txt` 的匹配范围恢复到原配置的**实际完整路径**；若为实验版另建了覆写模块，将其关闭。
+3. 将测试时打开的 OpenClash IPv6 代理/IPv6 DNS/Fake-IP v6 设置恢复至之前的基线，重启 OpenClash。若测试时还更改了 WAN6 / LAN RA / DHCPv6，按事先备份逐项恢复。
+4. 从最新 Debug 日志确认当前运行 YAML、A/B Provider、DNS 与防火墙；完成 IPv4/IPv6 和 DNS 泄漏复查。任何回退都**不能用删除全体 Provider 缓存**替代。
+
+本章节是**操作指南和待验证方案**；R2S 尚未按本章节完成 IPv6 验收。
