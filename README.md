@@ -12,7 +12,7 @@
 | --- | --- | --- |
 | Shadowrocket | `shadowrocket/README.md` | `shadowrocket/Jax-shadowrocket-v6.conf`、`shadowrocket/Jax-shadowrocket-home-clean.conf` |
 | Clash Verge Rev / Mihomo | `clash-verge/README.md` | `clash-verge/clash-verge-by-jax.yaml` |
-| OpenClash / Mihomo | `openclash/README.md` | `openclash/openclash_by_jax_v5.yaml` |
+| OpenClash / Mihomo | `openclash/README.md` | `openclash/openclash_by_jax_双机场_IPv6.yaml` |
 | OpenWrt / ImmortalWrt | `openwrt/README.md` | R2S 主路由运维知识；动态运行值从实机读取 |
 | Cloudflare Node | `cloudflare-node/README.md` | v2 `cloudflare-node/edgetunnel-v2/` 为当前优先方案；v1 `worker.js` 保留为基线/回滚 |
 
@@ -32,6 +32,8 @@ GitHub main
 ```
 
 长期边界：
+
+- **OpenClash 双机场**：IPv6 YAML 为主维护版，普通双机场 YAML 默认同步更新；保留彼此的 IPv6 专属字段差异。不自动改动 R2S 当前运行配置；详见 [openclash/README.md](./openclash/README.md)。
 
 - 三套代理客户端默认独立维护；除非用户明确要求同步，不顺手改其它平台。
 - `openwrt/` 维护系统运维、性能、DNS、防火墙、升级、存储与排障知识；`openclash/` 继续维护 OpenClash 正式 YAML，二者不互相复制配置。
@@ -62,7 +64,11 @@ GitHub main
 `https://raw.githubusercontent.com/jax2333333/proxy-configs/main/clash-verge/clash-verge-by-jax.yaml`
 
 ### OpenClash
-`https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/openclash_by_jax_v5.yaml`
+主维护 IPv6 双机场版：
+`https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/openclash_by_jax_双机场_IPv6.yaml`
+
+普通双机场同步版：
+`https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/openclash_by_jax_双机场.yaml`
 
 Cloudflare v2 通过 `cloudflare-node/edgetunnel-v2/` 的 Pages 构建流程部署，不使用包含真实凭据的公开 Raw 节点配置。
 
