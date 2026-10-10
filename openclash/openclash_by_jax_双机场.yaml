@@ -131,7 +131,6 @@ proxy-groups:
   - 🇸🇬 B|新加坡智能
   - 🖐️ 手动选择
   - 🛠️ 节点测速
-  - 🚀 直连
 - name: 🖐️ 手动选择
   type: select
   use:
@@ -168,7 +167,7 @@ proxy-groups:
   filter: (?i)香港|港|HK|Hong Kong|HongKong
   exclude-filter: 免费|0\.01|x0\.1
   exclude-type: direct
-  url: https://www.gstatic.com/generate_204
+  url: https://chatgpt.com/cdn-cgi/trace
   interval: 300
   tolerance: 100
 - name: 🇭🇰 B|香港智能
@@ -178,7 +177,7 @@ proxy-groups:
   filter: (?i)香港|港|HK|Hong Kong|HongKong
   exclude-filter: 免费|0\.01|x0\.1
   exclude-type: direct
-  url: https://www.gstatic.com/generate_204
+  url: https://www.youtube.com/generate_204
   interval: 300
   tolerance: 100
 - name: 🇯🇵 A|日本智能
@@ -188,7 +187,7 @@ proxy-groups:
   filter: (?i)日本|JP|Japan|Tokyo|Osaka
   exclude-filter: 免费|0\.01|x0\.1
   exclude-type: direct
-  url: https://www.gstatic.com/generate_204
+  url: https://chatgpt.com/cdn-cgi/trace
   interval: 300
   tolerance: 100
 - name: 🇯🇵 B|日本智能
@@ -198,7 +197,7 @@ proxy-groups:
   filter: (?i)日本|JP|Japan|Tokyo|Osaka
   exclude-filter: 免费|0\.01|x0\.1
   exclude-type: direct
-  url: https://www.gstatic.com/generate_204
+  url: https://www.youtube.com/generate_204
   interval: 300
   tolerance: 100
 - name: 🇹🇼 A|台湾智能
@@ -208,7 +207,7 @@ proxy-groups:
   filter: (?i)台湾|TW|Taiwan
   exclude-filter: 免费|0\.01|x0\.1
   exclude-type: direct
-  url: https://www.gstatic.com/generate_204
+  url: https://chatgpt.com/cdn-cgi/trace
   interval: 300
   tolerance: 100
 - name: 🇹🇼 B|台湾智能
@@ -218,7 +217,7 @@ proxy-groups:
   filter: (?i)台湾|TW|Taiwan
   exclude-filter: 免费|0\.01|x0\.1
   exclude-type: direct
-  url: https://www.gstatic.com/generate_204
+  url: https://www.youtube.com/generate_204
   interval: 300
   tolerance: 100
 - name: 🇺🇸 A|美国智能
@@ -228,7 +227,7 @@ proxy-groups:
   filter: (?i)美国|USA|United States|America
   exclude-filter: 免费|0\.01|x0\.1
   exclude-type: direct
-  url: https://www.gstatic.com/generate_204
+  url: https://chatgpt.com/cdn-cgi/trace
   interval: 300
   tolerance: 100
 - name: 🇺🇸 B|美国智能
@@ -238,7 +237,7 @@ proxy-groups:
   filter: (?i)美国|USA|United States|America
   exclude-filter: 免费|0\.01|x0\.1
   exclude-type: direct
-  url: https://www.gstatic.com/generate_204
+  url: https://www.youtube.com/generate_204
   interval: 300
   tolerance: 100
 - name: 🇸🇬 A|新加坡智能
@@ -248,7 +247,7 @@ proxy-groups:
   filter: (?i)新加坡|SG|Singapore
   exclude-filter: 免费|0\.01|x0\.1
   exclude-type: direct
-  url: https://www.gstatic.com/generate_204
+  url: https://chatgpt.com/cdn-cgi/trace
   interval: 300
   tolerance: 100
 - name: 🇸🇬 B|新加坡智能
@@ -258,7 +257,7 @@ proxy-groups:
   filter: (?i)新加坡|SG|Singapore
   exclude-filter: 免费|0\.01|x0\.1
   exclude-type: direct
-  url: https://www.gstatic.com/generate_204
+  url: https://www.youtube.com/generate_204
   interval: 300
   tolerance: 100
 - name: 🤖 AI
@@ -273,7 +272,6 @@ proxy-groups:
   - 🇺🇸 B|美国智能
   - 🇹🇼 A|台湾智能
   - 🇹🇼 B|台湾智能
-  - 🚀 直连
 - name: 📺 YouTube
   type: select
   proxies: &id001
