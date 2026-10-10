@@ -154,6 +154,8 @@ DNS检测相关域名保持海外解析优先：
 -   🎮 Steam
 -   🐟 漏网之鱼
 
+双机场 `🔮 节点选择` 与 `🤖 AI` 的可选列表已移除 `🚀 直连`（2026-10-11）；这不改变独立直连规则，也不移除其它策略组的直连选项。
+
 阿里云验证码/安全检测相关域名：双机场 YAML 已加入 `DOMAIN-SUFFIX,aliapp.org,🚀 直连`，位于 `cn_domain` 和 `MATCH` 之前，使 `ynuf.aliapp.org` 不再默认走兜底代理。单机场 YAML 未修改。
 
 当前两套 YAML 的 `🤖 AI` 都显式列出日本、新加坡、美国、台湾地区 Smart，但同时保留一个未按地区过滤的总 Smart 入口；因此当前状态不应描述为“严格排除全部香港路径”。
@@ -167,6 +169,13 @@ DNS检测相关域名保持海外解析优先：
 -   `A|智能选择` / `B|智能选择` 两个总 Smart 独立
 -   香港、日本、台湾、美国、新加坡分别建立 A/B 地区 Smart，共 10 个地区 Smart
 -   `🖐️ 手动选择` 与 `🛠️ 节点测速` 直接聚合两个 Provider
+
+双机场地区 Smart 测速地址（2026-10-11）：
+
+-   A 机场香港、日本、台湾、美国、新加坡共 5 个地区 Smart：`https://chatgpt.com/cdn-cgi/trace`。
+-   B 机场对应的 5 个地区 Smart：`https://www.youtube.com/generate_204`。
+-   `A|智能选择` / `B|智能选择`、`🛠️ 节点测速`、`Airport-A` / `Airport-B` Provider 健康检查仍保留原来的 `https://www.gstatic.com/generate_204`；这次不调整订阅更新与健康检查频率。
+-   这些 URL 用于连通性与延迟测试，并非实际下载吞吐测试。ChatGPT 在部分地区可能限制访问，尤其需关注 A 机场香港 Smart 的实机结果。
 
 单机场：
 
