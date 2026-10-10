@@ -4,7 +4,14 @@
 >
 > 正式配置永远以 `main` 分支中的 YAML 文件为准。
 
-当前正式配置入口：
+当前维护配置入口（2026-10-11 起）：
+
+- IPv6 双机场主维护：`openclash/openclash_by_jax_双机场_IPv6.yaml`
+- 普通双机场同步维护：`openclash/openclash_by_jax_双机场.yaml`
+
+**新维护规则（2026-10-11，用户明确指定）**：双机场以后以 `openclash/openclash_by_jax_双机场_IPv6.yaml` 作为主维护版；未明确要求只修改一个版本时，必须**同时修改** `openclash/openclash_by_jax_双机场.yaml` 普通双机场版。两版共同的 Provider、规则、策略组、Smart、DNS 分流等逻辑应同步，保留顶层 IPv6、DNS AAAA、IPv6 Fake-IP 池等专属差异，不允许整份覆盖。`openclash/openclash_by_jax_单机场.yaml` 单机场版不自动联动。每次修改都要重新读取两份 main 最新文件、分别校验、比对非预期差异，并报告提交。不代表自动切换 R2S 正在运行的配置，也不代表 DNS/IP/WebRTC 泄漏已完成全面验收。
+
+原有单机场入口仍独立：
 
 -   双机场： `openclash/openclash_by_jax_双机场.yaml`
 
@@ -41,6 +48,8 @@ OpenClash 维护范围：
 # 2. 配置入口
 
 ## 双机场配置
+
+主维护：`openclash/openclash_by_jax_双机场_IPv6.yaml`；普通双机场默认同步：`openclash/openclash_by_jax_双机场.yaml`。R2S 正在使用哪个文件需另行验证。
 
 文件：
 
@@ -116,7 +125,8 @@ GitHub只保存：
 
 长期设计：
 
--   ipv6: false
+-   IPv6 双机场主维护版：`ipv6: true`、`dns.ipv6: true`，含 `dns.fake-ip-range6`。
+-   普通双机场版：`ipv6: false`、`dns.ipv6: false`，不含 `dns.fake-ip-range6`。
 -   dns.enhanced-mode: fake-ip
 -   Fake-IP范围：198.18.0.1/16
 -   respect-rules: true
@@ -219,9 +229,7 @@ DNS检测相关域名保持海外解析优先：
 
 两个机场：
 
-使用：
-
-`openclash_by_jax_双机场.yaml`
+优先维护 `openclash_by_jax_双机场_IPv6.yaml`，并默认同步 `openclash_by_jax_双机场.yaml`。
 
 一个机场：
 
