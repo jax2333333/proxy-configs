@@ -176,3 +176,13 @@ https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/opencl
 - **结论：** 下次优先单独更新 Provider 并观察节点数量，失败后才进一步比对运行时订阅、日志和缓存；避免先删缓存或修改 GitHub YAML。
 - **未验证：** 更新前后 Provider 的准确节点总数、下载结果和缓存 SHA 均未取得，因此无法确认究竟是自动更新滞后、旧缓存还是服务商订阅响应变化。
 - **配置变更：** 本事件仅补充排障知识，没有修改路由器配置、GitHub 双机场 YAML 或真实订阅 URL。详细排查步骤见 `docs/TROUBLESHOOTING.md` 第 J 节。
+
+## 11. 2026-10-11：双机场 Smart 分地区按网站测速
+
+- **正式文件：** `openclash/openclash_by_jax_双机场.yaml`；单机场 YAML 不变。
+- **选择组：** `🔮 节点选择` 和 `🤖 AI` 的 `proxies` 列表各移除一项 `🚀 直连`；未修改独立直连规则、其它应用组或全局直连代理定义。
+- **A 地区 Smart：** 香港、日本、台湾、美国、新加坡 5 组测试 URL 改为 `https://chatgpt.com/cdn-cgi/trace`。
+- **B 地区 Smart：** 对应 5 组测试 URL 改为 `https://www.youtube.com/generate_204`。
+- **保持不变：** A/B 总 Smart、`🛠️ 节点测速`、Provider 健康检查 URL、Provider 更新间隔、DNS、Fake-IP、IPv6、规则集和其它策略组。
+- **验证范围：** 已检查提交后的 GitHub 文件与预期改动一致；R2S 实机 URL 连通性、Smart 选路表现和 OpenClash 运行时覆写结果仍待使用端验证。
+- **风险：** HTTP 小请求延迟不代表 ChatGPT 推理速度或 YouTube 视频下载速度；ChatGPT 对部分地区的访问限制可能导致 A|香港智能节点测试失败，应使用实际节点结果判断，避免据此删除地区分组。
