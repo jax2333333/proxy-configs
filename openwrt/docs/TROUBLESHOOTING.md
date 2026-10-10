@@ -227,3 +227,71 @@ dmesg | tail -200
 ```
 
 提交到 GitHub / 聊天前先脱敏。
+
+## 14. IPv6 国内外分流检查（原生 WAN 还是 OpenClash 代理）
+
+适用于“客户端显示 IPv6、`curl -6` 正常，但不确定实际经 WAN 直连还是被 TUN/透明代理接管”的情况。先只读排查，不立即关闭 IPv6、修改防火墙或重写 YAML。参考 2026-10-11 [历史实测](./HISTORY.md)。
+
+**一、客户端检查地址族（示例为 Mac/Linux 的 curl）**
+
+```sh
+for site in www.baidu.com www.qq.com www.bilibili.com; do
+  echo "=== $site / default ==="
+  curl --noproxy '*' -sS -L --connect-timeout 8 --max-time 20 -o /dev/null \
+    -w 'HTTP=%{http_code} IP=%{remote_ip}\n' "https://$site"
+  echo "=== $site / IPv6 only ==="
+  curl -6 --noproxy '*' -sS -L --connect-timeout 8 --max-time 20 -o /dev/null \
+    -w 'HTTP=%{http_code} IP=%{remote_ip}\n' "https://$site"
+done
+```
+
+`IP=` 出现冒号形式的地址表明目标 IPv6；`--noproxy '*'` 排除显式 HTTP(S) 代理，但**无法绕过系统 TUN、主路由透明代理**。HTTP 501 等状态需与 TCP/TLS 失败区分，不能仅看 HTTP 状态码判断 IPv6 不通。
+
+**二、R2S 检查原生 IPv6 / 源地址路由**
+
+```sh
+ip -6 addr show scope global
+ip -6 route show default
+ip -6 route show table all
+ip -6 rule show
+ifstatus wan
+ifstatus wan6  # 不存在不等于 IPv6 断网，检查 WAN 本身
+```
+
+若默认路由形式为 `default from <源前缀> via <网关> dev <WAN接口>`，无源地址的 `ip -6 route get <目标IPv6>` 可能报 `Network unreachable`；使用 **实机当时查出的** WAN、LAN 的 IPv6 源地址分别复查：
+
+```sh
+ip -6 route get <目标IPv6> from <WAN当前IPv6>
+ip -6 route get <目标IPv6> from <LAN当前IPv6>
+```
+
+不要将示例占位符直接复制执行；公网地址、接口名、`fwmark`、路由表号都是动态值。若有 `fwmark -> TUN/utun`，表示某些流量**可能**进入代理，不能直接推断被测连接的实际路径。
+
+**三、指定单个 IPv6 目标并核对 WAN 抓包**
+
+1. 用 `command -v tcpdump` 检查抓包工具。未安装时，先确认 `command -v apk; command -v opkg` 与发行版，再考虑对应包；不要盲装或改软件源。
+2. R2S 在实机确认的 WAN 接口上执行 `tcpdump -ni <WAN接口> -c 20 'ip6 and host <目标IPv6>'`；其中占位符替换为真实接口及测试地址。
+3. 同时在客户端执行（目标必须是可访问的该网站 IPv6）：
+
+```sh
+curl -6 --noproxy '*' \
+  --resolve 'www.baidu.com:443:[<百度实际IPv6>]' \
+  --connect-timeout 8 --max-time 20 \
+  -sS -o /dev/null -w 'HTTP=%{http_code} IP=%{remote_ip}\n' \
+  https://www.baidu.com
+```
+
+4. 观察对应 IPv6 客户端 ↔ 目标 IPv6 的双向 TCP 流量和客户端返回码。仅见目标 IP 不够，须核对**方向、接口、连接时间及协议**。有匹配双向通信可证明**该次连接**原生 WAN 通信；无匹配数据需要排查接口、过滤地址、VPN/TUN、DNS 与时间窗口，不能立即断言走代理。
+5. 某些精简版 tcpdump 可能以 `UNSUPPORTED` 显示链路层但附十六进制数据；可先确认报文中的 IPv6（以太类型 `86dd`）、TCP（下一头 `06`）、443 端口等，不将该提示当作抓包失败。
+
+**四、交叉核对 OpenClash**
+
+```sh
+grep -Ei 'baidu.com|qq.com|bilibili.com|v6.ident.me' /tmp/openclash.log | tail -30
+```
+
+- 显示 `using DIRECT` 或具体代理节点时，仅说明对应日志事件；要核实是否同次连接。
+- **没有匹配日志，不等于确认直连**，尤其是 IP 直连、绕过透明代理、日志未覆盖或日志轮换场景。
+- 外网 IPv6 的日志命中代理节点不能替代对国内 IPv6 的 WAN 抓包；也不能替代 DNS / WebRTC / IP 泄漏测试。
+- 不改正式 `openclash/` YAML；如需修改，重新读取其当前正式 YAML 并单独授权验证。
+
