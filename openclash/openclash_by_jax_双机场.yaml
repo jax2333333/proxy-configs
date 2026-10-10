@@ -511,6 +511,7 @@ rules:
 - DOMAIN,whoami.akamai.net,🔮 节点选择
 - DOMAIN,whatismyip.akamai.com,🔮 节点选择
 - DOMAIN-SUFFIX,surfshark.com,🔮 节点选择
+- DOMAIN-SUFFIX,aliapp.org,🚀 直连
 - RULE-SET,cn_domain,🚀 直连
 - RULE-SET,cn_ip,🚀 直连,no-resolve
 - MATCH,🐟 漏网之鱼
