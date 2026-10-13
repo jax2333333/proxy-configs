@@ -69,7 +69,7 @@ GitHub main
 
 - R2S / ImmortalWrt 上运行 OpenClash / Mihomo；
 - GitHub YAML 只含 Provider 占位地址，真实机场订阅在 R2S 本地覆写；
-- Fake-IP 为主，IPv6 默认关闭；
+- Fake-IP 为主；双机场以 `openclash/openclash_by_jax_双机场_IPv6.yaml` 为主维护版（`ipv6: true`、`dns.ipv6: true`，含 `dns.fake-ip-range6`），普通双机场 `openclash/openclash_by_jax_双机场.yaml` 默认同步维护（`ipv6: false`、`dns.ipv6: false`）；GitHub 配置不等于 R2S 当前运行配置，实机 IPv6 状态须另行核实；
 - DNS 优先防泄漏：境外、DIRECT/中国域名、节点域名分别按当前 YAML 的设计解析；
 - Apple 默认直连但保留代理选择，AI/YouTube/Telegram/GitHub/Netflix/TikTok/Steam/Microsoft/OneDrive 等保持独立策略；
 - MetaCubeX MRS 为路由器端主要规则体系，`ios_rule_script` 主要用于核对/补充；
