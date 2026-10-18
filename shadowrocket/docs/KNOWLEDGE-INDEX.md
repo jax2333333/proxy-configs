@@ -20,6 +20,7 @@
 | 5G YouTube 去广告正常、家庭 Wi-Fi 又出现广告 | `HISTORY-MITM-CERTIFICATE-20260904.md` + `CURRENT-MITM-CERTIFICATE.md` + `TROUBLESHOOTING.md` + 当前 `youtube-adblock.sgmodule`；第一优先检查本地共享 CA / iOS 完全信任 / 模块开关 |
 | HTTPDNS 防绕过 | `CURRENT-CONFIG.md` + `TROUBLESHOOTING.md` + 当前 `httpdns-block-safe.sgmodule` |
 | FaceTime / Google Meet / Discord 语音 / 网页视频会议异常 | **P0：先读 `TROUBLESHOOTING.md` → WebRTC / STUN** + `CURRENT-CONFIG.md` + 当前所用配置 `[General]` + `webrtc-privacy.sgmodule`；先排查 WebRTC Privacy，再查 QUIC / DNS / 节点 |
+| 抖音商城 / 我的订单在蜂窝数据下网络异常 | **`TROUBLESHOOTING.md` → `抖音商城「我的订单」移动数据网络异常`** + `main` 当前 `Jax-shadowrocket-v6.conf`；优先核对 `ecomuser.snssdk.com` 精确 DIRECT 是否早于 TikTok 共享域名规则，结合新日志 A/B 排查，不扩展整个 `snssdk.com` |
 | 抖音 / TikTok 广告问题 | **`HISTORY-DOUYIN-ADBLOCK-20260906.md`** + `HISTORY.md` + `TROUBLESHOOTING.md` + 当前专项 module/script；先区分域名 REJECT、MITM 基础链路、App 实际解密与 JSON 字段识别，不封正常视频 CDN |
 | YouTube 去广告 | `CURRENT-CONFIG.md` + `CURRENT-MITM-CERTIFICATE.md` + 当前 YouTube module/script；涉及多场景差异时同时读 `OPERATIONS-MITM-CERTIFICATE.md` |
 | DNS / IPv6 / QUIC / WebRTC | `TROUBLESHOOTING.md` + 当前所用配置 `[General]` + 对应 Toolkit 模块 |
