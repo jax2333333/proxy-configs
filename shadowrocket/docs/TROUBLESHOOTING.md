@@ -119,6 +119,51 @@ B | 日本 01
 
 传统 53/UDP 出现本身不等于 DNS 泄漏，应结合当前所用配置、实际命中规则和 DNS 泄漏测试判断。
 
+## 抖音商城「我的订单」移动数据网络异常（2026-10-19：实机验收通过）
+
+### 现象与对照测试
+
+| 场景 | 抖音订单页结果 |
+| --- | --- |
+| 家庭 Wi-Fi + Home Clean | 正常 |
+| 蜂窝数据 + 原 Mobile 配置 | 提示「网络异常」 |
+| 蜂窝数据 + 原 Mobile 配置，关闭 TikTok / 抖音 / 红果广告净化模块 | 仍提示「网络异常」 |
+| 蜂窝数据，完全断开 Shadowrocket VPN | 正常 |
+| 蜂窝数据，更新 Mobile 精确直连规则，广告净化模块关闭 | 正常 |
+| 蜂窝数据，保持修复规则并重新开启广告净化模块 | 正常 |
+
+以上成功/失败情况来自用户在 iPhone 上的实际复测；最后两项已验收，说明此案例的订单功能修复与当前抖音净化模块可共存。家庭和蜂窝不仅配置不同、底层网络也不同，因此不能仅凭两者对照判断 DNS 或网关的根因。
+
+### 故障前证据与判断
+
+- 故障前 Shadowrocket SQLite 日志 `1(2).db` 的既有分析记录显示：抖音电商请求 `ecomuser.snssdk.com` 被送至 `🎵 TikTok` 策略下的 B 机场日本代理；同一故障窗口中其他部分 `ecombdapi.com`、`jinritemai.com` 电商域名走 DIRECT。后续定位相似故障时应以**新抓取的当前日志**复核。
+- 当时 Mobile 正式配置中的宽泛规则 `DOMAIN-SUFFIX,snssdk.com,🎵 TikTok` 会覆盖该电商子域；`snssdk.com` 同时是 TikTok/抖音共享基础设施，不能整体改为 DIRECT。
+- 关闭整个抖音广告净化模块并未恢复订单；只修改该子域路由后恢复，重新启用模块仍正常。综合 A/B 测试，**错误代理是本次订单页异常的高可信根因**，而非证明所有抖音订单故障都由此引起。
+- 本次没有新的修复后 SQLite 抓包或 HTTP 状态码证据；验收依据为用户实机功能测试，不声称已经逐个验证电商所有接口。
+
+### 已纳入 GitHub main 的最小修复
+
+正式文件：`shadowrocket/Jax-shadowrocket-v6.conf`，在 `[Rule]` 的 TikTok `RULE-SET` 与 `DOMAIN-SUFFIX,snssdk.com` **之前**设置：
+
+```ini
+# 抖音电商订单接口直连
+DOMAIN,ecomuser.snssdk.com,🌐 全球直连
+```
+
+`🌐 全球直连` 在该配置中指向 `DIRECT`。对应已提交的配置修复：[e4e74f74](https://github.com/jax2333333/proxy-configs/commit/e4e74f74d7c4da174f549be6137351aac42cd9af)。
+
+不修改 Home Clean、不改 DNS / IPv6 / MITM、不扩大 `*.snssdk.com` 的直连、不调整 TikTok 其他域名的地区分流；此规则应作为**已实机验证的精确例外**持续保留，除非后续有新的复现证据。
+
+### 相同症状的固定排查 / 回滚
+
+1. 确认当前实际网络与生效配置：家庭指定 SSID 应为 Home Clean；蜂窝/其他未知网络应为 Mobile。不要把 Home Clean 用作外部网络的常驻替代方案。
+2. 在同一蜂窝网络分别测试 Shadowrocket VPN 开/关，并单独关闭抖音广告模块做 A/B。模块关闭仍异常时，不要继续盲目扩大 REJECT / MITM。
+3. 检查 iPhone Mobile 是否已更新 GitHub 当前配置、是否使用配置/场景路由，以及精确 `ecomuser.snssdk.com` 规则是否**早于** TikTok 的 `RULE-SET` 和 `DOMAIN-SUFFIX,snssdk.com`。
+4. 如仍复现，清空日志后只重现一次订单页，记录 `ecomuser.snssdk.com` 及相关电商域名的 DIRECT / PROXY / REJECT、策略组、连接错误和时间；必要时再按证据检查 DNS / HTTPDNS / 其他模块。不要把整个 `snssdk.com`、`bytegecko.com` 或 `ecombdapi.com` 一律改为直连。
+5. 如果精确规则对其他已验证功能造成回归，仅回退 Mobile 文件中的这一条精确规则并重新加载，再逐项复测订单与 TikTok；修改仓库仍需遵循 `AGENTS.md` 的授权流程。
+
+本记录仅存公共域名、规则和脱敏结论，不上传原始 SQLite 日志、账户订单、Cookie、Token 或真实机场地址。
+
 ## 抖音广告
 
 - `p*-ad-sign.byteimg.com` 等素材域名被 REJECT，不代表服务器插入视频广告一定消失。
