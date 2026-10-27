@@ -1,11 +1,12 @@
 # JAX AI Core
 # Curated high-confidence AI service domains.
 # Avoid broad shared SaaS domains such as stripe.com, auth0.com, sentry.io or segment.io.
-# Updated: 2026-09-04
+# Updated: 2026-10-27
 
 # OpenAI / ChatGPT
 DOMAIN-SUFFIX,openai.com
 DOMAIN-SUFFIX,chatgpt.com
+DOMAIN-SUFFIX,sora.com
 DOMAIN-SUFFIX,oaistatic.com
 DOMAIN-SUFFIX,oaiusercontent.com
 DOMAIN-SUFFIX,chatgpt.livekit.cloud
@@ -15,12 +16,15 @@ DOMAIN-SUFFIX,turn.livekit.cloud
 # Anthropic / Claude
 DOMAIN-SUFFIX,anthropic.com
 DOMAIN-SUFFIX,claude.ai
+DOMAIN-SUFFIX,claude.com
+DOMAIN-SUFFIX,claudeusercontent.com
 
 # Google Gemini / AI Studio
 DOMAIN,ai.google.dev
 DOMAIN,makersuite.google.com
 DOMAIN-SUFFIX,aistudio.google.com
 DOMAIN-SUFFIX,gemini.google.com
+DOMAIN,notebooklm.google.com
 DOMAIN-SUFFIX,generativeai.google
 DOMAIN-SUFFIX,deepmind.com
 DOMAIN-SUFFIX,deepmind.google
@@ -29,3 +33,6 @@ DOMAIN-KEYWORD,generativelanguage
 
 # Microsoft Copilot - keep only the explicit Copilot host here.
 DOMAIN,copilot.microsoft.com
+
+# Perplexity
+DOMAIN-SUFFIX,perplexity.ai

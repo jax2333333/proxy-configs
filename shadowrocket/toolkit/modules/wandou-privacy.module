@@ -21,7 +21,7 @@ DOMAIN-SUFFIX,mbridge.com,REJECT
 DOMAIN-SUFFIX,mintegral.com,REJECT
 
 # Umeng / common analytics trackers
-DOMAIN,cnlogs.umeng.com,REJECT
+# cnlogs.umeng.com 在移动主配置中明确直连，不与主配置冲突。
 DOMAIN,errlog.umeng.com,REJECT
 DOMAIN,ulogs.umeng.com,REJECT
 DOMAIN,log.umtrack.com,REJECT
