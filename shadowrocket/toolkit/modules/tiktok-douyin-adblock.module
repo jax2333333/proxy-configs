@@ -1,12 +1,12 @@
 #!name=JAX - TikTok / 抖音 / 红果广告净化
-#!desc=TikTok 安全优先：拦截高置信度字节广告域名、红果短剧广告 CDN 与明确 /api/ad/ 请求，并递归过滤抖音 amemv / aweme.snssdk.com JSON 中具有强广告标记的 Feed / 短剧插播广告。v6 · 2026-09-23
+#!desc=TikTok 安全优先：拦截高置信度字节广告域名、红果短剧广告 CDN 与明确 /api/ad/ 请求，并递归过滤抖音 amemv / aweme.snssdk.com JSON 中具有强广告标记的 Feed / 短剧插播广告；修复红果 reading-ad 连字符前缀漏匹配。v7 · 2026-10-27
 
 # 设计原则：
 # - TikTok 安全 / 地区稳定优先，不阻断 tiktokv.com / tiktokcdn.com / byteoversea 等核心域名。
 # - 不封整个 snssdk.com / zijieapi.com / pstatp.com / qznovelvod.com，避免共享基础设施误伤 TikTok、抖音或红果正常业务。
 # - 域名层仅拦截本机日志验证或公开规则库明确标记为 Ads/Tracking 的高置信度广告专用域名。
 # - 明确 /api/ad/ 路径直接拒绝；原生信息流与短剧插播广告继续由自托管 response Script 处理。
-# - 红果正片使用 reading-video.qznovelvod.com；广告素材使用 reading-ad 子域，仅拦 reading-ad，不影响正片。
+# - 红果正片使用 *-reading-video.qznovelvod.com 等主机；本规则只匹配 reading-ad 广告主机，不封整个 qznovelvod.com。
 # - ad_info / adInfo 不能单独判定为广告；普通作品可能携带通用广告能力/配置字段。
 # - 脚本不主动联网、不上传 Cookie/Header/账号信息；解析异常时原样放行。
 
@@ -44,12 +44,14 @@ DOMAIN,pangolin-lq.snssdk.com,REJECT
 DOMAIN,pangolin.snssdk.com,REJECT
 
 # ============================================================
-# 红果短剧：2026-09-23 本机 Shadowrocket 日志验证
+# 红果短剧：2026-09-23 / 2026-10-27 本机 Shadowrocket 日志验证
 # ============================================================
-# 正片：reading-video.qznovelvod.com
-# 广告：v5-*-reading-ad.qznovelvod.com
-# 因此禁止 DOMAIN-SUFFIX,qznovelvod.com，仅匹配 reading-ad。
+# 正片：v11-reading-video.qznovelvod.com 等，不拦截。
+# 广告：v96-reading-ad.qznovelvod.com / v5-ex-reading-ad.qznovelvod.com 等。
+# DOMAIN-SUFFIX 只覆盖 reading-ad.qznovelvod.com 本身及点分隔子域，无法覆盖连字符前缀。
+# 保留原后缀规则，并以通配符补齐 *-reading-ad；禁止封锁整个 qznovelvod.com。
 DOMAIN-SUFFIX,reading-ad.qznovelvod.com,REJECT
+DOMAIN-WILDCARD,*-reading-ad.qznovelvod.com,REJECT
 
 # 红果 / 字节广告素材与广告接口
 DOMAIN,ads3-normal-lq.zijieapi.com,REJECT

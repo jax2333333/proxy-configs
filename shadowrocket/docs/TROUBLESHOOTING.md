@@ -164,6 +164,35 @@ DOMAIN,ecomuser.snssdk.com,🌐 全球直连
 
 本记录仅存公共域名、规则和脱敏结论，不上传原始 SQLite 日志、账户订单、Cookie、Token 或真实机场地址。
 
+## 红果短剧：家庭无广告、外出仍有广告（2026-10-27：待实机复测）
+
+### 日志与当前修复
+
+- 用户报告家庭 OpenClash 场景无广告，外出使用 Shadowrocket 时仍有广告；两种网络的拦截链路不同，不能据此认定家庭效果全部来自 OpenClash。
+- 本次 Shadowrocket SQLite 日志中，8 个 `*-reading-ad.qznovelvod.com` 主机共出现 44 条连接，41 条 DIRECT、3 条 PROXY，没有 REJECT。正常播放另有 21 个其他 `qznovelvod.com` 主机，不应整域封锁。
+- 模块原规则 `DOMAIN-SUFFIX,reading-ad.qznovelvod.com,REJECT` 只能覆盖该主机及点分隔子域，不能匹配 `v96-reading-ad.qznovelvod.com`、`v5-ex-reading-ad.qznovelvod.com` 等连字符前缀；这是可由当前配置确认的匹配缺口。
+- `tiktok-douyin-adblock.module` v7 保留原后缀规则，并补充：
+
+```ini
+DOMAIN-WILDCARD,*-reading-ad.qznovelvod.com,REJECT
+```
+
+本次保持现有抖音 response Script、MITM、DNS、IPv6 和场景分流设置。红果继续使用域名层拦截；静态匹配通过不等于实际广告展示已经消失。
+
+### 仍需检查的模块生效问题
+
+同一份日志中，模块已列出的 `dig.bdurl.net`、`ads3-normal-lq.zijieapi.com`、`ads5-normal-lq.zijieapi.com`、`p3-ad-sign.byteimg.com` 合计还有 66 条连接被 DIRECT / PROXY 放行，其他时段则能命中精确 REJECT。仅补充 CDN 规则不能证明这项运行状态差异已经解决；模块是否启用、重新编译是否成功、是否存在其他模块覆盖，需在手机当前外出场景核实。
+
+### 固定复测与回滚
+
+1. 更新手机上的远程模块，确认描述为 `v7 · 2026-10-27`，保持模块开启；关闭 Wi-Fi，用蜂窝数据启用 `Jax-shadowrocket-v6.conf`，重新使用 / 编译当前配置。
+2. 在“测试规则”分别输入 `https://ads3-normal-lq.zijieapi.com/` 与 `https://v96-reading-ad.qznovelvod.com/`，预期均为 REJECT。第一项仍被放行时先查模块加载 / 覆盖，不继续扩大广告域名或 MITM。
+3. 完全退出红果，清空连接日志，重新打开并复现原广告场景；记录复现时间并导出新的 `.db`。核对广告域名是否 REJECT，以及正常播放、切集是否仍可用；已缓存的广告不能单独证明新规则失败。
+4. 若仅规则测试通过但广告仍出现，继续按新日志定位广告来源；连接级记录不能证明抖音 response Script 执行，也不能据此扩大红果 MITM。
+5. 若出现新的播放异常，先只撤销本次新增的 `DOMAIN-WILDCARD` 规则并重新加载，做单变量 A/B；不要同时改变节点、DNS 或其他模块。
+
+此记录只保存脱敏统计和公开域名；v7 的手机实际去广告效果尚待用户验收，不上传原始 SQLite 日志、请求参数或认证材料。
+
 ## 抖音广告
 
 - `p*-ad-sign.byteimg.com` 等素材域名被 REJECT，不代表服务器插入视频广告一定消失。
