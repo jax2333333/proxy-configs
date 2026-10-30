@@ -35,7 +35,7 @@ R2S 基于 Rockchip RK3328：
 
 - 稳定性和低延迟优先于单次跑分。
 - DNS 泄漏风险优先处理。
-- IPv6 默认保持关闭，除非用户明确要求启用并重新做完整泄漏/兼容性验证。
+- IPv6：此前曾以默认关闭为偏好；**2026-10-30 用户已明确选择家庭 IPv6 开启并实测**。在用户没有新指令时保持实机现状，不因旧文档偏好自动关闭或重新配置；未来如变更须重新验证分流与泄漏风险。
 - OpenClash 常用 Fake-IP / TUN 体系；具体值以 `openclash/` 当前 YAML 为准。
 - 优化必须先测基线，单项改动，复测后决定保留或回滚。
 
@@ -45,6 +45,14 @@ R2S 基于 Rockchip RK3328：
 - Mac mini 默认访问百度、QQ、B站时连接目标均为 IPv6；其中百度通过 R2S `pppoe-wan` 抓包已确认双向 TCP 443 原生 IPv6 直连。国外 `v6.ident.me` 当次日志命中 OpenClash 日本代理节点。
 - 以上为**特定时间、特定站点的实测快照**，不代表全部 IPv6 流量规则、DNS/WebRTC/IP 泄漏已完成全面验收；不同于“默认希望关闭 IPv6”的长期偏好，亦**不等于 GitHub 正式 OpenClash YAML 已启用 IPv6**。
 - 详细证据和复测边界：[HISTORY.md](./HISTORY.md)；可复用排查步骤：[TROUBLESHOOTING.md](./TROUBLESHOOTING.md)。实际状态必须每次从 R2S 重新读取。
+
+## 2026-10-30 最近一次 R2S 实机体检结论（历史快照）
+
+- PPPoE 的自动 DHCPv6 接口、/60 PD → LAN /64、带源前缀的 IPv6 默认路由、Mac IPv6 连通均已验证；当日国内 IPv6 网站获得真实 AAAA 且 HTTPS 200，国外 IPv6 流量有 OpenClash 代理节点连接记录。
+- DNS 使用 Fake-IP + 国内/国外分流；WAN 53 端口抓包观察到 `doh.pub` 的 DNS 引导解析，未观察到所测窗口内普通域名发往运营商 DNS。**不是“零 DNS 泄露”全面证明**；dnsmasq 保留运营商 DNS 的故障回退可能性仍待专项检测。
+- 当日 CPU、内存、温度健康，WAN 网卡没有 CRC/overflow/missed 硬件错误。境外 Ping 与 Traceroute 结果受 OpenClash ICMP 打标影响，不能据此判断原生 ISP 国际线路丢包；未做满载吞吐测试。
+- 用户已执行 Docker 服务停止及禁用自启（`enabled` 返回非零）；Docker/OpenList 软件包并未卸载，OpenList 状态和依赖尚未验证。ZeroTier 仍在使用，不应误删。
+- 完整命令证据、时间范围、未完成项与后续安全操作边界见 [2026-10-30 验证归档](./2026-10-30-R2S-IPV6-DNS-PERFORMANCE-VERIFICATION.md)。**不把本次观测中的动态地址、版本、端口视为最新值。**
 
 ## 当前已完成
 
