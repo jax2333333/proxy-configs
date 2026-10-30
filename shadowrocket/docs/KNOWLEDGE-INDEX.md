@@ -6,7 +6,7 @@
 | 询问“我现在可以做什么 / 下一步 / 给我操作关键词” | **`OPERATIONS-KEYWORDS.md`** + 当前 GitHub `main` 状态；先检查实际状态，再只输出 3～8 个当前真正有意义的关键词，每个关键词独立代码块，用户复制后可直接进入对应操作 |
 | 新增 iPhone / iPad，从零复制当前 Shadowrocket 架构 | **`IOS-NEW-DEVICE-SETUP.md`** → `CURRENT-CONFIG.md` → `CURRENT-MITM-CERTIFICATE.md` → `toolkit/README.md`；每台设备默认生成独立 CA，私人订阅与证书私钥只保存在设备本机 |
 | 同步 `jax2333333/ios_rule_script` | **`OPERATIONS-KEYWORDS.md` → `同步 ios_rule_script`**；先比较 Blackmatrix7 上游与 Fork，只有 `ahead_by=0` 且单纯 behind 才允许快进；存在独有提交 / diverged 时禁止强制覆盖 |
-| 优化默认节点选择 | **`OPERATIONS-KEYWORDS.md` → `优化默认节点选择`** + `CURRENT-CONFIG.md` + `main` 中的 `Jax-shadowrocket-v6.conf`；不把机场具体节点名写死；`A|智能选择` / `B|智能选择` 分别覆盖对应机场全部节点，`🎯 节点选择` 默认指向 `A|智能选择`，A/B 地区智能负责地区过滤 |
+| 优化默认节点选择 | **`OPERATIONS-KEYWORDS.md` → `优化默认节点选择`** + `CURRENT-CONFIG.md` + `main` 中的 `Jax-shadowrocket-v6.conf`；不把机场具体节点名写死；`A|智能选择` / `B|智能选择` 分别覆盖对应机场全部节点，`🎯 节点选择` 默认指向 `🇯🇵 B|日本智能`，A/B 地区智能负责地区过滤 |
 | 地区智能正则全面检测 | **`OPERATIONS-KEYWORDS.md` → `地区智能正则全面检测`** + `CURRENT-CONFIG.md` + `main` 中的 `Jax-shadowrocket-v6.conf`；检查 `A|智能选择` / `B|智能选择` 的机场前缀隔离，并确认 `A |` / `B |` 带空格与 `A|` / `B|` 无空格命名都能命中；同时检查香港、日本、新加坡、美国、台湾 A/B 地区组的中英文关键词、缩写和互斥条件；除非用户明确要求，不默认排除倍率、免费或试用节点 |
 | A/B 智能组没有节点 | **`TROUBLESHOOTING.md` → `A/B 智能组没有节点`** + 当前 `Jax-shadowrocket-v6.conf`；先核对实际 `A | 地区 序号` / `B | 地区 序号` 命名与允许空格的前缀正则，再检查地区关键词；不要先改订阅、DNS 或规则 |
 | 检查 Shadowrocket 自动 CI | **`OPERATIONS-KEYWORDS.md` → `检查 Shadowrocket CI`** + `.github/workflows/shadowrocket-ci.yml` + `.github/scripts/validate-shadowrocket.mjs` |
