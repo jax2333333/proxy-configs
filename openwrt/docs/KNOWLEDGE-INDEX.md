@@ -39,6 +39,10 @@
 
 - `CHATGPT-MAINTENANCE-PROMPT.md`
 
+## 最近一次实机验证归档（非当前配置）
+
+- [2026-10-30 R2S IPv6 / DNS / OpenClash / 性能体检](./2026-10-30-R2S-IPV6-DNS-PERFORMANCE-VERIFICATION.md)：包含 IPv6-PD、Fake-IP、国内/国外 IPv6 分流、DNS WAN 抓包、nftables/fwmark、ICMP 路由追踪、硬件/网卡健康及 Docker 停用；注明未验证项目与下一步安全清理边界。此文件只代表当日观测，不能替代实机当前状态或 GitHub 正式 OpenClash YAML。
+
 ## 按任务读取
 
 ### OpenWrt 全面体检 / R2S 全面体检
