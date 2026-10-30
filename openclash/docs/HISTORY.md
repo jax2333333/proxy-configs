@@ -186,3 +186,23 @@ https://raw.githubusercontent.com/jax2333333/proxy-configs/main/openclash/opencl
 - **保持不变：** A/B 总 Smart、`🛠️ 节点测速`、Provider 健康检查 URL、Provider 更新间隔、DNS、Fake-IP、IPv6、规则集和其它策略组。
 - **验证范围：** 已检查提交后的 GitHub 文件与预期改动一致；R2S 实机 URL 连通性、Smart 选路表现和 OpenClash 运行时覆写结果仍待使用端验证。
 - **风险：** HTTP 小请求延迟不代表 ChatGPT 推理速度或 YouTube 视频下载速度；ChatGPT 对部分地区的访问限制可能导致 A|香港智能节点测试失败，应使用实际节点结果判断，避免据此删除地区分组。
+
+## 12. 2026-10-30：R2S / OpenClash 双栈与机场入口地址族实测
+
+> 以下是当日的部分实测快照，不代表当前状态、全设备或所有节点；机场域名、IP、订阅和凭据均不记录。实际运行状态应重新检查。
+
+- **家庭网络：** 当时运营商 IPv6 前缀委派为 /60，LAN 分配 /64；Mac 系统 DNS 指向 R2S。IPv6 Fake-IP 的 AAAA 查询得到虚拟地址。
+- **Mac 不指定地址族的访问：** 百度连接选择 IPv6，YouTube 连接选择 IPv4 Fake-IP，均返回 HTTP 200。单次结果不能证明应用的地址族优先顺序或是否发生回退，也不能把 Fake-IP 当成最终网站公网地址。
+- **代理访问：** Mac 用 `curl -6` 测试 IPv6 网站成功；OpenClash 连接日志显示请求命中兜底规则并选择 B 机场日本高速 02，Smart 日志有上下行数据。这证明该次强制 IPv6 的客户端代理访问可用，不能据此认定日常连接默认 IPv6 优先，也不能单凭此日志推断每一段地址族。
+- **R2S 到机场节点：** 核对本地 Provider 缓存中的节点域名和端口、DNS 记录、REALITY 调试信息及 `netstat` 中 Mihomo 的已建立 TCP 连接：B 机场日本高速 02、04 的入口地址各有 IPv6 TCP 连接记录；A 机场日本 4 入口有 IPv4 TCP 连接记录。证据采集时间不完全相同，因此不能将这些连接与之前的网站测试认定为同一会话。结果不代表两家全部节点、UDP 或未来连接。
+- **未完成验收：** 未覆盖所有设备、应用、IPv4/IPv6、DNS 和 WebRTC 的全面泄漏测试；国内 DNS、节点域名 bootstrap 使用国内解析器本身也不能证明境外网站 DNS 泄漏。机场到最终网站的地址族不能从 R2S 到机场的连接推断。
+- **处理：** 仅检查，未调整 R2S/OpenClash 设置。鉴于已观察到双栈连通，建议保持现有设置；动态状态和节点选择以后仍以实机为准。
+
+### 后续复查方法
+
+1. 先区分客户端到路由器、路由器到机场节点、机场节点到目标网站三段；每段可使用不同地址族。判断系统自然选路时使用不带 `-4` / `-6` 的客户端测试；强制 `-6` 只验证该次 IPv6 路径。
+2. 在 R2S 终端读取瞬时 TCP 连接：`netstat -tnp | grep '[c]lash' | grep ESTABLISHED`。识别远端 IP 和端口时排除局域网设备进入代理端口及控制面板连接；`::ffff:` 映射地址表示 IPv4。此命令只覆盖 TCP，短连接可能错过，动态端口和监听地址以实机为准。
+3. 在路由器本地对照当前 Provider 缓存中节点名称、服务器域名及端口，再结合对应时间的 DNS、协议日志与已建立连接。DNS A / AAAA 结果只能证明解析结果；相同地址和端口可增强关联，若缺少时间与连接标识，不应断言不同记录属于同一会话。不要上传完整 Provider、订阅、节点参数、真实域名、IP 或认证信息。
+4. 节点测速、系统默认选路、机场入口和网站出口是不同问题；需要验证 IPv6 优先或泄漏时，另外设计对应的双栈、DNS 和 WebRTC 实测。
+
+官方参考：OpenClash 用户指南 `14-diagnostics.md` §14.2.5、§14.3 和 `09-settings-dns-ac-ipv6.md` §9.5；每次先读取 [指南入口](https://raw.githubusercontent.com/vernesong/OpenClash/dev/.github/skills/openclash-user-guide/SKILL.md) 及当前版本的相关章节。
