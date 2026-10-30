@@ -78,8 +78,8 @@ const home = read(homePath);
 const toolkitReadme = read(toolkitReadmePath);
 
 // 1) 正式配置长期不变量：Mobile。
-expectAssignment(mobile, 'ipv6', 'false', 'Mobile');
-expectAssignment(mobile, 'prefer-ipv6', 'false', 'Mobile');
+expectAssignment(mobile, 'ipv6', 'true', 'Mobile');
+expectAssignment(mobile, 'prefer-ipv6', 'true', 'Mobile');
 expectAssignment(mobile, 'dns-direct-system', 'false', 'Mobile');
 expectAssignment(mobile, 'dns-fallback-system', 'false', 'Mobile');
 expectAssignment(mobile, 'dns-direct-fallback-proxy', 'false', 'Mobile');
@@ -101,8 +101,8 @@ if (tiktokIndex < 0 || douyinIndex < 0 || tiktokIndex >= douyinIndex) {
 }
 
 // 2) 正式配置长期不变量：Home Clean。
-expectAssignment(home, 'ipv6', 'false', 'Home Clean');
-expectAssignment(home, 'prefer-ipv6', 'false', 'Home Clean');
+expectAssignment(home, 'ipv6', 'true', 'Home Clean');
+expectAssignment(home, 'prefer-ipv6', 'true', 'Home Clean');
 expectAssignment(home, 'dns-server', 'system', 'Home Clean');
 expectAssignment(home, 'fallback-dns-server', 'system', 'Home Clean');
 expectAssignment(
