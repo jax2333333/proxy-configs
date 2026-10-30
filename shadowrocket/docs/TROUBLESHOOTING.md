@@ -245,7 +245,9 @@ DOMAIN-WILDCARD,*-reading-ad.qznovelvod.com,REJECT
 
 ## YouTube、DNS、IPv6 与 QUIC
 
-YouTube 异常按模块逐层停用，不直接改正式配置。IPv6 当前默认关闭，但每次仍以当前所用配置实际 `[General]` 为准。
+YouTube 异常按模块逐层停用，不直接改正式配置。2026-10-30 起移动与家庭配置启用 IPv6 支持并优先 IPv6，实机表现待观察；每次以当前所用配置实际 `[General]` 为准。
+
+IPv6 观察：分别在家庭 Wi-Fi / Home Clean 和蜂窝 / Mobile 记录时间、网络、现象、命中规则、DIRECT / PROXY / REJECT、可见目标地址族与错误。实际出口、DNS 与规则覆盖需分别验证，单凭连接日志或 IPv6 测试成功无法证明不存在泄漏。出现异常先备份日志并先仅将当前场景的 `prefer-ipv6 = true` 改为 `false` 并复测；若仍有异常，将 `ipv6 = true` 改回 `false`，保持 `prefer-ipv6 = false`，重新加载并复测；也可从修改前提交 `34541a32c7e2e5a5fc8ad29f0c4d49c479919963` 找回原配置，注意历史版本不含后续更新。
 
 `proxy-stability.sgmodule` 设置 `block-quic = all-proxy`，只阻断走 Shadowrocket 代理连接的 QUIC，DIRECT 不受影响。它属于移动模式可选稳定性实验，不是默认修复手段。若移动模式实测需要，可以长期保持开启；Home Clean 正常流量为 DIRECT，`all-proxy` 通常不会作用于这些连接，家庭真实代理 QUIC/UDP 仍由 OpenClash 处理，因此无需为了回家/出门反复切换模块。
 
